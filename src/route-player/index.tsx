@@ -158,7 +158,7 @@ const RoutePlayerContainer = styled.div`
 `;
 
 const WaypointsCol = styled.div`
-  width: 250px;
+  width: 300px;
   margin-right: 10px;
 `;
 const PlayerMapCol = styled.div`
