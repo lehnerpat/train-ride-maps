@@ -36,4 +36,6 @@ const RouteFileModel = t.readonly(
     waypoints: t.array(WayPointModel),
   })
 );
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type RouteFileModel = t.TypeOf<typeof RouteFileModel>;

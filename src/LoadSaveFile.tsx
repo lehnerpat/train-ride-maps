@@ -1,5 +1,4 @@
-import { boolean } from "fp-ts";
-import { FC, useRef, useState } from "react";
+import { FC, useRef } from "react";
 import styled from "styled-components";
 import { Panel } from "./components/Panel";
 
@@ -10,7 +9,6 @@ interface LoadSaveFileProps {
 }
 
 export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onFileLoaded, isDownloadAvailable, onDownloadRequested }) => {
-  const [isFileInputActive, setFileInputActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onUploadButtonClicked = () => {
@@ -70,9 +68,5 @@ const Button = styled.button`
 `;
 
 const HiddenInput = styled.input`
-  display: none;
-`;
-
-const HiddenLink = styled.a`
   display: none;
 `;

@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import { RoutePlayer } from "./RoutePlayer";
-import { HiroshimaMiyoshi } from "./data/hiroshima-miyoshi";
-import { JsonInputTester } from "./JsonInputTester";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
 import { readFromJson, RouteFileModel, serializeToJson } from "./route-files";
