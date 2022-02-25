@@ -3,7 +3,7 @@ import "./App.css";
 import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import ReactPlayer from "react-player/youtube";
 import { LatLngLiteral, Map as LeafletMap } from "leaflet";
-import { Route, Waypoint } from "./Route";
+import { Route, Waypoint } from "./route-models";
 import styled from "styled-components";
 import { Panel } from "./components/Panel";
 

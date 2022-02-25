@@ -47,9 +47,7 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onFileLoaded, isDownloadAv
     <Panel>
       <ButtonBar>
         <Button onClick={onUploadButtonClicked}>Upload file...</Button>
-        <Button disabled={!isDownloadAvailable} onClick={onDownloadButtonClicked}>
-          Download file...
-        </Button>
+        {isDownloadAvailable && <Button onClick={onDownloadButtonClicked}>Download current file...</Button>}
       </ButtonBar>
       <HiddenInput type="file" id="upload-file" ref={fileInputRef} onChange={onFileSelectionChanged} />
     </Panel>

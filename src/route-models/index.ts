@@ -2,9 +2,9 @@ import * as t from "io-ts";
 import { isLeft } from "fp-ts/Either";
 import { PathReporter } from "io-ts/PathReporter";
 
-export function readFromJson(j: string): RouteFileModel {
+export function readFromJson(j: string): Route {
   const data = JSON.parse(j);
-  const decoded = RouteFileModel.decode(data);
+  const decoded = Route.decode(data);
 
   if (isLeft(decoded)) {
     throw new Error(PathReporter.report(decoded).join("\n"));
@@ -13,29 +13,33 @@ export function readFromJson(j: string): RouteFileModel {
   return decoded.right;
 }
 
-export function serializeToJson(route: RouteFileModel): string {
+export function serializeToJson(route: Route): string {
   return JSON.stringify(route);
 }
 
-const LatLngLiteralModel = t.readonly(
+const LatLngLiteral = t.readonly(
   t.strict({
     lat: t.number,
     lng: t.number,
   })
 );
-const WayPointModel = t.readonly(
+
+const Waypoint = t.readonly(
   t.strict({
     t: t.number,
-    p: LatLngLiteralModel,
+    p: LatLngLiteral,
   })
 );
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type Waypoint = t.TypeOf<typeof Waypoint>;
 
-const RouteFileModel = t.readonly(
+const Route = t.readonly(
   t.strict({
+    title: t.string,
     videoUrl: t.string,
-    waypoints: t.array(WayPointModel),
+    waypoints: t.array(Waypoint),
   })
 );
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export type RouteFileModel = t.TypeOf<typeof RouteFileModel>;
+export type Route = t.TypeOf<typeof Route>;

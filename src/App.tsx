@@ -3,11 +3,12 @@ import "./App.css";
 import { RoutePlayer } from "./RoutePlayer";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
-import { readFromJson, RouteFileModel, serializeToJson } from "./route-files";
+import { readFromJson, Route, serializeToJson } from "./route-models";
 import { NewFileStarter } from "./NewFileStarter";
+import { IncludedRouteSelector } from "./IncludedRouteSelector";
 
 function App() {
-  const [route, setRoute] = useState<RouteFileModel>();
+  const [route, setRoute] = useState<Route>();
 
   const onFileLoaded = async (file: File): Promise<void> => {
     const j = await file.text();
@@ -26,11 +27,18 @@ function App() {
         {!!route ? (
           <RoutePlayer routeState={[route, setRoute]} />
         ) : (
-          <NewFileStarter
-            onCreateNewFile={(videoUrl) => {
-              setRoute({ videoUrl, waypoints: [] });
-            }}
-          />
+          <>
+            <NewFileStarter
+              onCreateNewFile={(title, videoUrl) => {
+                setRoute({ title, videoUrl, waypoints: [] });
+              }}
+            />
+            <IncludedRouteSelector
+              onRouteSelected={(selectedRoute) => {
+                setRoute(selectedRoute);
+              }}
+            />
+          </>
         )}
       </MainContainer>
     </MainCenterer>
