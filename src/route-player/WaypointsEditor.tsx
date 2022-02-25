@@ -1,4 +1,3 @@
-import { boolean } from "fp-ts";
 import { LatLngLiteral } from "leaflet";
 import { FC, useState } from "react";
 import styled from "styled-components";
@@ -48,11 +47,11 @@ const WaypointsEditorContainer = styled(Panel)`
   padding: 0;
   margin-top: 0;
 `;
-interface EditingArea extends InputFieldProps {
+interface EditingAreaProps extends InputFieldProps {
   waypointsState: UseState<Waypoint[]>;
   editingIndexState: UseState<number | null>;
 }
-const EditingArea: FC<EditingArea> = ({
+const EditingArea: FC<EditingAreaProps> = ({
   timeSeconds,
   position,
   waypointsState: [waypoints, setWaypoints],
