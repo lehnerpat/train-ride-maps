@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { Panel } from "./components/Panel";
+import { Panel } from "./common-components/Panel";
 import { IncludedData } from "./included-data";
 import { Route } from "./route-models";
 

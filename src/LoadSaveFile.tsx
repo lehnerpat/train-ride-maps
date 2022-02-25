@@ -1,6 +1,6 @@
 import { FC, useRef } from "react";
 import styled from "styled-components";
-import { Panel } from "./components/Panel";
+import { Panel } from "./common-components/Panel";
 
 interface LoadSaveFileProps {
   onFileLoaded: (file: File) => void;

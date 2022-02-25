@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
-import { Panel } from "./components/Panel";
+import { Panel } from "./common-components/Panel";
 
 interface NewFileStarterProps {
   onCreateNewFile: (title: string, videoUrl: string) => void;

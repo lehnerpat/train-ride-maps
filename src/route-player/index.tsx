@@ -1,14 +1,15 @@
 import { FC, useEffect, useState } from "react";
-import "./App.css";
 import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import ReactPlayer from "react-player/youtube";
 import { LatLngLiteral, Map as LeafletMap } from "leaflet";
-import { Route, Waypoint } from "./route-models";
+import { Route, Waypoint } from "../route-models";
 import styled from "styled-components";
-import { Panel } from "./components/Panel";
+import { Panel } from "../common-components/Panel";
+import { WaypointsEditor } from "./WaypointsEditor";
+import { UseState } from "../common-components/UseState";
 
 interface RoutePlayerProps {
-  routeState: [Route, React.Dispatch<React.SetStateAction<Route | undefined>>];
+  routeState: UseState<Route>;
 }
 export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute] }) => {
   const initialCoord = route.waypoints.length > 0 ? route.waypoints[0].p : { lat: 0, lng: 0 };
@@ -17,9 +18,6 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [lastClickedCoord, setLastClickedCoord] = useState<LatLngLiteral>();
   const [map, setMap] = useState<LeafletMap | null>(null);
-
-  const [wpInputTime, setWpInputTime] = useState(0);
-  const [wpInputTimeTouched, setWpInputTimeTouched] = useState(false);
 
   useEffect(() => {
     if (map === null) return;
@@ -32,84 +30,24 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
     }
   }, [playedSeconds, map, route.waypoints]);
 
+  const waypoints = route.waypoints;
+  const setWaypoints = (newWaypoints: React.SetStateAction<Waypoint[]>) => {
+    setRoute((prevRoute) => {
+      return {
+        ...prevRoute,
+        waypoints: typeof newWaypoints === "function" ? newWaypoints(prevRoute.waypoints) : newWaypoints,
+      };
+    });
+  };
+
   return (
     <RoutePlayerContainer>
       <WaypointsCol>
-        <Panel>
-          <div style={{ marginBottom: "20px" }}>
-            <div>
-              <input
-                type="number"
-                value={wpInputTimeTouched ? wpInputTime : playedSeconds}
-                style={{ width: "120px" }}
-                onChange={(ev) => {
-                  setWpInputTime(ev.target.valueAsNumber);
-                  setWpInputTimeTouched(true);
-                }}
-              />
-              <Button
-                onClick={() => {
-                  setWpInputTime(playedSeconds);
-                  setWpInputTimeTouched(false);
-                }}
-              >
-                Now
-              </Button>
-            </div>
-            <div>
-              lat:
-              <input
-                type="number"
-                value={!!lastClickedCoord ? lastClickedCoord.lat : ""}
-                style={{ width: "120px" }}
-                readOnly
-              />
-            </div>
-            <div>
-              lng:
-              <input
-                type="number"
-                value={!!lastClickedCoord ? lastClickedCoord.lng : ""}
-                style={{ width: "120px" }}
-                readOnly
-              />
-            </div>
-            <div>
-              <Button
-                onClick={() => {
-                  if (!lastClickedCoord) return;
-                  const t = wpInputTimeTouched ? wpInputTime : playedSeconds;
-                  addWaypoint({ t, p: lastClickedCoord }, setRoute);
-                }}
-              >
-                Add WP
-              </Button>
-              <Button
-                onClick={() => {
-                  copyToClipboard(
-                    route.waypoints.map(({ t, p: { lat, lng } }) => `{t:${t}, p:{lat:${lat},lng:${lng}}}`).join(", ")
-                  );
-                }}
-              >
-                Copy WPs
-              </Button>
-            </div>
-          </div>
-          <WpList>
-            {route.waypoints.map((tc, idx) => (
-              <WpListItem key={idx}>
-                <div>
-                  t={tc.t}s, p={"{"}
-                </div>
-                <div>lat={tc.p.lat},</div>
-                <div>
-                  lng={tc.p.lng}
-                  {"}"}
-                </div>
-              </WpListItem>
-            ))}
-          </WpList>
-        </Panel>
+        <WaypointsEditor
+          waypointsState={[waypoints, setWaypoints]}
+          playedSeconds={playedSeconds}
+          lastMapClickPosition={lastClickedCoord}
+        />
       </WaypointsCol>
       <PlayerMapCol>
         <Panel>
@@ -203,21 +141,6 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
   );
 };
 
-function addWaypoint(newWaypoint: Waypoint, setRoute: React.Dispatch<React.SetStateAction<Route | undefined>>) {
-  setRoute((prevState) => {
-    if (!prevState) throw new Error();
-    const oldRoute = prevState;
-    const waypoints = [...oldRoute.waypoints];
-    const newIdx = waypoints.findIndex((wp) => wp.t > newWaypoint.t);
-    if (newIdx === -1) {
-      waypoints.push(newWaypoint);
-    } else {
-      waypoints.splice(newIdx, 0, newWaypoint);
-    }
-    return { ...oldRoute, waypoints };
-  });
-}
-
 function formatLatLngLiteral(p: LatLngLiteral): string {
   const { lat, lng } = p;
   return `{ lat: ${lat}, lng: ${lng} }`;
@@ -284,13 +207,6 @@ const WaypointsCol = styled.div`
 `;
 const PlayerMapCol = styled.div`
   width: 800px;
-`;
-
-const WpList = styled.ul`
-  padding-left: 10px;
-`;
-const WpListItem = styled.li`
-  font-family: monospace;
 `;
 
 function copyToClipboard(s: string) {
