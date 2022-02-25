@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./App.css";
 import { RoutePlayer } from "./route-player";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
