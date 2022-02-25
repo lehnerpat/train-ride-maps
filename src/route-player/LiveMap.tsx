@@ -32,7 +32,7 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
       <MapContainer
         center={initialCenter}
         zoom={17}
-        style={{ height: "400px", width: "100%" }}
+        style={{ height: "500px", width: "100%" }}
         whenCreated={(map) => {
           setMap(map);
         }}
