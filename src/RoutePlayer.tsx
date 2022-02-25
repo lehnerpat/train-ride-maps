@@ -5,13 +5,13 @@ import ReactPlayer from "react-player/youtube";
 import { LatLngLiteral, Map as LeafletMap } from "leaflet";
 import { Route, Waypoint } from "./Route";
 import styled from "styled-components";
+import { Panel } from "./components/Panel";
 
 interface RoutePlayerProps {
-  route: Route;
+  routeState: [Route, React.Dispatch<React.SetStateAction<Route | undefined>>];
 }
-export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
+export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute] }) => {
   const initialCoord = route.waypoints[0].p;
-  const [waypoints, setWaypoints] = useState(route.waypoints);
   const [durationSec, setDurationSec] = useState<number>();
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
@@ -23,19 +23,19 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
 
   useEffect(() => {
     if (map === null) return;
-    const [prev, next] = findAdjacentCoordinates(playedSeconds, waypoints);
+    const [prev, next] = findAdjacentCoordinates(playedSeconds, route.waypoints);
     const interpolated =
       prev === null ? next?.p : next === null ? prev.p : interpolateCoordinates(prev, next, playedSeconds);
     if (!!interpolated) {
       setCurrentCenter(interpolated);
       map.setView(interpolated, undefined, { animate: true });
     }
-  }, [playedSeconds, map, waypoints]);
+  }, [playedSeconds, map, route.waypoints]);
 
   return (
     <RoutePlayerContainer>
       <WaypointsCol>
-        <InfoPane>
+        <Panel>
           <div style={{ marginBottom: "20px" }}>
             <div>
               <input
@@ -79,7 +79,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
                 onClick={() => {
                   if (!lastClickedCoord) return;
                   const t = wpInputTimeTouched ? wpInputTime : playedSeconds;
-                  addWaypoint({ t, p: lastClickedCoord }, setWaypoints);
+                  addWaypoint({ t, p: lastClickedCoord }, setRoute);
                 }}
               >
                 Add WP
@@ -87,7 +87,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
               <Button
                 onClick={() => {
                   copyToClipboard(
-                    waypoints.map(({ t, p: { lat, lng } }) => `{t:${t}, p:{lat:${lat},lng:${lng}}}`).join(", ")
+                    route.waypoints.map(({ t, p: { lat, lng } }) => `{t:${t}, p:{lat:${lat},lng:${lng}}}`).join(", ")
                   );
                 }}
               >
@@ -96,7 +96,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
             </div>
           </div>
           <WpList>
-            {waypoints.map((tc, idx) => (
+            {route.waypoints.map((tc, idx) => (
               <WpListItem key={idx}>
                 <div>
                   t={tc.t}s, p={"{"}
@@ -109,13 +109,13 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
               </WpListItem>
             ))}
           </WpList>
-        </InfoPane>
+        </Panel>
       </WaypointsCol>
       <PlayerMapCol>
-        <InfoPane>
+        <Panel>
           <div>Duration: {typeof durationSec === "number" ? durationSec + "s" : "---"}</div>
           <div>Current: {playedSeconds.toFixed(0)}s</div>
-        </InfoPane>
+        </Panel>
         <div className="player-container">
           <ReactPlayer
             className="react-player"
@@ -162,8 +162,8 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
               detectRetina
             />
             <Pane name="all-waypoints-pane">
-              <Polyline color="purple" positions={waypoints.map((wp) => wp.p)} />
-              {waypoints.map((tc, idx) => (
+              <Polyline color="purple" positions={route.waypoints.map((wp) => wp.p)} />
+              {route.waypoints.map((tc, idx) => (
                 <Marker position={tc.p} key={idx} />
               ))}
             </Pane>
@@ -172,7 +172,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
             </Pane>
           </MapContainer>
         </div>
-        <InfoPane>
+        <Panel>
           <div style={{ display: "flex" }}>
             <div>Last click:</div>
             <CoordDisplay
@@ -197,22 +197,24 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ route }) => {
               Clear
             </Button>
           </div>
-        </InfoPane>
+        </Panel>
       </PlayerMapCol>
     </RoutePlayerContainer>
   );
 };
 
-function addWaypoint(newWaypoint: Waypoint, setWaypoints: React.Dispatch<React.SetStateAction<Waypoint[]>>) {
-  setWaypoints((oldWaypoints) => {
-    const newWaypoints = [...oldWaypoints];
-    const newIdx = newWaypoints.findIndex((wp) => wp.t > newWaypoint.t);
+function addWaypoint(newWaypoint: Waypoint, setRoute: React.Dispatch<React.SetStateAction<Route | undefined>>) {
+  setRoute((prevState) => {
+    if (!prevState) throw new Error();
+    const oldRoute = prevState;
+    const waypoints = [...oldRoute.waypoints];
+    const newIdx = waypoints.findIndex((wp) => wp.t > newWaypoint.t);
     if (newIdx === -1) {
-      newWaypoints.push(newWaypoint);
+      waypoints.push(newWaypoint);
     } else {
-      newWaypoints.splice(newIdx, 0, newWaypoint);
+      waypoints.splice(newIdx, 0, newWaypoint);
     }
-    return newWaypoints;
+    return { ...oldRoute, waypoints };
   });
 }
 
@@ -250,15 +252,6 @@ function interpolateCoordinates(prevCoord: Waypoint, nextCoord: Waypoint, offset
   const lng = prevCoord.p.lng + p * (nextCoord.p.lng - prevCoord.p.lng);
   return { lat, lng };
 }
-
-const InfoPane = styled.div`
-  margin: 20px 0;
-  background: #282828;
-  border: 1px solid gray;
-  border-radius: 2px;
-  padding: 10px 20px;
-  color: #eee;
-`;
 
 const CoordDisplay = styled.input`
   background: #333;

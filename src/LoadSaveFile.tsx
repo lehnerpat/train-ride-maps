@@ -1,0 +1,78 @@
+import { boolean } from "fp-ts";
+import { FC, useRef, useState } from "react";
+import styled from "styled-components";
+import { Panel } from "./components/Panel";
+
+interface LoadSaveFileProps {
+  onFileLoaded: (file: File) => void;
+  isDownloadAvailable: boolean;
+  onDownloadRequested: () => string;
+}
+
+export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onFileLoaded, isDownloadAvailable, onDownloadRequested }) => {
+  const [isFileInputActive, setFileInputActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const onUploadButtonClicked = () => {
+    const inputEl = fileInputRef.current;
+    if (inputEl === null) return;
+
+    // reset the input so change event fires even when user selects same file as previously
+    inputEl.value = "";
+    inputEl.files = null;
+    inputEl.click();
+  };
+  const onFileSelectionChanged = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const files = ev.target.files;
+    if (!!files && files.length > 0 && !!onFileLoaded) {
+      onFileLoaded(files[0]);
+    }
+  };
+
+  const onDownloadButtonClicked = () => {
+    const contents = onDownloadRequested();
+    if (!contents) return;
+
+    const element = document.createElement("a");
+    const file = new Blob([contents], { type: "application/json" });
+    const fileDownloadUrl = URL.createObjectURL(file);
+    element.href = fileDownloadUrl;
+    element.download = "route.json";
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    URL.revokeObjectURL(fileDownloadUrl);
+    document.body.removeChild(element);
+  };
+
+  return (
+    <Panel>
+      <ButtonBar>
+        <Button onClick={onUploadButtonClicked}>Upload file...</Button>
+        <Button disabled={!isDownloadAvailable} onClick={onDownloadButtonClicked}>
+          Download file...
+        </Button>
+      </ButtonBar>
+      <HiddenInput type="file" id="upload-file" ref={fileInputRef} onChange={onFileSelectionChanged} />
+    </Panel>
+  );
+};
+
+const ButtonBar = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+`;
+
+const Button = styled.button`
+  flex-grow: 1;
+  padding: 1em 3em;
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const HiddenLink = styled.a`
+  display: none;
+`;
