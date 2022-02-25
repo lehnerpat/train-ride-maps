@@ -18,12 +18,26 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [lastClickedCoord, setLastClickedCoord] = useState<LatLngLiteral>();
   const [map, setMap] = useState<LeafletMap | null>(null);
+  const [adjacentCoordIndexes, setAdjacentCoordIndex] = useState<[number | null, number | null]>([
+    null,
+    route.waypoints.length > 0 ? 0 : null,
+  ]);
 
   useEffect(() => {
     if (map === null) return;
     const [prev, next] = findAdjacentCoordinates(playedSeconds, route.waypoints);
-    const interpolated =
-      prev === null ? next?.p : next === null ? prev.p : interpolateCoordinates(prev, next, playedSeconds);
+    setAdjacentCoordIndex([prev, next]);
+    let interpolated: LatLngLiteral | undefined;
+    if (prev === null) {
+      if (next !== null) {
+        interpolated = waypoints[next].p;
+      }
+    } else if (next === null) {
+      interpolated = waypoints[prev].p;
+    } else {
+      interpolated = interpolateCoordinates(waypoints[prev], waypoints[next], playedSeconds);
+    }
+
     if (!!interpolated) {
       setCurrentCenter(interpolated);
       map.setView(interpolated, undefined, { animate: true });
@@ -47,6 +61,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
           waypointsState={[waypoints, setWaypoints]}
           playedSeconds={playedSeconds}
           lastMapClickPosition={lastClickedCoord}
+          adjactedCoordinateIndex={adjacentCoordIndexes}
         />
       </WaypointsCol>
       <PlayerMapCol>
@@ -156,15 +171,15 @@ const ClickHandler: FC<{ setLastClickedCoord: React.Dispatch<React.SetStateActio
   return null;
 };
 
-function findAdjacentCoordinates(offsetSec: number, coordinates: Waypoint[]): [Waypoint | null, Waypoint | null] {
+function findAdjacentCoordinates(offsetSec: number, coordinates: Waypoint[]): [number | null, number | null] {
   const coordinatesCount = coordinates.length;
   if (!coordinates || !Array.isArray(coordinates) || coordinatesCount === 0) return [null, null];
-  if (offsetSec < coordinates[0].t) return [null, coordinates[0]];
-  if (offsetSec >= coordinates[coordinatesCount - 1].t) return [coordinates[coordinatesCount - 1], null];
+  if (offsetSec < coordinates[0].t) return [null, 0];
+  if (offsetSec >= coordinates[coordinatesCount - 1].t) return [coordinatesCount - 1, null];
   const nextIndex = coordinates.findIndex((tc) => tc.t > offsetSec);
   if (nextIndex === -1) throw new Error("nextIndex was -1 but should never be here");
   if (nextIndex === 0) throw new Error("nextIndex was 0 but should never be here");
-  return [coordinates[nextIndex - 1], coordinates[nextIndex]];
+  return [nextIndex - 1, nextIndex];
 }
 
 function interpolateCoordinates(prevCoord: Waypoint, nextCoord: Waypoint, offsetSec: number): LatLngLiteral {

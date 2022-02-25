@@ -9,16 +9,18 @@ interface WaypointsEditorProps {
   waypointsState: UseState<Waypoint[]>;
   playedSeconds: number;
   lastMapClickPosition: LatLngLiteral | undefined;
+  adjactedCoordinateIndex: [number | null, number | null];
 }
 export const WaypointsEditor: FC<WaypointsEditorProps> = ({
   waypointsState: [waypoints, setWaypoints],
   playedSeconds,
   lastMapClickPosition,
+  adjactedCoordinateIndex,
 }) => (
   <WaypointsEditorContainer>
     <EditingArea setWaypoints={setWaypoints} timeSeconds={playedSeconds} position={lastMapClickPosition} />
     <h3 style={{ marginLeft: "15px" }}>Waypoints:</h3>
-    <WaypointList waypoints={waypoints} />
+    <WaypointList waypoints={waypoints} adjactedCoordinateIndex={adjactedCoordinateIndex} />
   </WaypointsEditorContainer>
 );
 const WaypointsEditorContainer = styled(Panel)`
@@ -30,6 +32,7 @@ interface WaypointSetterProp {
 const EditingArea: FC<InputFieldProps & WaypointSetterProp> = ({ timeSeconds, position, setWaypoints }) => (
   <EditingAreaContainer>
     <EditingInputFieldsGrid timeSeconds={timeSeconds} position={position} />
+    <div style={{ textAlign: "right", fontSize: "70%" }}>Right-click the map to pick a coordinate</div>
     <div style={{ display: "flex", justifyContent: "flex-end" }}>
       <button
         onClick={() => {
@@ -84,10 +87,19 @@ const EditingInputField = styled.input`
   color: #eee;
 `;
 
-const WaypointList: FC<{ waypoints: Waypoint[] }> = ({ waypoints }) => (
+interface WaypointListProps {
+  waypoints: Waypoint[];
+  adjactedCoordinateIndex: [number | null, number | null];
+}
+
+const WaypointList: FC<WaypointListProps> = ({ waypoints, adjactedCoordinateIndex }) => (
   <WaypointListContainer>
     {waypoints.map((wp, idx) => (
-      <WaypointListEntry key={idx} waypoint={wp} />
+      <WaypointListEntry
+        key={idx}
+        waypoint={wp}
+        className={idx === adjactedCoordinateIndex[0] ? "previous" : idx === adjactedCoordinateIndex[1] ? "next" : ""}
+      />
     ))}
   </WaypointListContainer>
 );
@@ -96,8 +108,8 @@ const WaypointListContainer = styled.div`
   overflow-y: auto;
 `;
 
-const WaypointListEntry: FC<{ waypoint: Waypoint }> = ({ waypoint }) => (
-  <WaypointListEntryContainer>
+const WaypointListEntry: FC<{ waypoint: Waypoint; className?: string }> = ({ waypoint, className }) => (
+  <WaypointListEntryContainer className={className}>
     <>
       <WaypointListEntryContainerLabel>t =</WaypointListEntryContainerLabel>
       <span>{waypoint.t}s</span>
@@ -112,6 +124,8 @@ const WaypointListEntry: FC<{ waypoint: Waypoint }> = ({ waypoint }) => (
     </>
   </WaypointListEntryContainer>
 );
+
+const activeWaypointColor = "#678fd4";
 const WaypointListEntryContainer = styled.div`
   border: 1px solid transparent;
   background: #333;
@@ -120,6 +134,18 @@ const WaypointListEntryContainer = styled.div`
   grid-template-columns: 3.2em auto;
   column-gap: 5px;
   font-family: monospace;
+
+  &.previous,
+  &.next {
+    border-left-color: ${activeWaypointColor};
+    border-right-color: ${activeWaypointColor};
+  }
+  &.previous {
+    border-top-color: ${activeWaypointColor};
+  }
+  &.next {
+    border-bottom-color: ${activeWaypointColor};
+  }
 `;
 const WaypointListEntryContainerLabel = styled.div`
   text-align: right;
