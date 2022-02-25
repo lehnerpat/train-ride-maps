@@ -25,6 +25,7 @@ export const WaypointsEditor: FC<WaypointsEditorProps> = ({
 );
 const WaypointsEditorContainer = styled(Panel)`
   padding: 0;
+  margin-top: 0;
 `;
 interface WaypointSetterProp {
   setWaypoints: React.Dispatch<React.SetStateAction<Waypoint[]>>;

@@ -4,7 +4,6 @@ import ReactPlayer from "react-player/youtube";
 import { LatLngLiteral, Map as LeafletMap } from "leaflet";
 import { Route, Waypoint } from "../route-models";
 import styled from "styled-components";
-import { Panel } from "../common-components/Panel";
 import { WaypointsEditor } from "./WaypointsEditor";
 import { UseState } from "../common-components/UseState";
 
@@ -13,7 +12,6 @@ interface RoutePlayerProps {
 }
 export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute] }) => {
   const initialCoord = route.waypoints.length > 0 ? route.waypoints[0].p : { lat: 0, lng: 0 };
-  const [durationSec, setDurationSec] = useState<number>();
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [lastClickedCoord, setLastClickedCoord] = useState<LatLngLiteral>();
@@ -23,9 +21,11 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
     route.waypoints.length > 0 ? 0 : null,
   ]);
 
+  const waypoints = route.waypoints;
+
   useEffect(() => {
     if (map === null) return;
-    const [prev, next] = findAdjacentCoordinates(playedSeconds, route.waypoints);
+    const [prev, next] = findAdjacentCoordinates(playedSeconds, waypoints);
     setAdjacentCoordIndex([prev, next]);
     let interpolated: LatLngLiteral | undefined;
     if (prev === null) {
@@ -42,9 +42,8 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
       setCurrentCenter(interpolated);
       map.setView(interpolated, undefined, { animate: true });
     }
-  }, [playedSeconds, map, route.waypoints]);
+  }, [playedSeconds, map, waypoints]);
 
-  const waypoints = route.waypoints;
   const setWaypoints = (newWaypoints: React.SetStateAction<Waypoint[]>) => {
     setRoute((prevRoute) => {
       return {
@@ -65,10 +64,6 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
         />
       </WaypointsCol>
       <PlayerMapCol>
-        <Panel>
-          <div>Duration: {typeof durationSec === "number" ? durationSec + "s" : "---"}</div>
-          <div>Current: {playedSeconds.toFixed(0)}s</div>
-        </Panel>
         <div className="player-container">
           <ReactPlayer
             className="react-player"
@@ -79,9 +74,6 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
             url={route.videoUrl}
             onProgress={(ev) => {
               setPlayedSeconds(ev.playedSeconds);
-            }}
-            onDuration={(duration) => {
-              setDurationSec(duration);
             }}
             config={{ playerVars: { start: 1 } }}
           />
@@ -125,41 +117,10 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
             </Pane>
           </MapContainer>
         </div>
-        <Panel>
-          <div style={{ display: "flex" }}>
-            <div>Last click:</div>
-            <CoordDisplay
-              type="text"
-              readOnly
-              value={!!lastClickedCoord ? formatLatLngLiteral(lastClickedCoord) : ""}
-            />
-            <Button
-              onClick={() => {
-                if (!!lastClickedCoord) {
-                  copyToClipboard(formatLatLngLiteral(lastClickedCoord));
-                }
-              }}
-            >
-              Copy
-            </Button>
-            <Button
-              onClick={() => {
-                setLastClickedCoord(undefined);
-              }}
-            >
-              Clear
-            </Button>
-          </div>
-        </Panel>
       </PlayerMapCol>
     </RoutePlayerContainer>
   );
 };
-
-function formatLatLngLiteral(p: LatLngLiteral): string {
-  const { lat, lng } = p;
-  return `{ lat: ${lat}, lng: ${lng} }`;
-}
 
 const ClickHandler: FC<{ setLastClickedCoord: React.Dispatch<React.SetStateAction<LatLngLiteral | undefined>> }> = ({
   setLastClickedCoord,
@@ -191,26 +152,6 @@ function interpolateCoordinates(prevCoord: Waypoint, nextCoord: Waypoint, offset
   return { lat, lng };
 }
 
-const CoordDisplay = styled.input`
-  background: #333;
-  color: white;
-  border: 1px solid gray;
-  border-radius: 2px;
-  margin: 0 10px;
-  width: fit-content;
-  font-family: monospace;
-  padding: 2px 5px;
-  flex-grow: 1;
-`;
-
-const Button = styled.button`
-  background: #333;
-  color: white;
-  border: 1px solid gray;
-  border-radius: 2px;
-  padding: 2px 5px;
-`;
-
 const RoutePlayerContainer = styled.div`
   display: flex;
   margin: 0 auto;
@@ -223,7 +164,3 @@ const WaypointsCol = styled.div`
 const PlayerMapCol = styled.div`
   width: 800px;
 `;
-
-function copyToClipboard(s: string) {
-  navigator.clipboard.writeText(s);
-}
