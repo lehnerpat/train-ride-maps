@@ -11,7 +11,7 @@ interface RoutePlayerProps {
   routeState: [Route, React.Dispatch<React.SetStateAction<Route | undefined>>];
 }
 export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute] }) => {
-  const initialCoord = route.waypoints[0].p;
+  const initialCoord = route.waypoints.length > 0 ? route.waypoints[0].p : { lat: 0, lng: 0 };
   const [durationSec, setDurationSec] = useState<number>();
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);

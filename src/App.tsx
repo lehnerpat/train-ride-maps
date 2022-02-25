@@ -6,6 +6,7 @@ import { JsonInputTester } from "./JsonInputTester";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
 import { readFromJson, RouteFileModel, serializeToJson } from "./route-files";
+import { NewFileStarter } from "./NewFileStarter";
 
 function App() {
   const [route, setRoute] = useState<RouteFileModel>();
@@ -24,7 +25,15 @@ function App() {
           isDownloadAvailable={!!route}
           onDownloadRequested={() => serializeToJson(route!)}
         />
-        {!!route && <RoutePlayer routeState={[route, setRoute]} />}
+        {!!route ? (
+          <RoutePlayer routeState={[route, setRoute]} />
+        ) : (
+          <NewFileStarter
+            onCreateNewFile={(videoUrl) => {
+              setRoute({ videoUrl, waypoints: [] });
+            }}
+          />
+        )}
       </MainContainer>
     </MainCenterer>
   );
