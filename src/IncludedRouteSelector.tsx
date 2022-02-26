@@ -2,24 +2,17 @@ import { FC } from "react";
 import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
 import { IncludedData } from "./included-data";
-import { Route } from "./route-models";
+import { Link } from "wouter";
+import { PageRouting } from "./page-routing";
 
-interface IncludedDataSelectorProps {
-  onRouteSelected: (route: Route) => void;
-}
-export const IncludedRouteSelector: FC<IncludedDataSelectorProps> = ({ onRouteSelected }) => (
+interface IncludedDataSelectorProps {}
+export const IncludedRouteSelector: FC<IncludedDataSelectorProps> = () => (
   <Panel>
     <h3>Example routes:</h3>
     <ul>
       {IncludedData.map((r, idx) => (
         <li>
-          <IncludedRouteLink
-            href="#"
-            key={idx}
-            onClick={() => {
-              onRouteSelected(r);
-            }}
-          >
+          <IncludedRouteLink href={PageRouting.viewRoutePage(r.uuid)} key={idx}>
             {r.title}
           </IncludedRouteLink>
         </li>
@@ -28,7 +21,7 @@ export const IncludedRouteSelector: FC<IncludedDataSelectorProps> = ({ onRouteSe
   </Panel>
 );
 
-const IncludedRouteLink = styled.a`
+const IncludedRouteLink = styled(Link)`
   &,
   &:visited {
     color: #ddd;

@@ -1,15 +1,18 @@
 import { FC, useRef } from "react";
 import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
+import { useLocation } from "wouter";
+import { Routes } from "./route-models";
+import { RouteLocalStorageService } from "./common-components/RouteLocalStorageServiceImpl";
+import { PageRouting } from "./page-routing";
 
 interface LoadSaveFileProps {
-  onFileLoaded: (file: File) => void;
-  isDownloadAvailable: boolean;
-  onDownloadRequested: () => string;
+  onDownloadRequested?: () => string;
 }
 
-export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onFileLoaded, isDownloadAvailable, onDownloadRequested }) => {
+export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [, setLocation] = useLocation();
 
   const onUploadButtonClicked = () => {
     const inputEl = fileInputRef.current;
@@ -20,14 +23,18 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onFileLoaded, isDownloadAv
     inputEl.files = null;
     inputEl.click();
   };
-  const onFileSelectionChanged = (ev: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileSelectionChanged = async (ev: React.ChangeEvent<HTMLInputElement>) => {
     const files = ev.target.files;
-    if (!!files && files.length > 0 && !!onFileLoaded) {
-      onFileLoaded(files[0]);
+    if (!!files && files.length > 0) {
+      const j = await files[0].text();
+      const r = Routes.readFromJson(j);
+      RouteLocalStorageService.save(r);
+      setLocation(PageRouting.viewRoutePage(r.uuid));
     }
   };
 
   const onDownloadButtonClicked = () => {
+    if (!onDownloadRequested) return;
     const contents = onDownloadRequested();
     if (!contents) return;
 
@@ -47,7 +54,7 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onFileLoaded, isDownloadAv
     <Panel>
       <ButtonBar>
         <Button onClick={onUploadButtonClicked}>Upload file...</Button>
-        {isDownloadAvailable && <Button onClick={onDownloadButtonClicked}>Download current file...</Button>}
+        {!!onDownloadRequested && <Button onClick={onDownloadButtonClicked}>Download current file...</Button>}
       </ButtonBar>
       <HiddenInput type="file" id="upload-file" ref={fileInputRef} onChange={onFileSelectionChanged} />
     </Panel>

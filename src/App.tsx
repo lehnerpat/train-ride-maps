@@ -1,70 +1,64 @@
-import { useState } from "react";
+import { FC } from "react";
 import { RoutePlayer } from "./route-player";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
-import { Route, Routes } from "./route-models";
+import { Route } from "./route-models";
 import { NewFileStarter } from "./NewFileStarter";
 import { IncludedRouteSelector } from "./IncludedRouteSelector";
+import { Route as ReactRoute, Switch, Link } from "wouter";
+import { RouteLocalStorageService } from "./common-components/RouteLocalStorageServiceImpl";
+import { IncludedDataMap } from "./included-data";
+import { Panel } from "./common-components/Panel";
 
 function App() {
-  const [route, setRoute] = useState<Route>();
-  const setDefinedRoute = (newRoute: React.SetStateAction<Route>) => {
-    setRoute((prevRoute) => {
-      if (typeof prevRoute === "undefined") throw new Error("prevRoute should never be undefined here");
-      return typeof newRoute === "function" ? newRoute(prevRoute) : newRoute;
-    });
-  };
-
-  const onFileLoaded = async (file: File): Promise<void> => {
-    const j = await file.text();
-    const r = Routes.readFromJson(j);
-    setRoute(r);
-  };
-
-  const LoadSaveFileBlock = () => (
-    <LoadSaveFile
-      onFileLoaded={onFileLoaded}
-      isDownloadAvailable={!!route}
-      onDownloadRequested={() => Routes.serializeToJson(route!)}
-    />
-  );
-
   return (
     <MainCenterer>
       <MainContainer>
-        {!!route ? (
-          <>
-            <RoutePlayer routeState={[route, setDefinedRoute]} />
-            <LoadSaveFileBlock />
-            <ReturnLinkContainer>
-              <ReturnLink
-                href="#"
-                onClick={() => {
-                  setRoute(undefined);
-                }}
-              >
-                Return to start page
-              </ReturnLink>
-            </ReturnLinkContainer>
-          </>
-        ) : (
-          <>
-            <IncludedRouteSelector
-              onRouteSelected={(selectedRoute) => {
-                setRoute(selectedRoute);
-              }}
-            />
-            <LoadSaveFileBlock />
-            <NewFileStarter
-              onCreateNewFile={(title, videoUrl) => {
-                setRoute(Routes.create(title, videoUrl));
-              }}
-            />
-          </>
-        )}
+        <Switch>
+          <ReactRoute path="/">
+            <StartPage />
+          </ReactRoute>
+          <ReactRoute path="/route/:id">{(params) => <ViewRoutePage routeUuid={params.id} />}</ReactRoute>
+          <ReactRoute path="/:rest*">{(params) => `404, Sorry the page ${params.rest} does not exist!`}</ReactRoute>
+        </Switch>
       </MainContainer>
     </MainCenterer>
   );
+}
+
+const StartPage = () => (
+  <>
+    <IncludedRouteSelector />
+    <LoadSaveFile />
+    <NewFileStarter />
+  </>
+);
+
+const ViewRoutePage: FC<{ routeUuid: string }> = ({ routeUuid }) => {
+  const route = loadRouteFromStorage(routeUuid);
+
+  if (route === null)
+    return (
+      <>
+        <Panel style={{ color: "#FF8888" }}>Route with ID {routeUuid} not found.</Panel>
+        <StartPage />
+      </>
+    );
+
+  return (
+    <>
+      <RoutePlayer initialRoute={route} />
+      <ReturnLinkContainer>
+        <ReturnLink href="/">Return to start page</ReturnLink>
+      </ReturnLinkContainer>
+    </>
+  );
+};
+
+function loadRouteFromStorage(routeUuid: string): Route | null {
+  const routeFromStorage = RouteLocalStorageService.load(routeUuid);
+  if (routeFromStorage !== null) return routeFromStorage;
+  return IncludedDataMap.get(routeUuid) || null;
 }
 
 const MainCenterer = styled.div`
@@ -79,7 +73,7 @@ const ReturnLinkContainer = styled.div`
   text-align: center;
   margin: 20px 0;
 `;
-const ReturnLink = styled.a`
+const ReturnLink = styled(Link)`
   &,
   &:visited {
     color: #ddd;

@@ -1,13 +1,16 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
+import { useLocation } from "wouter";
+import { Routes } from "./route-models";
+import { RouteLocalStorageService } from "./common-components/RouteLocalStorageServiceImpl";
+import { PageRouting } from "./page-routing";
 
-interface NewFileStarterProps {
-  onCreateNewFile: (title: string, videoUrl: string) => void;
-}
-export const NewFileStarter: FC<NewFileStarterProps> = ({ onCreateNewFile }) => {
+interface NewFileStarterProps {}
+export const NewFileStarter: FC<NewFileStarterProps> = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [videoTitle, setVideoTitle] = useState("");
+  const [, setLocation] = useLocation();
 
   return (
     <Panel>
@@ -36,7 +39,15 @@ export const NewFileStarter: FC<NewFileStarterProps> = ({ onCreateNewFile }) => 
           />
         </>
       </InputGrid>
-      <button onClick={() => onCreateNewFile(videoTitle, videoUrl)}>Create</button>
+      <button
+        onClick={() => {
+          const newRoute = Routes.create(videoTitle, videoUrl);
+          RouteLocalStorageService.save(newRoute);
+          setLocation(PageRouting.viewRoutePage(newRoute.uuid));
+        }}
+      >
+        Create
+      </button>
     </Panel>
   );
 };

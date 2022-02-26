@@ -1,17 +1,19 @@
 import { FC, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
-import { Route, Waypoint } from "../route-models";
+import { Route, Routes, Waypoint } from "../route-models";
 import styled from "styled-components";
 import { WaypointsEditor } from "./WaypointsEditor";
-import { UseState } from "../common-components/UseState";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
+import { RouteLocalStorageService } from "../common-components/RouteLocalStorageServiceImpl";
+import { LoadSaveFile } from "../LoadSaveFile";
 
 interface RoutePlayerProps {
-  routeState: UseState<Route>;
+  initialRoute: Route;
 }
-export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute] }) => {
-  const initialCoord = route.waypoints.length > 0 ? route.waypoints[0].p : { lat: 0, lng: 0 };
+export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
+  const initialCoord = initialRoute.waypoints.length > 0 ? initialRoute.waypoints[0].p : { lat: 0, lng: 0 };
+  const [route, setRoute] = useState(initialRoute);
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [lastClickedCoord, setLastClickedCoord] = useState<LatLngLiteral>();
@@ -22,6 +24,10 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
   const [isEditingModeOn, setEditingModeOn] = useState(false);
 
   const waypoints = route.waypoints;
+
+  useEffect(() => {
+    RouteLocalStorageService.save(route);
+  }, [route]);
 
   useEffect(() => {
     const [prev, next] = findAdjacentCoordinates(playedSeconds, waypoints);
@@ -90,6 +96,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
           />
         </PlayerMapCol>
       </RoutePlayerContainer>
+      <LoadSaveFile onDownloadRequested={() => Routes.serializeToJson(route)} />
     </div>
   );
 };
