@@ -1,21 +1,7 @@
 import * as t from "io-ts";
 import { isLeft } from "fp-ts/Either";
 import { PathReporter } from "io-ts/PathReporter";
-
-export function readFromJson(j: string): Route {
-  const data = JSON.parse(j);
-  const decoded = Route.decode(data);
-
-  if (isLeft(decoded)) {
-    throw new Error(PathReporter.report(decoded).join("\n"));
-  }
-
-  return decoded.right;
-}
-
-export function serializeToJson(route: Route): string {
-  return JSON.stringify(route);
-}
+import { newUuidv4 } from "../common-components/uuid";
 
 const LatLngLiteral = t.readonly(
   t.strict({
@@ -35,6 +21,7 @@ export type Waypoint = t.TypeOf<typeof Waypoint>;
 
 const Route = t.readonly(
   t.strict({
+    uuid: t.string,
     title: t.string,
     videoUrl: t.string,
     waypoints: t.array(Waypoint),
@@ -43,3 +30,29 @@ const Route = t.readonly(
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Route = t.TypeOf<typeof Route>;
+
+export const Routes = {
+  create(title: string, videoUrl: string): Route {
+    return {
+      uuid: newUuidv4(),
+      title,
+      videoUrl,
+      waypoints: [],
+    };
+  },
+
+  readFromJson(j: string): Route {
+    const data = JSON.parse(j);
+    const decoded = Route.decode(data);
+
+    if (isLeft(decoded)) {
+      throw new Error(PathReporter.report(decoded).join("\n"));
+    }
+
+    return decoded.right;
+  },
+
+  serializeToJson(route: Route): string {
+    return JSON.stringify(route);
+  },
+};

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RoutePlayer } from "./route-player";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
-import { readFromJson, Route, serializeToJson } from "./route-models";
+import { Route, Routes } from "./route-models";
 import { NewFileStarter } from "./NewFileStarter";
 import { IncludedRouteSelector } from "./IncludedRouteSelector";
 
@@ -17,9 +17,17 @@ function App() {
 
   const onFileLoaded = async (file: File): Promise<void> => {
     const j = await file.text();
-    const r = readFromJson(j);
+    const r = Routes.readFromJson(j);
     setRoute(r);
   };
+
+  const LoadSaveFileBlock = () => (
+    <LoadSaveFile
+      onFileLoaded={onFileLoaded}
+      isDownloadAvailable={!!route}
+      onDownloadRequested={() => Routes.serializeToJson(route!)}
+    />
+  );
 
   return (
     <MainCenterer>
@@ -27,11 +35,7 @@ function App() {
         {!!route ? (
           <>
             <RoutePlayer routeState={[route, setDefinedRoute]} />
-            <LoadSaveFile
-              onFileLoaded={onFileLoaded}
-              isDownloadAvailable={!!route}
-              onDownloadRequested={() => serializeToJson(route!)}
-            />
+            <LoadSaveFileBlock />
             <ReturnLinkContainer>
               <ReturnLink
                 href="#"
@@ -50,14 +54,10 @@ function App() {
                 setRoute(selectedRoute);
               }}
             />
-            <LoadSaveFile
-              onFileLoaded={onFileLoaded}
-              isDownloadAvailable={!!route}
-              onDownloadRequested={() => serializeToJson(route!)}
-            />
+            <LoadSaveFileBlock />
             <NewFileStarter
               onCreateNewFile={(title, videoUrl) => {
-                setRoute({ title, videoUrl, waypoints: [] });
+                setRoute(Routes.create(title, videoUrl));
               }}
             />
           </>
