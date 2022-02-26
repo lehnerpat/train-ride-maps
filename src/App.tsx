@@ -32,6 +32,16 @@ function App() {
               isDownloadAvailable={!!route}
               onDownloadRequested={() => serializeToJson(route!)}
             />
+            <ReturnLinkContainer>
+              <ReturnLink
+                href="#"
+                onClick={() => {
+                  setRoute(undefined);
+                }}
+              >
+                Return to start page
+              </ReturnLink>
+            </ReturnLinkContainer>
           </>
         ) : (
           <>
@@ -62,6 +72,24 @@ const MainCenterer = styled.div`
 `;
 const MainContainer = styled.div`
   margin: 0 auto;
+`;
+
+const ReturnLinkContainer = styled.div`
+  font-size: 60%;
+  text-align: center;
+  margin: 20px 0;
+`;
+const ReturnLink = styled.a`
+  &,
+  &:visited {
+    color: #ddd;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: white;
+  }
 `;
 
 export default App;
