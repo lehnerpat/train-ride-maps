@@ -12,6 +12,8 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
   const [videoTitle, setVideoTitle] = useState("");
   const [, setLocation] = useLocation();
 
+  const inputsInvalid = !videoTitle || !videoUrl || !videoUrl.startsWith("https://");
+
   return (
     <Panel>
       <div>Start new:</div>
@@ -25,6 +27,7 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
             onChange={(ev) => {
               setVideoTitle(ev.target.value);
             }}
+            required
           />
         </>
         <>
@@ -33,18 +36,22 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
             type="text"
             id="new-video-url"
             value={videoUrl}
+            placeholder="https://www.youtube.com/watch?v=..."
             onChange={(ev) => {
               setVideoUrl(ev.target.value);
             }}
+            required
           />
         </>
       </InputGrid>
       <button
         onClick={() => {
+          if (inputsInvalid) return;
           const newRoute = Routes.create(videoTitle, videoUrl);
           RouteLocalStorageService.save(newRoute);
           setLocation(PageRouting.viewRoutePage(newRoute.uuid));
         }}
+        disabled={inputsInvalid}
       >
         Create
       </button>
