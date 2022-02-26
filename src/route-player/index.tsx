@@ -145,6 +145,7 @@ const RoutePlayerContainer = styled.div`
   display: flex;
   margin: 0 auto;
   width: 1110px;
+  justify-content: center;
 `;
 
 const WaypointsCol = styled.div`
@@ -152,6 +153,6 @@ const WaypointsCol = styled.div`
   margin-right: 10px;
 `;
 const PlayerMapCol = styled.div`
-  width: 800px;
   flex-grow: 1;
+  max-width: 1000px;
 `;
