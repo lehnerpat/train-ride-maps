@@ -7,13 +7,14 @@ import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { RouteLocalStorageService } from "../common-components/RouteLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
+import { UseState } from "../common-components/UseState";
 
 interface RoutePlayerProps {
   initialRoute: Route;
 }
 export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
   const initialCoord = initialRoute.waypoints.length > 0 ? initialRoute.waypoints[0].p : { lat: 0, lng: 0 };
-  const [route, setRoute] = useState(initialRoute);
+  const [route, setRoute] = useAutosavingRouteState(initialRoute);
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [lastClickedCoord, setLastClickedCoord] = useState<LatLngLiteral>();
@@ -24,10 +25,6 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
   const [isEditingModeOn, setEditingModeOn] = useState(false);
 
   const waypoints = route.waypoints;
-
-  useEffect(() => {
-    RouteLocalStorageService.save(route);
-  }, [route]);
 
   useEffect(() => {
     const [prev, next] = findAdjacentCoordinates(playedSeconds, waypoints);
@@ -100,6 +97,17 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
     </div>
   );
 };
+
+function useAutosavingRouteState(initialRoute: Route): UseState<Route> {
+  const [route, setRoute] = useState(initialRoute);
+  const wrappedSetRoute: React.Dispatch<React.SetStateAction<Route>> = (newRoute) =>
+    setRoute((prevRoute) => {
+      const updatedRoute = typeof newRoute === "function" ? newRoute(prevRoute) : newRoute;
+      RouteLocalStorageService.save(route);
+      return updatedRoute;
+    });
+  return [route, wrappedSetRoute];
+}
 
 const TopButtonPanel = styled.div`
   margin: 3px 0 5px;
