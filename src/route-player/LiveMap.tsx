@@ -1,10 +1,11 @@
 import { LatLngLiteral, Map as LeafletMap } from "leaflet";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
 import { UseState } from "../common-components/UseState";
 import { Waypoint } from "../route-models";
+import useResizeObserver from "@react-hook/resize-observer";
 
 interface LiveMapProps {
   waypoints: Waypoint[];
@@ -12,9 +13,16 @@ interface LiveMapProps {
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
   playedSeconds: number;
+  isEditingModeOn: boolean;
 }
 
-export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCenter, setLastClickedCoord }) => {
+export const LiveMap: FC<LiveMapProps> = ({
+  waypoints,
+  initialCenter,
+  currentCenter,
+  setLastClickedCoord,
+  isEditingModeOn,
+}) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [isAutopanOn, setAutopanOn] = useState(true);
   const [isRoutePolylineOn, setRoutePolylineOn] = useState(true);
@@ -22,13 +30,20 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
   const [isCrosshairOverlayOn, setCrosshairOverlayOn] = useState(false);
   const [isUseMapCenterForCoord, setUseMapCenterForCoord] = useState(false);
 
+  const containerRef = useRef(null);
+
+  useResizeObserver(containerRef, () => {
+    if (map === null) return;
+    map.invalidateSize();
+  });
+
   useEffect(() => {
     if (map === null || !isAutopanOn) return;
     map.setView(currentCenter, undefined, { animate: true });
   }, [map, currentCenter, isAutopanOn]);
 
   return (
-    <LiveMapContainer>
+    <LiveMapContainer ref={containerRef}>
       <MapContainer
         center={initialCenter}
         zoom={17}
@@ -62,7 +77,7 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
         <CurrentPositionPane name="current-position-pane">
           <Marker position={currentCenter} title="Current" />
         </CurrentPositionPane>
-        {isCrosshairOverlayOn && <CrosshairOverlay />}
+        {isEditingModeOn && isCrosshairOverlayOn && <CrosshairOverlay />}
       </MapContainer>
       <Panel>
         <CheckBox id="autopan" checkedState={[isAutopanOn, setAutopanOn]}>
@@ -74,12 +89,16 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
         <CheckBox id="route-polyline" checkedState={[isRoutePolylineOn, setRoutePolylineOn]}>
           Show polyline for route
         </CheckBox>
-        <CheckBox id="crosshair-overlay" checkedState={[isCrosshairOverlayOn, setCrosshairOverlayOn]}>
-          Show crosshair overlay for map center
-        </CheckBox>
-        <CheckBox id="map-center" checkedState={[isUseMapCenterForCoord, setUseMapCenterForCoord]}>
-          Use map center for waypoint coordinates (right-click otherwise)
-        </CheckBox>
+        {isEditingModeOn && (
+          <>
+            <CheckBox id="crosshair-overlay" checkedState={[isCrosshairOverlayOn, setCrosshairOverlayOn]}>
+              Show crosshair overlay for map center
+            </CheckBox>
+            <CheckBox id="map-center" checkedState={[isUseMapCenterForCoord, setUseMapCenterForCoord]}>
+              Use map center for waypoint coordinates (right-click otherwise)
+            </CheckBox>
+          </>
+        )}
       </Panel>
     </LiveMapContainer>
   );

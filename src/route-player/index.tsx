@@ -19,6 +19,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
     null,
     route.waypoints.length > 0 ? 0 : null,
   ]);
+  const [isEditingModeOn, setEditingModeOn] = useState(false);
 
   const waypoints = route.waypoints;
 
@@ -51,33 +52,74 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ routeState: [route, setRoute
   };
 
   return (
-    <RoutePlayerContainer>
-      <WaypointsCol>
-        <WaypointsEditor
-          waypointsState={[waypoints, setWaypoints]}
-          playedSeconds={playedSeconds}
-          lastMapClickPosition={lastClickedCoord}
-          adjactedCoordinateIndex={adjacentCoordIndexes}
-        />
-      </WaypointsCol>
-      <PlayerMapCol>
-        <VideoPlayer
-          videoUrl={route.videoUrl}
-          onProgress={(ev) => {
-            setPlayedSeconds(ev.playedSeconds);
+    <div>
+      <TopButtonPanel>
+        <TopButton
+          onClick={() => {
+            setEditingModeOn(!isEditingModeOn);
           }}
-        />
-        <LiveMap
-          initialCenter={initialCoord}
-          currentCenter={currentCenter}
-          setLastClickedCoord={setLastClickedCoord}
-          waypoints={waypoints}
-          playedSeconds={playedSeconds}
-        />
-      </PlayerMapCol>
-    </RoutePlayerContainer>
+        >
+          {isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
+        </TopButton>
+      </TopButtonPanel>
+      <RoutePlayerContainer>
+        {isEditingModeOn && (
+          <WaypointsCol>
+            <WaypointsEditor
+              waypointsState={[waypoints, setWaypoints]}
+              playedSeconds={playedSeconds}
+              lastMapClickPosition={lastClickedCoord}
+              adjactedCoordinateIndex={adjacentCoordIndexes}
+            />
+          </WaypointsCol>
+        )}
+        <PlayerMapCol>
+          <VideoPlayer
+            videoUrl={route.videoUrl}
+            onProgress={(ev) => {
+              setPlayedSeconds(ev.playedSeconds);
+            }}
+          />
+          <LiveMap
+            initialCenter={initialCoord}
+            currentCenter={currentCenter}
+            setLastClickedCoord={setLastClickedCoord}
+            waypoints={waypoints}
+            playedSeconds={playedSeconds}
+            isEditingModeOn={isEditingModeOn}
+          />
+        </PlayerMapCol>
+      </RoutePlayerContainer>
+    </div>
   );
 };
+
+const TopButtonPanel = styled.div`
+  margin: 3px 0 5px;
+  background: #222222;
+  border: 1px solid #555;
+  border-radius: 2px;
+  padding: 0;
+  color: #eee;
+`;
+
+const TopButton = styled.button`
+  background: #242424;
+  border: 1px solid #666;
+  color: #eee;
+  padding: 3px 7px;
+  margin: -1px;
+  margin-right: 0;
+
+  &:hover {
+    background: #333;
+    border-color: gray;
+  }
+  &:active {
+    background: #181818;
+    color: #ccc;
+  }
+`;
 
 function findAdjacentCoordinates(offsetSec: number, coordinates: Waypoint[]): [number | null, number | null] {
   const coordinatesCount = coordinates.length;
@@ -102,6 +144,7 @@ function interpolateCoordinates(prevCoord: Waypoint, nextCoord: Waypoint, offset
 const RoutePlayerContainer = styled.div`
   display: flex;
   margin: 0 auto;
+  width: 1110px;
 `;
 
 const WaypointsCol = styled.div`
@@ -110,4 +153,5 @@ const WaypointsCol = styled.div`
 `;
 const PlayerMapCol = styled.div`
   width: 800px;
+  flex-grow: 1;
 `;

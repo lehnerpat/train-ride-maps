@@ -8,19 +8,40 @@ interface VideoPlayerProps {
 }
 export const VideoPlayer: FC<VideoPlayerProps> = ({ videoUrl, onProgress }) => (
   <VideoPlayerContainer>
-    <ReactPlayer
-      className="react-player"
-      controls
-      progressInterval={100}
-      width="800px"
-      height="450px"
-      url={videoUrl}
-      onProgress={onProgress}
-      config={{ playerVars: { start: 1 } }}
-    />
+    <AspectRatioContainerOuter>
+      <AspectRatioContainerInner>
+        <ReactPlayer
+          className="react-player"
+          controls
+          progressInterval={100}
+          width="100%"
+          height="100%"
+          url={videoUrl}
+          onProgress={onProgress}
+          config={{ playerVars: { start: 1 } }}
+        />
+      </AspectRatioContainerInner>
+    </AspectRatioContainerOuter>
   </VideoPlayerContainer>
 );
 
 const VideoPlayerContainer = styled.div`
   margin-bottom: 20px;
+`;
+
+const AspectRatioContainerOuter = styled.div`
+  position: relative;
+  &:before {
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: calc((9 / 16) * 100%);
+  }
+`;
+const AspectRatioContainerInner = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 `;
