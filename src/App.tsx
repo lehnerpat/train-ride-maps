@@ -6,7 +6,7 @@ import { Route } from "./route-models";
 import { NewFileStarter } from "./NewFileStarter";
 import { IncludedRouteSelector } from "./IncludedRouteSelector";
 import { Route as ReactRoute, Switch, Link } from "wouter";
-import { RouteLocalStorageService } from "./common-components/RouteLocalStorageServiceImpl";
+import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 import { IncludedDataMap } from "./included-data";
 import { Panel } from "./common-components/Panel";
 

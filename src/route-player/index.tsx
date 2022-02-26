@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { WaypointsEditor } from "./WaypointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
-import { RouteLocalStorageService } from "../common-components/RouteLocalStorageServiceImpl";
+import { RouteLocalStorageService } from "../common-components/RouteLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
 
 interface RoutePlayerProps {

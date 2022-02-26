@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
 import { useLocation } from "wouter";
 import { Routes } from "./route-models";
-import { RouteLocalStorageService } from "./common-components/RouteLocalStorageServiceImpl";
+import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 import { PageRouting } from "./page-routing";
 
 interface LoadSaveFileProps {

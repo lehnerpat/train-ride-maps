@@ -4,7 +4,7 @@ import { Panel } from "./common-components/Panel";
 import { IncludedData } from "./included-data";
 import { Link } from "wouter";
 import { PageRouting } from "./page-routing";
-import { RouteLocalStorageService } from "./common-components/RouteLocalStorageServiceImpl";
+import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 
 interface IncludedDataSelectorProps {}
 export const IncludedRouteSelector: FC<IncludedDataSelectorProps> = () => {
