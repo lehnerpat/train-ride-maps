@@ -24,23 +24,30 @@ function App() {
   return (
     <MainCenterer>
       <MainContainer>
-        <LoadSaveFile
-          onFileLoaded={onFileLoaded}
-          isDownloadAvailable={!!route}
-          onDownloadRequested={() => serializeToJson(route!)}
-        />
         {!!route ? (
-          <RoutePlayer routeState={[route, setDefinedRoute]} />
+          <>
+            <RoutePlayer routeState={[route, setDefinedRoute]} />
+            <LoadSaveFile
+              onFileLoaded={onFileLoaded}
+              isDownloadAvailable={!!route}
+              onDownloadRequested={() => serializeToJson(route!)}
+            />
+          </>
         ) : (
           <>
-            <NewFileStarter
-              onCreateNewFile={(title, videoUrl) => {
-                setRoute({ title, videoUrl, waypoints: [] });
-              }}
-            />
             <IncludedRouteSelector
               onRouteSelected={(selectedRoute) => {
                 setRoute(selectedRoute);
+              }}
+            />
+            <LoadSaveFile
+              onFileLoaded={onFileLoaded}
+              isDownloadAvailable={!!route}
+              onDownloadRequested={() => serializeToJson(route!)}
+            />
+            <NewFileStarter
+              onCreateNewFile={(title, videoUrl) => {
+                setRoute({ title, videoUrl, waypoints: [] });
               }}
             />
           </>
