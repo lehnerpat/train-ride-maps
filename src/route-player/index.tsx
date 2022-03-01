@@ -17,7 +17,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
   const [route, setRoute] = useAutosavingRouteState(initialRoute);
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
-  const [lastClickedCoord, setLastClickedCoord] = useState<LatLngLiteral>();
+  const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
   const [adjacentCoordIndexes, setAdjacentCoordIndex] = useState<[number | null, number | null]>([
     null,
     route.waypoints.length > 0 ? 0 : null,
@@ -71,7 +71,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
             <WaypointsEditor
               waypointsState={[waypoints, setWaypoints]}
               playedSeconds={playedSeconds}
-              lastMapClickPosition={lastClickedCoord}
+              mapCenter={interactionMapCenter}
               adjactedCoordinateIndex={adjacentCoordIndexes}
             />
           </WaypointsCol>
@@ -86,7 +86,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
           <LiveMap
             initialCenter={initialCoord}
             currentCenter={currentCenter}
-            setLastClickedCoord={setLastClickedCoord}
+            onMapMoved={(newCenter) => setInteractionMapCenter(newCenter)}
             waypoints={waypoints}
             playedSeconds={playedSeconds}
             isEditingModeOn={isEditingModeOn}

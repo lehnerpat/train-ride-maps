@@ -9,26 +9,19 @@ import useResizeObserver from "@react-hook/resize-observer";
 
 interface LiveMapProps {
   waypoints: Waypoint[];
-  setLastClickedCoord: React.Dispatch<React.SetStateAction<LatLngLiteral | undefined>>;
+  onMapMoved: (newCenter: LatLngLiteral) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
   playedSeconds: number;
   isEditingModeOn: boolean;
 }
 
-export const LiveMap: FC<LiveMapProps> = ({
-  waypoints,
-  initialCenter,
-  currentCenter,
-  setLastClickedCoord,
-  isEditingModeOn,
-}) => {
+export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCenter, onMapMoved, isEditingModeOn }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [isAutopanOn, setAutopanOn] = useState(true);
   const [isRoutePolylineOn, setRoutePolylineOn] = useState(true);
   const [isWaypointMarkersOn, setWaypointMarkersOn] = useState(false);
-  const [isCrosshairOverlayOn, setCrosshairOverlayOn] = useState(false);
-  const [isUseMapCenterForCoord, setUseMapCenterForCoord] = useState(false);
+  const [isCrosshairOverlayOn, setCrosshairOverlayOn] = useState(true);
 
   const containerRef = useRef(null);
 
@@ -52,7 +45,7 @@ export const LiveMap: FC<LiveMapProps> = ({
           setMap(map);
         }}
       >
-        <MapEventHandler isUseMapCenterForCoord={isUseMapCenterForCoord} setLastClickedCoord={setLastClickedCoord} />
+        <MapEventHandler onMapMoved={onMapMoved} />
         <BaseTileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -94,9 +87,6 @@ export const LiveMap: FC<LiveMapProps> = ({
             <CheckBox id="crosshair-overlay" checkedState={[isCrosshairOverlayOn, setCrosshairOverlayOn]}>
               Show crosshair overlay for map center
             </CheckBox>
-            <CheckBox id="map-center" checkedState={[isUseMapCenterForCoord, setUseMapCenterForCoord]}>
-              Use map center for waypoint coordinates (right-click otherwise)
-            </CheckBox>
           </>
         )}
       </Panel>
@@ -107,18 +97,11 @@ export const LiveMap: FC<LiveMapProps> = ({
 const LiveMapContainer = styled.div``;
 
 const MapEventHandler: FC<{
-  isUseMapCenterForCoord: boolean;
-  setLastClickedCoord: React.Dispatch<React.SetStateAction<LatLngLiteral | undefined>>;
-}> = ({ setLastClickedCoord, isUseMapCenterForCoord }) => {
-  useMapEvent("contextmenu", (ev) => {
-    if (isUseMapCenterForCoord) return;
-    const pos = ev.latlng;
-    setLastClickedCoord(pos);
-  });
+  onMapMoved: (newCenter: LatLngLiteral) => void;
+}> = ({ onMapMoved }) => {
   useMapEvent("moveend", (ev) => {
-    if (!isUseMapCenterForCoord) return;
     const pos = (ev.target as LeafletMap).getCenter();
-    setLastClickedCoord(pos);
+    onMapMoved(pos);
   });
   return null;
 };

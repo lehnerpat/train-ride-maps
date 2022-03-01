@@ -8,13 +8,13 @@ import { Waypoint } from "../route-models";
 interface WaypointsEditorProps {
   waypointsState: UseState<Waypoint[]>;
   playedSeconds: number;
-  lastMapClickPosition: LatLngLiteral | undefined;
+  mapCenter: LatLngLiteral | undefined;
   adjactedCoordinateIndex: [number | null, number | null];
 }
 export const WaypointsEditor: FC<WaypointsEditorProps> = ({
   waypointsState: [waypoints, setWaypoints],
   playedSeconds,
-  lastMapClickPosition,
+  mapCenter,
   adjactedCoordinateIndex,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -27,7 +27,7 @@ export const WaypointsEditor: FC<WaypointsEditorProps> = ({
       <EditingArea
         waypointsState={[waypoints, setWaypoints]}
         timeSeconds={playedSeconds}
-        position={lastMapClickPosition}
+        position={mapCenter}
         editingIndexState={[editingIndex, setEditingIndex]}
       />
       <h3 style={{ marginLeft: "15px" }}>Waypoints:</h3>
