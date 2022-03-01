@@ -21,6 +21,11 @@ function App() {
           <ReactRoute path="/route/:id">{(params) => <ViewRoutePage routeUuid={params.id} />}</ReactRoute>
           <ReactRoute path="/:rest*">{(params) => `404, Sorry the page ${params.rest} does not exist!`}</ReactRoute>
         </Switch>
+        <ReturnLinkContainer>
+          <GithubLink href="https://github.com/lehnerpat/train-ride-maps" target={"_blank"} rel="noopener noreferrer">
+            Source code on GitHub
+          </GithubLink>
+        </ReturnLinkContainer>
       </MainContainer>
     </MainCenterer>
   );
@@ -74,6 +79,18 @@ const ReturnLinkContainer = styled.div`
   margin: 20px 0;
 `;
 const ReturnLink = styled(Link)`
+  &,
+  &:visited {
+    color: #ddd;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: white;
+  }
+`;
+const GithubLink = styled.a`
   &,
   &:visited {
     color: #ddd;
