@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Track } from "./track-models";
 import { NewFileStarter } from "./NewFileStarter";
 import { IncludedTrackSelector } from "./IncludedTrackSelector";
-import { Route as ReactRoute, Switch, Link } from "wouter";
+import { Route, Switch, Link } from "wouter";
 import { TrackLocalStorageService } from "./common-components/TrackLocalStorageService";
 import { IncludedDataMap } from "./included-data";
 import { Panel } from "./common-components/Panel";
@@ -15,11 +15,11 @@ function App() {
     <MainCenterer>
       <MainContainer>
         <Switch>
-          <ReactRoute path="/">
+          <Route path="/">
             <StartPage />
-          </ReactRoute>
-          <ReactRoute path="/track/:id">{(params) => <ViewRoutePage routeUuid={params.id} />}</ReactRoute>
-          <ReactRoute path="/:rest*">{(params) => <Error404Page path={params.rest} />}</ReactRoute>
+          </Route>
+          <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
+          <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
         </Switch>
         <ReturnLinkContainer>
           <GithubLink href="https://github.com/lehnerpat/train-ride-maps" target={"_blank"} rel="noopener noreferrer">
@@ -39,20 +39,20 @@ const StartPage = () => (
   </>
 );
 
-const ViewRoutePage: FC<{ routeUuid: string }> = ({ routeUuid }) => {
-  const route = loadRouteFromStorage(routeUuid);
+const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
+  const track = loadTrackFromStorage(trackUuid);
 
-  if (route === null)
+  if (track === null)
     return (
       <>
-        <Panel style={{ color: "#FF8888" }}>Route with ID {routeUuid} not found.</Panel>
+        <Panel style={{ color: "#FF8888" }}>Track with ID {trackUuid} not found.</Panel>
         <StartPage />
       </>
     );
 
   return (
     <>
-      <TrackPlayer initialTrack={route} />
+      <TrackPlayer initialTrack={track} />
       <ReturnLinkContainer>
         <ReturnLink href="/">Return to start page</ReturnLink>
       </ReturnLinkContainer>
@@ -71,10 +71,10 @@ const Error404Page: FC<{ path: string | undefined }> = ({ path }) => (
   </div>
 );
 
-function loadRouteFromStorage(routeUuid: string): Track | null {
-  const routeFromStorage = TrackLocalStorageService.load(routeUuid);
-  if (routeFromStorage !== null) return routeFromStorage;
-  return IncludedDataMap.get(routeUuid) || null;
+function loadTrackFromStorage(trackUuid: string): Track | null {
+  const trackFromStorage = TrackLocalStorageService.load(trackUuid);
+  if (trackFromStorage !== null) return trackFromStorage;
+  return IncludedDataMap.get(trackUuid) || null;
 }
 
 const MainCenterer = styled.div`
