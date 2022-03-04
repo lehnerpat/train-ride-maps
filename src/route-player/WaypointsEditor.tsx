@@ -3,10 +3,10 @@ import { FC, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
 import { UseState } from "../common-components/UseState";
-import { Waypoint } from "../route-models";
+import { TrackPoint } from "../route-models";
 
 interface WaypointsEditorProps {
-  waypointsState: UseState<Waypoint[]>;
+  waypointsState: UseState<TrackPoint[]>;
   playedSeconds: number;
   mapCenter: LatLngLiteral | undefined;
   adjactedCoordinateIndex: [number | null, number | null];
@@ -48,7 +48,7 @@ const WaypointsEditorContainer = styled(Panel)`
   margin-top: 0;
 `;
 interface EditingAreaProps extends InputFieldProps {
-  waypointsState: UseState<Waypoint[]>;
+  waypointsState: UseState<TrackPoint[]>;
   editingIndexState: UseState<number | null>;
 }
 const EditingArea: FC<EditingAreaProps> = ({
@@ -141,7 +141,7 @@ const EditingInputField = styled.input`
 `;
 
 interface WaypointListProps {
-  waypoints: Waypoint[];
+  waypoints: TrackPoint[];
   adjactedCoordinateIndex: [number | null, number | null];
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
@@ -179,7 +179,7 @@ const WaypointListContainer = styled.div`
 `;
 
 interface WaypointListEntryProps {
-  waypoint: Waypoint;
+  waypoint: TrackPoint;
   className?: string;
   index: number;
   isStartEditingPossible: boolean;
@@ -276,7 +276,7 @@ const WaypointListEntryContainerLabel = styled.div`
   text-align: right;
 `;
 
-function addWaypoint(newWaypoint: Waypoint, setWaypoints: React.Dispatch<React.SetStateAction<Waypoint[]>>) {
+function addWaypoint(newWaypoint: TrackPoint, setWaypoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
   setWaypoints((oldWaypoints) => {
     const waypoints = [...oldWaypoints];
     const newIdx = waypoints.findIndex((wp) => wp.t > newWaypoint.t);
@@ -289,7 +289,7 @@ function addWaypoint(newWaypoint: Waypoint, setWaypoints: React.Dispatch<React.S
   });
 }
 
-function deleteWaypoint(index: number, setWaypoints: React.Dispatch<React.SetStateAction<Waypoint[]>>) {
+function deleteWaypoint(index: number, setWaypoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
   setWaypoints((oldWaypoints) => {
     const waypoints = [...oldWaypoints];
     waypoints.splice(index, 1);

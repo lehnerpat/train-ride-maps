@@ -4,11 +4,11 @@ import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "re
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
 import { UseState } from "../common-components/UseState";
-import { Waypoint } from "../route-models";
+import { TrackPoint } from "../route-models";
 import useResizeObserver from "@react-hook/resize-observer";
 
 interface LiveMapProps {
-  waypoints: Waypoint[];
+  waypoints: TrackPoint[];
   onMapMoved: (newCenter: LatLngLiteral) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;

@@ -10,21 +10,21 @@ const LatLngLiteral = t.readonly(
   })
 );
 
-const Waypoint = t.readonly(
+const TrackPoint = t.readonly(
   t.strict({
     t: t.number,
     p: LatLngLiteral,
   })
 );
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export type Waypoint = t.TypeOf<typeof Waypoint>;
+export type TrackPoint = t.TypeOf<typeof TrackPoint>;
 
 const Route = t.readonly(
   t.strict({
     uuid: t.string,
     title: t.string,
     videoUrl: t.string,
-    waypoints: t.array(Waypoint),
+    waypoints: t.array(TrackPoint),
   })
 );
 

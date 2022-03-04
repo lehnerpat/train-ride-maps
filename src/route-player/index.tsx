@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
-import { Route, Routes, Waypoint } from "../route-models";
+import { Route, Routes, TrackPoint } from "../route-models";
 import styled from "styled-components";
 import { WaypointsEditor } from "./WaypointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
@@ -45,7 +45,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
     }
   }, [playedSeconds, waypoints]);
 
-  const setWaypoints = (newWaypoints: React.SetStateAction<Waypoint[]>) => {
+  const setWaypoints = (newWaypoints: React.SetStateAction<TrackPoint[]>) => {
     setRoute((prevRoute) => {
       return {
         ...prevRoute,
@@ -136,7 +136,7 @@ const TopButton = styled.button`
   }
 `;
 
-function findAdjacentCoordinates(offsetSec: number, coordinates: Waypoint[]): [number | null, number | null] {
+function findAdjacentCoordinates(offsetSec: number, coordinates: TrackPoint[]): [number | null, number | null] {
   const coordinatesCount = coordinates.length;
   if (!coordinates || !Array.isArray(coordinates) || coordinatesCount === 0) return [null, null];
   if (offsetSec < coordinates[0].t) return [null, 0];
@@ -147,7 +147,7 @@ function findAdjacentCoordinates(offsetSec: number, coordinates: Waypoint[]): [n
   return [nextIndex - 1, nextIndex];
 }
 
-function interpolateCoordinates(prevCoord: Waypoint, nextCoord: Waypoint, offsetSec: number): LatLngLiteral {
+function interpolateCoordinates(prevCoord: TrackPoint, nextCoord: TrackPoint, offsetSec: number): LatLngLiteral {
   if (offsetSec < prevCoord.t || offsetSec > nextCoord.t)
     throw new Error(`Given offsetSec ${offsetSec} was outside of TimedCoord range [${prevCoord.t}, ${nextCoord.t}]`);
   const p = (offsetSec - prevCoord.t) / (nextCoord.t - prevCoord.t);
