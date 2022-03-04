@@ -2,7 +2,7 @@ import { FC } from "react";
 import { RoutePlayer } from "./route-player";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
-import { Track } from "./route-models";
+import { Track } from "./track-models";
 import { NewFileStarter } from "./NewFileStarter";
 import { IncludedRouteSelector } from "./IncludedRouteSelector";
 import { Route as ReactRoute, Switch, Link } from "wouter";

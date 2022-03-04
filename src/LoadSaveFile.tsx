@@ -2,7 +2,7 @@ import { FC, useRef } from "react";
 import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
 import { useLocation } from "wouter";
-import { Tracks } from "./route-models";
+import { Tracks } from "./track-models";
 import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 import { PageRouting } from "./page-routing";
 

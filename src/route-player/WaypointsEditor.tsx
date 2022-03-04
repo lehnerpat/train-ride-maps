@@ -3,7 +3,7 @@ import { FC, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
 import { UseState } from "../common-components/UseState";
-import { TrackPoint } from "../route-models";
+import { TrackPoint } from "../track-models";
 
 interface WaypointsEditorProps {
   waypointsState: UseState<TrackPoint[]>;

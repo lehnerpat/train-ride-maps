@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
-import { Track, Tracks, TrackPoint } from "../route-models";
+import { Track, Tracks, TrackPoint } from "../track-models";
 import styled from "styled-components";
 import { WaypointsEditor } from "./WaypointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
