@@ -4,7 +4,7 @@ import { Panel } from "./common-components/Panel";
 import { IncludedData } from "./included-data";
 import { Link } from "wouter";
 import { PageRouting } from "./page-routing";
-import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
+import { TrackLocalStorageService } from "./common-components/TrackLocalStorageService";
 
 export const IncludedTrackSelector: FC = () => {
   const [localTracks, setLocalTracks] = useState(listLocalTracks());
@@ -29,7 +29,7 @@ export const IncludedTrackSelector: FC = () => {
                 <DeleteItemLink
                   href="#"
                   onClick={() => {
-                    RouteLocalStorageService.delete(r.uuid);
+                    TrackLocalStorageService.delete(r.uuid);
                     setLocalTracks(listLocalTracks());
                   }}
                 >
@@ -72,5 +72,5 @@ const DeleteItemLink = styled.a`
 `;
 
 function listLocalTracks() {
-  return RouteLocalStorageService.getList();
+  return TrackLocalStorageService.getList();
 }

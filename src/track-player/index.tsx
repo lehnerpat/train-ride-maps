@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { WaypointsEditor } from "./WaypointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
-import { RouteLocalStorageService } from "../common-components/RouteLocalStorageService";
+import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
 import { UseState } from "../common-components/UseState";
 
@@ -103,7 +103,7 @@ function useAutosavingRouteState(initialRoute: Track): UseState<Track> {
   const wrappedSetRoute: React.Dispatch<React.SetStateAction<Track>> = (newRoute) =>
     setRoute((prevRoute) => {
       const updatedRoute = typeof newRoute === "function" ? newRoute(prevRoute) : newRoute;
-      RouteLocalStorageService.save(route);
+      TrackLocalStorageService.save(route);
       return updatedRoute;
     });
   return [route, wrappedSetRoute];

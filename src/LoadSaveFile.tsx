@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
 import { useLocation } from "wouter";
 import { Tracks } from "./track-models";
-import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
+import { TrackLocalStorageService } from "./common-components/TrackLocalStorageService";
 import { PageRouting } from "./page-routing";
 
 interface LoadSaveFileProps {
@@ -28,7 +28,7 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
     if (!!files && files.length > 0) {
       const j = await files[0].text();
       const r = Tracks.readFromJson(j);
-      RouteLocalStorageService.save(r);
+      TrackLocalStorageService.save(r);
       setLocation(PageRouting.viewRoutePage(r.uuid));
     }
   };

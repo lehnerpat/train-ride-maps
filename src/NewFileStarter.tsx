@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
 import { useLocation } from "wouter";
 import { Tracks } from "./track-models";
-import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
+import { TrackLocalStorageService } from "./common-components/TrackLocalStorageService";
 import { PageRouting } from "./page-routing";
 
 interface NewFileStarterProps {}
@@ -48,7 +48,7 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
         onClick={() => {
           if (inputsInvalid) return;
           const newRoute = Tracks.create(videoTitle, videoUrl);
-          RouteLocalStorageService.save(newRoute);
+          TrackLocalStorageService.save(newRoute);
           setLocation(PageRouting.viewRoutePage(newRoute.uuid));
         }}
         disabled={inputsInvalid}

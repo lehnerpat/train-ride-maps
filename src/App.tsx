@@ -6,7 +6,7 @@ import { Track } from "./track-models";
 import { NewFileStarter } from "./NewFileStarter";
 import { IncludedTrackSelector } from "./IncludedTrackSelector";
 import { Route as ReactRoute, Switch, Link } from "wouter";
-import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
+import { TrackLocalStorageService } from "./common-components/TrackLocalStorageService";
 import { IncludedDataMap } from "./included-data";
 import { Panel } from "./common-components/Panel";
 
@@ -61,7 +61,7 @@ const ViewRoutePage: FC<{ routeUuid: string }> = ({ routeUuid }) => {
 };
 
 function loadRouteFromStorage(routeUuid: string): Track | null {
-  const routeFromStorage = RouteLocalStorageService.load(routeUuid);
+  const routeFromStorage = TrackLocalStorageService.load(routeUuid);
   if (routeFromStorage !== null) return routeFromStorage;
   return IncludedDataMap.get(routeUuid) || null;
 }
