@@ -42,7 +42,7 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
     const file = new Blob([contents], { type: "application/json" });
     const fileDownloadUrl = URL.createObjectURL(file);
     element.href = fileDownloadUrl;
-    element.download = "route.json";
+    element.download = "track.json";
     element.style.display = "none";
     document.body.appendChild(element);
     element.click();

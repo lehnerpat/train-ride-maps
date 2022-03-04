@@ -9,23 +9,23 @@ import { PageRouting } from "./page-routing";
 interface NewFileStarterProps {}
 export const NewFileStarter: FC<NewFileStarterProps> = () => {
   const [videoUrl, setVideoUrl] = useState("");
-  const [videoTitle, setVideoTitle] = useState("");
+  const [trackTitle, setTrackTitle] = useState("");
   const [, setLocation] = useLocation();
 
-  const inputsInvalid = !videoTitle || !videoUrl || !videoUrl.startsWith("https://");
+  const inputsInvalid = !trackTitle || !videoUrl || !videoUrl.startsWith("https://");
 
   return (
     <Panel>
       <div>Start new:</div>
       <InputGrid>
         <>
-          <label htmlFor="new-video-title">Title:</label>
+          <label htmlFor="new-track-title">Title:</label>
           <input
             type="text"
-            id="new-video-title"
-            value={videoTitle}
+            id="new-track-title"
+            value={trackTitle}
             onChange={(ev) => {
-              setVideoTitle(ev.target.value);
+              setTrackTitle(ev.target.value);
             }}
             required
           />
@@ -47,7 +47,7 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
       <button
         onClick={() => {
           if (inputsInvalid) return;
-          const newRoute = Tracks.create(videoTitle, videoUrl);
+          const newRoute = Tracks.create(trackTitle, videoUrl);
           TrackLocalStorageService.save(newRoute);
           setLocation(PageRouting.viewTrackPage(newRoute.uuid));
         }}
