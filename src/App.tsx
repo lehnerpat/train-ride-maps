@@ -2,7 +2,7 @@ import { FC } from "react";
 import { RoutePlayer } from "./route-player";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
-import { Route } from "./route-models";
+import { Track } from "./route-models";
 import { NewFileStarter } from "./NewFileStarter";
 import { IncludedRouteSelector } from "./IncludedRouteSelector";
 import { Route as ReactRoute, Switch, Link } from "wouter";
@@ -60,7 +60,7 @@ const ViewRoutePage: FC<{ routeUuid: string }> = ({ routeUuid }) => {
   );
 };
 
-function loadRouteFromStorage(routeUuid: string): Route | null {
+function loadRouteFromStorage(routeUuid: string): Track | null {
   const routeFromStorage = RouteLocalStorageService.load(routeUuid);
   if (routeFromStorage !== null) return routeFromStorage;
   return IncludedDataMap.get(routeUuid) || null;

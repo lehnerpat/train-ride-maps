@@ -19,7 +19,7 @@ const TrackPoint = t.readonly(
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type TrackPoint = t.TypeOf<typeof TrackPoint>;
 
-const Route = t.readonly(
+const Track = t.readonly(
   t.strict({
     uuid: t.string,
     title: t.string,
@@ -29,10 +29,10 @@ const Route = t.readonly(
 );
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export type Route = t.TypeOf<typeof Route>;
+export type Track = t.TypeOf<typeof Track>;
 
 export const Routes = {
-  create(title: string, videoUrl: string): Route {
+  create(title: string, videoUrl: string): Track {
     return {
       uuid: newUuidv4(),
       title,
@@ -41,9 +41,9 @@ export const Routes = {
     };
   },
 
-  readFromJson(j: string): Route {
+  readFromJson(j: string): Track {
     const data = JSON.parse(j);
-    const decoded = Route.decode(data);
+    const decoded = Track.decode(data);
 
     if (isLeft(decoded)) {
       throw new Error(PathReporter.report(decoded).join("\n"));
@@ -52,7 +52,7 @@ export const Routes = {
     return decoded.right;
   },
 
-  serializeToJson(route: Route): string {
+  serializeToJson(route: Track): string {
     return JSON.stringify(route);
   },
 };

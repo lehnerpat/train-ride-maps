@@ -1,23 +1,23 @@
-import { Route, Routes } from "../route-models";
+import { Track, Routes } from "../route-models";
 
 class RouteLocalStorageServiceImpl {
-  load(routeId: string): Route | null {
+  load(routeId: string): Track | null {
     return this.loadKey(this.makeKey(routeId));
   }
 
-  private loadKey(key: string): Route | null {
+  private loadKey(key: string): Track | null {
     const loadedValue = localStorage.getItem(key);
     if (loadedValue === null) return null;
     return Routes.readFromJson(loadedValue);
   }
 
-  save(value: Route) {
+  save(value: Track) {
     const serializedRoute = Routes.serializeToJson(value);
     console.debug(`Saving route id ${value.uuid} with size ${serializedRoute.length}`);
     localStorage.setItem(this.makeKey(value.uuid), serializedRoute);
   }
 
-  getList(): Route[] {
+  getList(): Track[] {
     const routes = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);

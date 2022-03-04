@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
-import { Route, Routes, TrackPoint } from "../route-models";
+import { Track, Routes, TrackPoint } from "../route-models";
 import styled from "styled-components";
 import { WaypointsEditor } from "./WaypointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
@@ -10,7 +10,7 @@ import { LoadSaveFile } from "../LoadSaveFile";
 import { UseState } from "../common-components/UseState";
 
 interface RoutePlayerProps {
-  initialRoute: Route;
+  initialRoute: Track;
 }
 export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
   const initialCoord = initialRoute.trackPoints.length > 0 ? initialRoute.trackPoints[0].p : { lat: 0, lng: 0 };
@@ -98,9 +98,9 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
   );
 };
 
-function useAutosavingRouteState(initialRoute: Route): UseState<Route> {
+function useAutosavingRouteState(initialRoute: Track): UseState<Track> {
   const [route, setRoute] = useState(initialRoute);
-  const wrappedSetRoute: React.Dispatch<React.SetStateAction<Route>> = (newRoute) =>
+  const wrappedSetRoute: React.Dispatch<React.SetStateAction<Track>> = (newRoute) =>
     setRoute((prevRoute) => {
       const updatedRoute = typeof newRoute === "function" ? newRoute(prevRoute) : newRoute;
       RouteLocalStorageService.save(route);
