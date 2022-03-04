@@ -83,7 +83,7 @@ export const LiveMap: FC<LiveMapProps> = ({
           Auto-pan map to current position
         </CheckBox>
         <CheckBox id="trackPoint-markers" checkedState={[isTrackPointMarkersOn, setTrackPointMarkersOn]}>
-          Show markers for all trackPoints
+          Show markers for all track points
         </CheckBox>
         <CheckBox id="track-polyline" checkedState={[isTrackPolylineOn, setTrackPolylineOn]}>
           Show polyline for track

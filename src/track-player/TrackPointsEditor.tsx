@@ -24,7 +24,7 @@ export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
   return (
     <TrackPointsEditorContainer>
       <h3 style={{ marginLeft: "15px" }}>
-        {!isEditing ? "Add new trackPoint:" : `Editing trackPoint ${editingIndex}:`}
+        {!isEditing ? "Add new track point:" : `Editing track point ${editingIndex}:`}
       </h3>
       <EditingArea
         trackPointsState={[trackPoints, setTrackPoints]}
@@ -32,7 +32,7 @@ export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
         position={mapCenter}
         editingIndexState={[editingIndex, setEditingIndex]}
       />
-      <h3 style={{ marginLeft: "15px" }}>TrackPoints:</h3>
+      <h3 style={{ marginLeft: "15px" }}>Track points:</h3>
       <TrackPointList
         trackPoints={trackPoints}
         adjactedCoordinateIndex={adjactedCoordinateIndex}
@@ -66,7 +66,7 @@ const EditingArea: FC<EditingAreaProps> = ({
         timeSeconds={editingTrackPoint !== null ? editingTrackPoint.t : timeSeconds}
         position={editingTrackPoint !== null ? editingTrackPoint.p : position}
       />
-      <div style={{ textAlign: "right", fontSize: "70%" }}>Right-click the map to pick a coordinate</div>
+      <div style={{ textAlign: "right", fontSize: "70%" }}>Position map to choose coordinate</div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
           onClick={() => {
@@ -75,7 +75,7 @@ const EditingArea: FC<EditingAreaProps> = ({
             }
           }}
         >
-          Add new trackPoint
+          Add new track point
         </button>
       </div>
       {editingIndex !== null && editingTrackPoint !== null && (
