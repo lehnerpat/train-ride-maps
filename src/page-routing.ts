@@ -1,5 +1,5 @@
 export const PageRouting = {
-  viewRoutePage(routeId: string): string {
-    return `/route/${routeId}`;
+  viewTrackPage(trackId: string): string {
+    return `/track/${trackId}`;
   },
 };

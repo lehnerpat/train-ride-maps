@@ -18,8 +18,8 @@ function App() {
           <ReactRoute path="/">
             <StartPage />
           </ReactRoute>
-          <ReactRoute path="/route/:id">{(params) => <ViewRoutePage routeUuid={params.id} />}</ReactRoute>
-          <ReactRoute path="/:rest*">{(params) => `404, Sorry the page ${params.rest} does not exist!`}</ReactRoute>
+          <ReactRoute path="/track/:id">{(params) => <ViewRoutePage routeUuid={params.id} />}</ReactRoute>
+          <ReactRoute path="/:rest*">{(params) => <Error404Page path={params.rest} />}</ReactRoute>
         </Switch>
         <ReturnLinkContainer>
           <GithubLink href="https://github.com/lehnerpat/train-ride-maps" target={"_blank"} rel="noopener noreferrer">
@@ -59,6 +59,17 @@ const ViewRoutePage: FC<{ routeUuid: string }> = ({ routeUuid }) => {
     </>
   );
 };
+
+const Error404Page: FC<{ path: string | undefined }> = ({ path }) => (
+  <div>
+    <h2>
+      404, Sorry the page <code>{path}</code> does not exist!
+    </h2>
+    <p>
+      <ReturnLink href="/">Return to the start page.</ReturnLink>
+    </p>
+  </div>
+);
 
 function loadRouteFromStorage(routeUuid: string): Track | null {
   const routeFromStorage = TrackLocalStorageService.load(routeUuid);

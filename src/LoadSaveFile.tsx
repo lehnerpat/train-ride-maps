@@ -29,7 +29,7 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
       const j = await files[0].text();
       const r = Tracks.readFromJson(j);
       TrackLocalStorageService.save(r);
-      setLocation(PageRouting.viewRoutePage(r.uuid));
+      setLocation(PageRouting.viewTrackPage(r.uuid));
     }
   };
 

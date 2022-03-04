@@ -15,7 +15,7 @@ export const IncludedTrackSelector: FC = () => {
       <ul>
         {IncludedData.map((r) => (
           <li key={r.uuid}>
-            <TrackLink href={PageRouting.viewRoutePage(r.uuid)}>{r.title}</TrackLink>
+            <TrackLink href={PageRouting.viewTrackPage(r.uuid)}>{r.title}</TrackLink>
           </li>
         ))}
       </ul>
@@ -25,7 +25,7 @@ export const IncludedTrackSelector: FC = () => {
           <ul>
             {localTracks.map((r) => (
               <li key={r.uuid}>
-                <TrackLink href={PageRouting.viewRoutePage(r.uuid)}>{r.title}</TrackLink>{" "}
+                <TrackLink href={PageRouting.viewTrackPage(r.uuid)}>{r.title}</TrackLink>{" "}
                 <DeleteItemLink
                   href="#"
                   onClick={() => {
