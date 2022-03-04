@@ -12,7 +12,9 @@ class RouteLocalStorageServiceImpl {
   }
 
   save(value: Route) {
-    localStorage.setItem(this.makeKey(value.uuid), Routes.serializeToJson(value));
+    const serializedRoute = Routes.serializeToJson(value);
+    console.debug(`Saving route id ${value.uuid} with size ${serializedRoute.length}`);
+    localStorage.setItem(this.makeKey(value.uuid), serializedRoute);
   }
 
   getList(): Route[] {
