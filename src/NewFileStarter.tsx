@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
 import { useLocation } from "wouter";
-import { Routes } from "./route-models";
+import { Tracks } from "./route-models";
 import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 import { PageRouting } from "./page-routing";
 
@@ -47,7 +47,7 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
       <button
         onClick={() => {
           if (inputsInvalid) return;
-          const newRoute = Routes.create(videoTitle, videoUrl);
+          const newRoute = Tracks.create(videoTitle, videoUrl);
           RouteLocalStorageService.save(newRoute);
           setLocation(PageRouting.viewRoutePage(newRoute.uuid));
         }}

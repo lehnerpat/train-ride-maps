@@ -2,7 +2,7 @@ import { FC, useRef } from "react";
 import styled from "styled-components";
 import { Panel } from "./common-components/Panel";
 import { useLocation } from "wouter";
-import { Routes } from "./route-models";
+import { Tracks } from "./route-models";
 import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 import { PageRouting } from "./page-routing";
 
@@ -27,7 +27,7 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
     const files = ev.target.files;
     if (!!files && files.length > 0) {
       const j = await files[0].text();
-      const r = Routes.readFromJson(j);
+      const r = Tracks.readFromJson(j);
       RouteLocalStorageService.save(r);
       setLocation(PageRouting.viewRoutePage(r.uuid));
     }

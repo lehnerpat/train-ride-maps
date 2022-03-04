@@ -1,4 +1,4 @@
-import { Track, Routes } from "../route-models";
+import { Track, Tracks } from "../route-models";
 
 class RouteLocalStorageServiceImpl {
   load(routeId: string): Track | null {
@@ -8,11 +8,11 @@ class RouteLocalStorageServiceImpl {
   private loadKey(key: string): Track | null {
     const loadedValue = localStorage.getItem(key);
     if (loadedValue === null) return null;
-    return Routes.readFromJson(loadedValue);
+    return Tracks.readFromJson(loadedValue);
   }
 
   save(value: Track) {
-    const serializedRoute = Routes.serializeToJson(value);
+    const serializedRoute = Tracks.serializeToJson(value);
     console.debug(`Saving route id ${value.uuid} with size ${serializedRoute.length}`);
     localStorage.setItem(this.makeKey(value.uuid), serializedRoute);
   }

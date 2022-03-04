@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
-import { Track, Routes, TrackPoint } from "../route-models";
+import { Track, Tracks, TrackPoint } from "../route-models";
 import styled from "styled-components";
 import { WaypointsEditor } from "./WaypointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
@@ -93,7 +93,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
           />
         </PlayerMapCol>
       </RoutePlayerContainer>
-      <LoadSaveFile onDownloadRequested={() => Routes.serializeToJson(route)} />
+      <LoadSaveFile onDownloadRequested={() => Tracks.serializeToJson(route)} />
     </div>
   );
 };

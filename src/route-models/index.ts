@@ -31,7 +31,7 @@ const Track = t.readonly(
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Track = t.TypeOf<typeof Track>;
 
-export const Routes = {
+export const Tracks = {
   create(title: string, videoUrl: string): Track {
     return {
       uuid: newUuidv4(),
@@ -52,7 +52,7 @@ export const Routes = {
     return decoded.right;
   },
 
-  serializeToJson(route: Track): string {
-    return JSON.stringify(route);
+  serializeToJson(track: Track): string {
+    return JSON.stringify(track);
   },
 };
