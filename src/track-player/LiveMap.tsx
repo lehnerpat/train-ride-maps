@@ -19,7 +19,7 @@ interface LiveMapProps {
 export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCenter, onMapMoved, isEditingModeOn }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [isAutopanOn, setAutopanOn] = useState(true);
-  const [isRoutePolylineOn, setRoutePolylineOn] = useState(true);
+  const [isTrackPolylineOn, setTrackPolylineOn] = useState(true);
   const [isWaypointMarkersOn, setWaypointMarkersOn] = useState(false);
   const [isCrosshairOverlayOn, setCrosshairOverlayOn] = useState(true);
 
@@ -64,7 +64,7 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
           detectRetina
         />
         <AllWaypointsPane name="all-waypoints-pane">
-          {isRoutePolylineOn && <Polyline color="purple" positions={waypoints.map((wp) => wp.p)} />}
+          {isTrackPolylineOn && <Polyline color="purple" positions={waypoints.map((wp) => wp.p)} />}
           {isWaypointMarkersOn && waypoints.map((tc, idx) => <Marker position={tc.p} key={idx} />)}
         </AllWaypointsPane>
         <CurrentPositionPane name="current-position-pane">
@@ -79,8 +79,8 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
         <CheckBox id="waypoint-markers" checkedState={[isWaypointMarkersOn, setWaypointMarkersOn]}>
           Show markers for all waypoints
         </CheckBox>
-        <CheckBox id="route-polyline" checkedState={[isRoutePolylineOn, setRoutePolylineOn]}>
-          Show polyline for route
+        <CheckBox id="track-polyline" checkedState={[isTrackPolylineOn, setTrackPolylineOn]}>
+          Show polyline for track
         </CheckBox>
         {isEditingModeOn && (
           <>

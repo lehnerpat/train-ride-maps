@@ -47,9 +47,9 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
       <button
         onClick={() => {
           if (inputsInvalid) return;
-          const newRoute = Tracks.create(trackTitle, videoUrl);
-          TrackLocalStorageService.save(newRoute);
-          setLocation(PageRouting.viewTrackPage(newRoute.uuid));
+          const newTrack = Tracks.create(trackTitle, videoUrl);
+          TrackLocalStorageService.save(newTrack);
+          setLocation(PageRouting.viewTrackPage(newTrack.uuid));
         }}
         disabled={inputsInvalid}
       >
