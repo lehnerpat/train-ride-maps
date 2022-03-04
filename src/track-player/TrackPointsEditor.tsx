@@ -5,14 +5,14 @@ import { Panel } from "../common-components/Panel";
 import { UseState } from "../common-components/UseState";
 import { TrackPoint } from "../track-models";
 
-interface WaypointsEditorProps {
-  waypointsState: UseState<TrackPoint[]>;
+interface TrackPointsEditorProps {
+  trackPointsState: UseState<TrackPoint[]>;
   playedSeconds: number;
   mapCenter: LatLngLiteral | undefined;
   adjactedCoordinateIndex: [number | null, number | null];
 }
-export const WaypointsEditor: FC<WaypointsEditorProps> = ({
-  waypointsState: [waypoints, setWaypoints],
+export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
+  trackPointsState: [trackPoints, setTrackPoints],
   playedSeconds,
   mapCenter,
   adjactedCoordinateIndex,
@@ -22,17 +22,19 @@ export const WaypointsEditor: FC<WaypointsEditorProps> = ({
   const isEditing = editingIndex !== null;
 
   return (
-    <WaypointsEditorContainer>
-      <h3 style={{ marginLeft: "15px" }}>{!isEditing ? "Add new waypoint:" : `Editing waypoint ${editingIndex}:`}</h3>
+    <TrackPointsEditorContainer>
+      <h3 style={{ marginLeft: "15px" }}>
+        {!isEditing ? "Add new trackPoint:" : `Editing trackPoint ${editingIndex}:`}
+      </h3>
       <EditingArea
-        waypointsState={[waypoints, setWaypoints]}
+        trackPointsState={[trackPoints, setTrackPoints]}
         timeSeconds={playedSeconds}
         position={mapCenter}
         editingIndexState={[editingIndex, setEditingIndex]}
       />
-      <h3 style={{ marginLeft: "15px" }}>Waypoints:</h3>
-      <WaypointList
-        waypoints={waypoints}
+      <h3 style={{ marginLeft: "15px" }}>TrackPoints:</h3>
+      <TrackPointList
+        trackPoints={trackPoints}
         adjactedCoordinateIndex={adjactedCoordinateIndex}
         isStartEditingPossible={!isEditing}
         editingIndex={editingIndex}
@@ -40,48 +42,48 @@ export const WaypointsEditor: FC<WaypointsEditorProps> = ({
           setEditingIndex(index);
         }}
       />
-    </WaypointsEditorContainer>
+    </TrackPointsEditorContainer>
   );
 };
-const WaypointsEditorContainer = styled(Panel)`
+const TrackPointsEditorContainer = styled(Panel)`
   padding: 0;
   margin-top: 0;
 `;
 interface EditingAreaProps extends InputFieldProps {
-  waypointsState: UseState<TrackPoint[]>;
+  trackPointsState: UseState<TrackPoint[]>;
   editingIndexState: UseState<number | null>;
 }
 const EditingArea: FC<EditingAreaProps> = ({
   timeSeconds,
   position,
-  waypointsState: [waypoints, setWaypoints],
+  trackPointsState: [trackPoints, setTrackPoints],
   editingIndexState: [editingIndex, setEditingIndex],
 }) => {
-  const editingWaypoint = editingIndex !== null ? waypoints[editingIndex] : null;
+  const editingTrackPoint = editingIndex !== null ? trackPoints[editingIndex] : null;
   return (
     <EditingAreaContainer>
       <EditingInputFieldsGrid
-        timeSeconds={editingWaypoint !== null ? editingWaypoint.t : timeSeconds}
-        position={editingWaypoint !== null ? editingWaypoint.p : position}
+        timeSeconds={editingTrackPoint !== null ? editingTrackPoint.t : timeSeconds}
+        position={editingTrackPoint !== null ? editingTrackPoint.p : position}
       />
       <div style={{ textAlign: "right", fontSize: "70%" }}>Right-click the map to pick a coordinate</div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
           onClick={() => {
             if (typeof timeSeconds === "number" && typeof position === "object") {
-              addWaypoint({ t: timeSeconds, p: position }, setWaypoints);
+              addTrackPoint({ t: timeSeconds, p: position }, setTrackPoints);
             }
           }}
         >
-          Add new waypoint
+          Add new trackPoint
         </button>
       </div>
-      {editingIndex !== null && editingWaypoint !== null && (
+      {editingIndex !== null && editingTrackPoint !== null && (
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button
             onClick={() => {
               setEditingIndex(null);
-              deleteWaypoint(editingIndex, setWaypoints);
+              deleteTrackPoint(editingIndex, setTrackPoints);
             }}
           >
             Delete
@@ -140,30 +142,30 @@ const EditingInputField = styled.input`
   color: #eee;
 `;
 
-interface WaypointListProps {
-  waypoints: TrackPoint[];
+interface TrackPointListProps {
+  trackPoints: TrackPoint[];
   adjactedCoordinateIndex: [number | null, number | null];
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
   editingIndex: number | null;
 }
 
-const WaypointList: FC<WaypointListProps> = ({
-  waypoints,
+const TrackPointList: FC<TrackPointListProps> = ({
+  trackPoints,
   adjactedCoordinateIndex,
   isStartEditingPossible,
   onStartEditing,
   editingIndex,
 }) => (
-  <WaypointListContainer>
-    {waypoints.map((wp, idx) => {
+  <TrackPointListContainer>
+    {trackPoints.map((wp, idx) => {
       const prevNextClass =
         idx === adjactedCoordinateIndex[0] ? "previous" : idx === adjactedCoordinateIndex[1] ? "next" : "";
       const editingClass = idx === editingIndex ? "editing" : "";
       return (
-        <WaypointListEntry
+        <TrackPointListEntry
           key={idx}
-          waypoint={wp}
+          trackPoint={wp}
           className={`${prevNextClass} ${editingClass}`}
           index={idx}
           isStartEditingPossible={isStartEditingPossible}
@@ -171,72 +173,72 @@ const WaypointList: FC<WaypointListProps> = ({
         />
       );
     })}
-  </WaypointListContainer>
+  </TrackPointListContainer>
 );
-const WaypointListContainer = styled.div`
+const TrackPointListContainer = styled.div`
   max-height: 600px;
   overflow-y: auto;
 `;
 
-interface WaypointListEntryProps {
-  waypoint: TrackPoint;
+interface TrackPointListEntryProps {
+  trackPoint: TrackPoint;
   className?: string;
   index: number;
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
 }
 
-const WaypointListEntry: FC<WaypointListEntryProps> = ({
-  waypoint,
+const TrackPointListEntry: FC<TrackPointListEntryProps> = ({
+  trackPoint,
   className,
   index,
   isStartEditingPossible,
   onStartEditing,
 }) => (
-  <WaypointListEntryContainer>
-    <WaypointListEntryInfoContainer>
+  <TrackPointListEntryContainer>
+    <TrackPointListEntryInfoContainer>
       <div>{index}</div>
-      <WaypointEditButton
+      <TrackPointEditButton
         disabled={!isStartEditingPossible}
-        title="Edit this waypoint"
+        title="Edit this trackPoint"
         onClick={() => {
           if (isStartEditingPossible && typeof onStartEditing === "function") onStartEditing(index);
         }}
       >
         E
-      </WaypointEditButton>
-    </WaypointListEntryInfoContainer>
-    <WaypointListEntryDataContainer className={className}>
+      </TrackPointEditButton>
+    </TrackPointListEntryInfoContainer>
+    <TrackPointListEntryDataContainer className={className}>
       <>
-        <WaypointListEntryContainerLabel>t =</WaypointListEntryContainerLabel>
-        <span>{waypoint.t}s</span>
+        <TrackPointListEntryContainerLabel>t =</TrackPointListEntryContainerLabel>
+        <span>{trackPoint.t}s</span>
       </>
       <>
-        <WaypointListEntryContainerLabel>lat =</WaypointListEntryContainerLabel>
-        <span>{waypoint.p.lat}</span>
+        <TrackPointListEntryContainerLabel>lat =</TrackPointListEntryContainerLabel>
+        <span>{trackPoint.p.lat}</span>
       </>
       <>
-        <WaypointListEntryContainerLabel>lng =</WaypointListEntryContainerLabel>
-        <span>{waypoint.p.lng}</span>
+        <TrackPointListEntryContainerLabel>lng =</TrackPointListEntryContainerLabel>
+        <span>{trackPoint.p.lng}</span>
       </>
-    </WaypointListEntryDataContainer>
-  </WaypointListEntryContainer>
+    </TrackPointListEntryDataContainer>
+  </TrackPointListEntryContainer>
 );
-const WaypointListEntryContainer = styled.div`
+const TrackPointListEntryContainer = styled.div`
   display: flex;
   font-family: monospace;
   gap: 5px;
   margin: 5px 10px;
 `;
 
-const WaypointListEntryInfoContainer = styled.div`
+const TrackPointListEntryInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
   align-items: center;
   justify-content: center;
 `;
-const WaypointEditButton = styled.button`
+const TrackPointEditButton = styled.button`
   color: #eee;
   background: #282828;
   border: 1px solid gray;
@@ -248,8 +250,8 @@ const WaypointEditButton = styled.button`
   }
 `;
 
-const activeWaypointColor = "#678fd4";
-const WaypointListEntryDataContainer = styled.div`
+const activeTrackPointColor = "#678fd4";
+const TrackPointListEntryDataContainer = styled.div`
   border: 1px solid transparent;
   background: #333;
   display: grid;
@@ -259,40 +261,40 @@ const WaypointListEntryDataContainer = styled.div`
 
   &.previous,
   &.next {
-    border-left-color: ${activeWaypointColor};
-    border-right-color: ${activeWaypointColor};
+    border-left-color: ${activeTrackPointColor};
+    border-right-color: ${activeTrackPointColor};
   }
   &.previous {
-    border-top-color: ${activeWaypointColor};
+    border-top-color: ${activeTrackPointColor};
   }
   &.next {
-    border-bottom-color: ${activeWaypointColor};
+    border-bottom-color: ${activeTrackPointColor};
   }
   &.editing {
     background: #594a33;
   }
 `;
-const WaypointListEntryContainerLabel = styled.div`
+const TrackPointListEntryContainerLabel = styled.div`
   text-align: right;
 `;
 
-function addWaypoint(newWaypoint: TrackPoint, setWaypoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
-  setWaypoints((oldWaypoints) => {
-    const waypoints = [...oldWaypoints];
-    const newIdx = waypoints.findIndex((wp) => wp.t > newWaypoint.t);
+function addTrackPoint(newTrackPoint: TrackPoint, setTrackPoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
+  setTrackPoints((oldTrackPoints) => {
+    const trackPoints = [...oldTrackPoints];
+    const newIdx = trackPoints.findIndex((wp) => wp.t > newTrackPoint.t);
     if (newIdx === -1) {
-      waypoints.push(newWaypoint);
+      trackPoints.push(newTrackPoint);
     } else {
-      waypoints.splice(newIdx, 0, newWaypoint);
+      trackPoints.splice(newIdx, 0, newTrackPoint);
     }
-    return waypoints;
+    return trackPoints;
   });
 }
 
-function deleteWaypoint(index: number, setWaypoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
-  setWaypoints((oldWaypoints) => {
-    const waypoints = [...oldWaypoints];
-    waypoints.splice(index, 1);
-    return waypoints;
+function deleteTrackPoint(index: number, setTrackPoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
+  setTrackPoints((oldTrackPoints) => {
+    const trackPoints = [...oldTrackPoints];
+    trackPoints.splice(index, 1);
+    return trackPoints;
   });
 }

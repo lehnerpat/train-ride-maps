@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { Track, Tracks, TrackPoint } from "../track-models";
 import styled from "styled-components";
-import { WaypointsEditor } from "./WaypointsEditor";
+import { TrackPointsEditor } from "./TrackPointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
@@ -68,8 +68,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
       <TrackPlayerContainer>
         {isEditingModeOn && (
           <WaypointsCol>
-            <WaypointsEditor
-              waypointsState={[waypoints, setWaypoints]}
+            <TrackPointsEditor
+              trackPointsState={[waypoints, setWaypoints]}
               playedSeconds={playedSeconds}
               mapCenter={interactionMapCenter}
               adjactedCoordinateIndex={adjacentCoordIndexes}
