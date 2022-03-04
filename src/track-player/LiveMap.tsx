@@ -8,7 +8,7 @@ import { TrackPoint } from "../track-models";
 import useResizeObserver from "@react-hook/resize-observer";
 
 interface LiveMapProps {
-  waypoints: TrackPoint[];
+  trackPoints: TrackPoint[];
   onMapMoved: (newCenter: LatLngLiteral) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
@@ -16,11 +16,17 @@ interface LiveMapProps {
   isEditingModeOn: boolean;
 }
 
-export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCenter, onMapMoved, isEditingModeOn }) => {
+export const LiveMap: FC<LiveMapProps> = ({
+  trackPoints,
+  initialCenter,
+  currentCenter,
+  onMapMoved,
+  isEditingModeOn,
+}) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [isAutopanOn, setAutopanOn] = useState(true);
   const [isTrackPolylineOn, setTrackPolylineOn] = useState(true);
-  const [isWaypointMarkersOn, setWaypointMarkersOn] = useState(false);
+  const [isTrackPointMarkersOn, setTrackPointMarkersOn] = useState(false);
   const [isCrosshairOverlayOn, setCrosshairOverlayOn] = useState(true);
 
   const containerRef = useRef(null);
@@ -63,10 +69,10 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
           tileSize={256}
           detectRetina
         />
-        <AllWaypointsPane name="all-waypoints-pane">
-          {isTrackPolylineOn && <Polyline color="purple" positions={waypoints.map((wp) => wp.p)} />}
-          {isWaypointMarkersOn && waypoints.map((tc, idx) => <Marker position={tc.p} key={idx} />)}
-        </AllWaypointsPane>
+        <AllTrackPointsPane name="all-trackPoints-pane">
+          {isTrackPolylineOn && <Polyline color="purple" positions={trackPoints.map((wp) => wp.p)} />}
+          {isTrackPointMarkersOn && trackPoints.map((tc, idx) => <Marker position={tc.p} key={idx} />)}
+        </AllTrackPointsPane>
         <CurrentPositionPane name="current-position-pane">
           <Marker position={currentCenter} title="Current" />
         </CurrentPositionPane>
@@ -76,8 +82,8 @@ export const LiveMap: FC<LiveMapProps> = ({ waypoints, initialCenter, currentCen
         <CheckBox id="autopan" checkedState={[isAutopanOn, setAutopanOn]}>
           Auto-pan map to current position
         </CheckBox>
-        <CheckBox id="waypoint-markers" checkedState={[isWaypointMarkersOn, setWaypointMarkersOn]}>
-          Show markers for all waypoints
+        <CheckBox id="trackPoint-markers" checkedState={[isTrackPointMarkersOn, setTrackPointMarkersOn]}>
+          Show markers for all trackPoints
         </CheckBox>
         <CheckBox id="track-polyline" checkedState={[isTrackPolylineOn, setTrackPolylineOn]}>
           Show polyline for track
@@ -112,7 +118,7 @@ const BaseTileLayer = styled(TileLayer)`
   }
 `;
 
-const AllWaypointsPane = styled(Pane)`
+const AllTrackPointsPane = styled(Pane)`
   z-index: 600;
   & img {
     filter: hue-rotate(90deg);

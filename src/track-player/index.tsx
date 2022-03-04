@@ -24,32 +24,32 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   ]);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
 
-  const waypoints = track.trackPoints;
+  const trackPoints = track.trackPoints;
 
   useEffect(() => {
-    const [prev, next] = findAdjacentCoordinates(playedSeconds, waypoints);
+    const [prev, next] = findAdjacentCoordinates(playedSeconds, trackPoints);
     setAdjacentCoordIndex([prev, next]);
     let interpolated: LatLngLiteral | undefined;
     if (prev === null) {
       if (next !== null) {
-        interpolated = waypoints[next].p;
+        interpolated = trackPoints[next].p;
       }
     } else if (next === null) {
-      interpolated = waypoints[prev].p;
+      interpolated = trackPoints[prev].p;
     } else {
-      interpolated = interpolateCoordinates(waypoints[prev], waypoints[next], playedSeconds);
+      interpolated = interpolateCoordinates(trackPoints[prev], trackPoints[next], playedSeconds);
     }
 
     if (!!interpolated) {
       setCurrentCenter(interpolated);
     }
-  }, [playedSeconds, waypoints]);
+  }, [playedSeconds, trackPoints]);
 
-  const setWaypoints = (newWaypoints: React.SetStateAction<TrackPoint[]>) => {
+  const setTrackPoints = (newTrackPoints: React.SetStateAction<TrackPoint[]>) => {
     setTrack((prevTrack) => {
       return {
         ...prevTrack,
-        trackPoints: typeof newWaypoints === "function" ? newWaypoints(prevTrack.trackPoints) : newWaypoints,
+        trackPoints: typeof newTrackPoints === "function" ? newTrackPoints(prevTrack.trackPoints) : newTrackPoints,
       };
     });
   };
@@ -67,14 +67,14 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
       </TopButtonPanel>
       <TrackPlayerContainer>
         {isEditingModeOn && (
-          <WaypointsCol>
+          <TrackPointsCol>
             <TrackPointsEditor
-              trackPointsState={[waypoints, setWaypoints]}
+              trackPointsState={[trackPoints, setTrackPoints]}
               playedSeconds={playedSeconds}
               mapCenter={interactionMapCenter}
               adjactedCoordinateIndex={adjacentCoordIndexes}
             />
-          </WaypointsCol>
+          </TrackPointsCol>
         )}
         <PlayerMapCol>
           <VideoPlayer
@@ -87,7 +87,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
             initialCenter={initialCoord}
             currentCenter={currentCenter}
             onMapMoved={(newCenter) => setInteractionMapCenter(newCenter)}
-            waypoints={waypoints}
+            trackPoints={trackPoints}
             playedSeconds={playedSeconds}
             isEditingModeOn={isEditingModeOn}
           />
@@ -163,7 +163,7 @@ const TrackPlayerContainer = styled.div`
   justify-content: center;
 `;
 
-const WaypointsCol = styled.div`
+const TrackPointsCol = styled.div`
   width: 300px;
   margin-right: 10px;
 `;
