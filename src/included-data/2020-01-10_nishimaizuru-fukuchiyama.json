@@ -2,7 +2,7 @@
   "uuid": "b4244aaf-f19e-4644-a400-c0a902d302f2",
   "title": "[2020-01-10] Nishi-Maizuru ~ Fukuchiyama. Rapid service (TANGO AOMATSU)",
   "videoUrl": "https://www.youtube.com/watch?v=DSLq0_7wtvQ",
-  "waypoints": [
+  "trackPoints": [
     { "t": 16.258827, "p": { "lat": 35.440755390262346, "lng": 135.33021049011953 } },
     { "t": 39.167532, "p": { "lat": 35.43985673052328, "lng": 135.3300319036862 } },
     { "t": 54.641092, "p": { "lat": 35.43846207049367, "lng": 135.3298513303162 } },

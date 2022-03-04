@@ -24,7 +24,7 @@ const Route = t.readonly(
     uuid: t.string,
     title: t.string,
     videoUrl: t.string,
-    waypoints: t.array(TrackPoint),
+    trackPoints: t.array(TrackPoint),
   })
 );
 
@@ -37,7 +37,7 @@ export const Routes = {
       uuid: newUuidv4(),
       title,
       videoUrl,
-      waypoints: [],
+      trackPoints: [],
     };
   },
 

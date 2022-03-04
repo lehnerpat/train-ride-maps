@@ -13,18 +13,18 @@ interface RoutePlayerProps {
   initialRoute: Route;
 }
 export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
-  const initialCoord = initialRoute.waypoints.length > 0 ? initialRoute.waypoints[0].p : { lat: 0, lng: 0 };
+  const initialCoord = initialRoute.trackPoints.length > 0 ? initialRoute.trackPoints[0].p : { lat: 0, lng: 0 };
   const [route, setRoute] = useAutosavingRouteState(initialRoute);
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
   const [adjacentCoordIndexes, setAdjacentCoordIndex] = useState<[number | null, number | null]>([
     null,
-    route.waypoints.length > 0 ? 0 : null,
+    route.trackPoints.length > 0 ? 0 : null,
   ]);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
 
-  const waypoints = route.waypoints;
+  const waypoints = route.trackPoints;
 
   useEffect(() => {
     const [prev, next] = findAdjacentCoordinates(playedSeconds, waypoints);
@@ -49,7 +49,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
     setRoute((prevRoute) => {
       return {
         ...prevRoute,
-        waypoints: typeof newWaypoints === "function" ? newWaypoints(prevRoute.waypoints) : newWaypoints,
+        trackPoints: typeof newWaypoints === "function" ? newWaypoints(prevRoute.trackPoints) : newWaypoints,
       };
     });
   };

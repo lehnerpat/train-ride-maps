@@ -2,7 +2,7 @@
   "uuid": "a22a2bd7-adaa-4ff6-a604-f4d89ab0bee9",
   "title": "[2021-03-19] Hiroshima ~ Miyoshi Geibi Line",
   "videoUrl": "https://www.youtube.com/watch?v=x63cgmVmkgM",
-  "waypoints": [
+  "trackPoints": [
     { "t": 10, "p": { "lat": 34.39787732686167, "lng": 132.4755115973861 } },
     { "t": 36, "p": { "lat": 34.397438794805744, "lng": 132.47635140199455 } },
     { "t": 50, "p": { "lat": 34.396826325744755, "lng": 132.4773616337892 } },

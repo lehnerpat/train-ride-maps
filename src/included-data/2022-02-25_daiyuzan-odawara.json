@@ -2,7 +2,7 @@
   "uuid": "aec5ec00-684b-41fb-bb75-67ba9afed439",
   "title": "[2022-02-25] Daiyuzan ~ Odawara. Izuhakone Railway. Daiyuzan Line",
   "videoUrl": "https://www.youtube.com/watch?v=qQuGpWFzoAk&t=333s",
-  "waypoints": [
+  "trackPoints": [
     { "t": 14.063544, "p": { "lat": 35.318956708805345, "lng": 139.10391603536416 } },
     { "t": 19.307296, "p": { "lat": 35.318916042770425, "lng": 139.1041052917224 } },
     { "t": 24.622077, "p": { "lat": 35.31883856529953, "lng": 139.10444681945873 } },
