@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { RoutePlayer } from "./track-player";
+import { TrackPlayer } from "./track-player";
 import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
 import { Track } from "./track-models";
@@ -52,7 +52,7 @@ const ViewRoutePage: FC<{ routeUuid: string }> = ({ routeUuid }) => {
 
   return (
     <>
-      <RoutePlayer initialRoute={route} />
+      <TrackPlayer initialTrack={route} />
       <ReturnLinkContainer>
         <ReturnLink href="/">Return to start page</ReturnLink>
       </ReturnLinkContainer>

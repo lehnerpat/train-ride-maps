@@ -9,22 +9,22 @@ import { TrackLocalStorageService } from "../common-components/TrackLocalStorage
 import { LoadSaveFile } from "../LoadSaveFile";
 import { UseState } from "../common-components/UseState";
 
-interface RoutePlayerProps {
-  initialRoute: Track;
+interface TrackPlayerProps {
+  initialTrack: Track;
 }
-export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
-  const initialCoord = initialRoute.trackPoints.length > 0 ? initialRoute.trackPoints[0].p : { lat: 0, lng: 0 };
-  const [route, setRoute] = useAutosavingRouteState(initialRoute);
+export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
+  const initialCoord = initialTrack.trackPoints.length > 0 ? initialTrack.trackPoints[0].p : { lat: 0, lng: 0 };
+  const [track, setTrack] = useAutosavingTrackState(initialTrack);
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
   const [adjacentCoordIndexes, setAdjacentCoordIndex] = useState<[number | null, number | null]>([
     null,
-    route.trackPoints.length > 0 ? 0 : null,
+    track.trackPoints.length > 0 ? 0 : null,
   ]);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
 
-  const waypoints = route.trackPoints;
+  const waypoints = track.trackPoints;
 
   useEffect(() => {
     const [prev, next] = findAdjacentCoordinates(playedSeconds, waypoints);
@@ -46,10 +46,10 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
   }, [playedSeconds, waypoints]);
 
   const setWaypoints = (newWaypoints: React.SetStateAction<TrackPoint[]>) => {
-    setRoute((prevRoute) => {
+    setTrack((prevTrack) => {
       return {
-        ...prevRoute,
-        trackPoints: typeof newWaypoints === "function" ? newWaypoints(prevRoute.trackPoints) : newWaypoints,
+        ...prevTrack,
+        trackPoints: typeof newWaypoints === "function" ? newWaypoints(prevTrack.trackPoints) : newWaypoints,
       };
     });
   };
@@ -65,7 +65,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
           {isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
         </TopButton>
       </TopButtonPanel>
-      <RoutePlayerContainer>
+      <TrackPlayerContainer>
         {isEditingModeOn && (
           <WaypointsCol>
             <WaypointsEditor
@@ -78,7 +78,7 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
         )}
         <PlayerMapCol>
           <VideoPlayer
-            videoUrl={route.videoUrl}
+            videoUrl={track.videoUrl}
             onProgress={(ev) => {
               setPlayedSeconds(ev.playedSeconds);
             }}
@@ -92,21 +92,21 @@ export const RoutePlayer: FC<RoutePlayerProps> = ({ initialRoute }) => {
             isEditingModeOn={isEditingModeOn}
           />
         </PlayerMapCol>
-      </RoutePlayerContainer>
-      <LoadSaveFile onDownloadRequested={() => Tracks.serializeToJson(route)} />
+      </TrackPlayerContainer>
+      <LoadSaveFile onDownloadRequested={() => Tracks.serializeToJson(track)} />
     </div>
   );
 };
 
-function useAutosavingRouteState(initialRoute: Track): UseState<Track> {
-  const [route, setRoute] = useState(initialRoute);
-  const wrappedSetRoute: React.Dispatch<React.SetStateAction<Track>> = (newRoute) =>
-    setRoute((prevRoute) => {
-      const updatedRoute = typeof newRoute === "function" ? newRoute(prevRoute) : newRoute;
-      TrackLocalStorageService.save(route);
-      return updatedRoute;
+function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
+  const [track, setTrack] = useState(initialTrack);
+  const wrappedSetTrack: React.Dispatch<React.SetStateAction<Track>> = (newTrack) =>
+    setTrack((prevTrack) => {
+      const updatedTrack = typeof newTrack === "function" ? newTrack(prevTrack) : newTrack;
+      TrackLocalStorageService.save(track);
+      return updatedTrack;
     });
-  return [route, wrappedSetRoute];
+  return [track, wrappedSetTrack];
 }
 
 const TopButtonPanel = styled.div`
@@ -156,7 +156,7 @@ function interpolateCoordinates(prevCoord: TrackPoint, nextCoord: TrackPoint, of
   return { lat, lng };
 }
 
-const RoutePlayerContainer = styled.div`
+const TrackPlayerContainer = styled.div`
   display: flex;
   margin: 0 auto;
   width: 1110px;
