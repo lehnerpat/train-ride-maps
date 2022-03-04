@@ -4,7 +4,7 @@ import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
 import { Track } from "./track-models";
 import { NewFileStarter } from "./NewFileStarter";
-import { IncludedRouteSelector } from "./IncludedRouteSelector";
+import { IncludedTrackSelector } from "./IncludedTrackSelector";
 import { Route as ReactRoute, Switch, Link } from "wouter";
 import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 import { IncludedDataMap } from "./included-data";
@@ -33,7 +33,7 @@ function App() {
 
 const StartPage = () => (
   <>
-    <IncludedRouteSelector />
+    <IncludedTrackSelector />
     <LoadSaveFile />
     <NewFileStarter />
   </>

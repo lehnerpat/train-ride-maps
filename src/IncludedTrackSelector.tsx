@@ -6,32 +6,31 @@ import { Link } from "wouter";
 import { PageRouting } from "./page-routing";
 import { RouteLocalStorageService } from "./common-components/RouteLocalStorageService";
 
-interface IncludedDataSelectorProps {}
-export const IncludedRouteSelector: FC<IncludedDataSelectorProps> = () => {
-  const [localRoutes, setLocalRoutes] = useState(listLocalRoutes());
+export const IncludedTrackSelector: FC = () => {
+  const [localTracks, setLocalTracks] = useState(listLocalTracks());
 
   return (
     <Panel>
-      <h3>Example routes:</h3>
+      <h3>Example tracks:</h3>
       <ul>
         {IncludedData.map((r) => (
           <li key={r.uuid}>
-            <RouteLink href={PageRouting.viewRoutePage(r.uuid)}>{r.title}</RouteLink>
+            <TrackLink href={PageRouting.viewRoutePage(r.uuid)}>{r.title}</TrackLink>
           </li>
         ))}
       </ul>
-      {localRoutes && localRoutes.length > 0 && (
+      {localTracks && localTracks.length > 0 && (
         <>
-          <h3>Routes saved in browser:</h3>
+          <h3>Tracks saved in browser:</h3>
           <ul>
-            {localRoutes.map((r) => (
+            {localTracks.map((r) => (
               <li key={r.uuid}>
-                <RouteLink href={PageRouting.viewRoutePage(r.uuid)}>{r.title}</RouteLink>{" "}
+                <TrackLink href={PageRouting.viewRoutePage(r.uuid)}>{r.title}</TrackLink>{" "}
                 <DeleteItemLink
                   href="#"
                   onClick={() => {
                     RouteLocalStorageService.delete(r.uuid);
-                    setLocalRoutes(listLocalRoutes());
+                    setLocalTracks(listLocalTracks());
                   }}
                 >
                   (Delete this)
@@ -45,7 +44,7 @@ export const IncludedRouteSelector: FC<IncludedDataSelectorProps> = () => {
   );
 };
 
-const RouteLink = styled(Link)`
+const TrackLink = styled(Link)`
   &,
   &:visited {
     color: #ddd;
@@ -72,6 +71,6 @@ const DeleteItemLink = styled.a`
   }
 `;
 
-function listLocalRoutes() {
+function listLocalTracks() {
   return RouteLocalStorageService.getList();
 }
