@@ -18,6 +18,9 @@ function App() {
           <Route path="/">
             <StartPage />
           </Route>
+          <Route path="/ar-test">
+            <ArTest />
+          </Route>
           <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
           <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
         </Switch>
@@ -30,6 +33,37 @@ function App() {
     </MainCenterer>
   );
 }
+
+const ArTest = () => (
+  <AspectRatioContainerOuter>
+    <AspectRatioContainerInner>AR Test</AspectRatioContainerInner>
+  </AspectRatioContainerOuter>
+);
+
+const AspectRatioContainerOuter = styled.div`
+  border: 1px solid #fbb;
+  aspect-ratio: 16 / 9;
+  max-height: 90vh;
+  margin: 0 auto;
+  /* position: relative;
+  &:before {
+    border: 1px solid #88f;
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: calc((9 / 16) * 100%);
+  } */
+`;
+const AspectRatioContainerInner = styled.div`
+  border: 1px solid #f99;
+  width: 100%;
+  height: 100%;
+  /* position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; */
+`;
 
 const StartPage = () => (
   <>
@@ -78,7 +112,7 @@ function loadTrackFromStorage(trackUuid: string): Track | null {
 }
 
 const MainCenterer = styled.div`
-  display: flex;
+  /* display: flex; */
 `;
 const MainContainer = styled.div`
   margin: 0 auto;

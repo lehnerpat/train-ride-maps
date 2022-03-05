@@ -46,7 +46,7 @@ export const LiveMap: FC<LiveMapProps> = ({
       <MapContainer
         center={initialCenter}
         zoom={17}
-        style={{ height: "500px", width: "100%" }}
+        style={{ height: "100%", width: "100%" }}
         whenCreated={(map) => {
           setMap(map);
         }}
@@ -78,7 +78,7 @@ export const LiveMap: FC<LiveMapProps> = ({
         </CurrentPositionPane>
         {isEditingModeOn && isCrosshairOverlayOn && <CrosshairOverlay />}
       </MapContainer>
-      <Panel>
+      {/* <Panel>
         <CheckBox id="autopan" checkedState={[isAutopanOn, setAutopanOn]}>
           Auto-pan map to current position
         </CheckBox>
@@ -95,12 +95,14 @@ export const LiveMap: FC<LiveMapProps> = ({
             </CheckBox>
           </>
         )}
-      </Panel>
+      </Panel> */}
     </LiveMapContainer>
   );
 };
 
-const LiveMapContainer = styled.div``;
+const LiveMapContainer = styled.div`
+  height: 100%;
+`;
 
 const MapEventHandler: FC<{
   onMapMoved: (newCenter: LatLngLiteral) => void;

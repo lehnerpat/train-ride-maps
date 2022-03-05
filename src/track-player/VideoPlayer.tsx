@@ -7,26 +7,26 @@ interface VideoPlayerProps {
   onProgress: (state: { played: number; playedSeconds: number; loaded: number; loadedSeconds: number }) => void;
 }
 export const VideoPlayer: FC<VideoPlayerProps> = ({ videoUrl, onProgress }) => (
-  <VideoPlayerContainer>
-    <AspectRatioContainerOuter>
-      <AspectRatioContainerInner>
-        <ReactPlayer
-          className="react-player"
-          controls
-          progressInterval={100}
-          width="100%"
-          height="100%"
-          url={videoUrl}
-          onProgress={onProgress}
-          config={{ playerVars: { start: 1 } }}
-        />
-      </AspectRatioContainerInner>
-    </AspectRatioContainerOuter>
-  </VideoPlayerContainer>
+  <>
+    <ReactPlayer
+      className="react-player"
+      controls
+      progressInterval={100}
+      width="100%"
+      height="100%"
+      url={videoUrl}
+      onProgress={onProgress}
+      config={{ playerVars: { start: 1 } }}
+    />
+  </>
 );
 
 const VideoPlayerContainer = styled.div`
   margin-bottom: 20px;
+  height: 100%;
+  /* aspect-ratio: 16 / 9; */
+  /* max-height: 90vh; */
+  /* margin: 0 auto; */
 `;
 
 const AspectRatioContainerOuter = styled.div`

@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { Track, Tracks, TrackPoint } from "../track-models";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { TrackPointsEditor } from "./TrackPointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
@@ -54,6 +54,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     });
   };
 
+  const showMapAsOverlay = !isEditingModeOn;
+
   return (
     <div>
       <TopButtonPanel>
@@ -65,7 +67,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           {isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
         </TopButton>
       </TopButtonPanel>
-      <TrackPlayerContainer>
+      <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
             <TrackPointsEditor
@@ -77,26 +79,84 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           </TrackPointsCol>
         )}
         <PlayerMapCol>
-          <VideoPlayer
-            videoUrl={track.videoUrl}
-            onProgress={(ev) => {
-              setPlayedSeconds(ev.playedSeconds);
-            }}
-          />
-          <LiveMap
-            initialCenter={initialCoord}
-            currentCenter={currentCenter}
-            onMapMoved={(newCenter) => setInteractionMapCenter(newCenter)}
-            trackPoints={trackPoints}
-            playedSeconds={playedSeconds}
-            isEditingModeOn={isEditingModeOn}
-          />
+          <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay}>
+            <VideoPlayerContainer showMapAsOverlay={showMapAsOverlay}>
+              <VideoPlayer
+                videoUrl={track.videoUrl}
+                onProgress={(ev) => {
+                  setPlayedSeconds(ev.playedSeconds);
+                }}
+              />
+            </VideoPlayerContainer>
+            <LiveMapContainer showMapAsOverlay={showMapAsOverlay}>
+              <LiveMap
+                initialCenter={initialCoord}
+                currentCenter={currentCenter}
+                onMapMoved={(newCenter) => setInteractionMapCenter(newCenter)}
+                trackPoints={trackPoints}
+                playedSeconds={playedSeconds}
+                isEditingModeOn={isEditingModeOn}
+              />
+            </LiveMapContainer>
+          </VideoAndMapContainer>
+          {/*  */}
         </PlayerMapCol>
       </TrackPlayerContainer>
       <LoadSaveFile onDownloadRequested={() => Tracks.serializeToJson(track)} />
     </div>
   );
 };
+
+const PlayerMapCol = styled.div`
+  flex-grow: 1;
+  max-width: 100%;
+`;
+
+interface VideoAndMapContainerProps {
+  showMapAsOverlay: boolean;
+}
+const VideoAndMapContainer = styled.div<VideoAndMapContainerProps>`
+  ${(props) =>
+    !!props.showMapAsOverlay &&
+    css`
+      aspect-ratio: 16/9;
+      max-height: 90vh;
+      position: relative;
+      margin: 0 auto;
+    `}
+`;
+
+interface VideoPlayerContainerProps {
+  showMapAsOverlay: boolean;
+}
+const VideoPlayerContainer = styled.div<VideoPlayerContainerProps>`
+  width: 100%;
+  aspect-ratio: 16/9;
+  ${(props) =>
+    !!props.showMapAsOverlay
+      ? css`
+          height: 100%;
+        `
+      : css``}
+`;
+
+interface LiveMapContainerProps {
+  showMapAsOverlay: boolean;
+}
+const LiveMapContainer = styled.div<LiveMapContainerProps>`
+  ${(props) =>
+    !!props.showMapAsOverlay
+      ? css`
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 30%;
+          height: 30%;
+        `
+      : css`
+          aspect-ratio: 16/9;
+        `}
+`;
 
 function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
   const [track, setTrack] = useState(initialTrack);
@@ -156,18 +216,21 @@ function interpolateCoordinates(prevCoord: TrackPoint, nextCoord: TrackPoint, of
   return { lat, lng };
 }
 
-const TrackPlayerContainer = styled.div`
+interface TrackPlayerContainerProps {
+  isEditingModeOn: boolean;
+}
+const TrackPlayerContainer = styled.div<TrackPlayerContainerProps>`
   display: flex;
   margin: 0 auto;
-  width: 1110px;
   justify-content: center;
+  ${(props) =>
+    !!props.isEditingModeOn &&
+    css`
+      width: 1110px;
+    `}
 `;
 
 const TrackPointsCol = styled.div`
   width: 300px;
   margin-right: 10px;
-`;
-const PlayerMapCol = styled.div`
-  flex-grow: 1;
-  max-width: 1000px;
 `;
