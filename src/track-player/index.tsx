@@ -7,7 +7,9 @@ import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
-import { UseState } from "../common-components/UseState";
+import { SetState, UseState } from "../common-components/UseState";
+import { Checkbox } from "../common-components/Checkbox";
+import { pickState } from "../common-components/pickState";
 
 interface TrackPlayerProps {
   initialTrack: Track;
@@ -23,6 +25,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     track.trackPoints.length > 0 ? 0 : null,
   ]);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
+  const [viewOptions, setViewOptions] = useState(DefaultViewOptions);
+  const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
 
   const trackPoints = track.trackPoints;
 
@@ -66,7 +70,16 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         >
           {isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
         </TopButton>
+        <TopButtonSpacer />
+        <TopButton
+          onClick={() => {
+            setViewOptionsDialogOpen(!isViewOptionsDialogOpen);
+          }}
+        >
+          Map options
+        </TopButton>
       </TopButtonPanel>
+      {isViewOptionsDialogOpen && <ViewOptionsDialog viewOptionsState={[viewOptions, setViewOptions]} />}
       <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
@@ -88,7 +101,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 }}
               />
             </VideoPlayerContainer>
-            <LiveMapContainer showMapAsOverlay={showMapAsOverlay}>
+            <LiveMapContainer showMapAsOverlay={showMapAsOverlay} mapOverlayPosition={viewOptions.mapOverlayPosition}>
               <LiveMap
                 initialCenter={initialCoord}
                 currentCenter={currentCenter}
@@ -99,7 +112,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               />
             </LiveMapContainer>
           </VideoAndMapContainer>
-          {/*  */}
         </PlayerMapCol>
       </TrackPlayerContainer>
       <LoadSaveFile onDownloadRequested={() => Tracks.serializeToJson(track)} />
@@ -142,6 +154,7 @@ const VideoPlayerContainer = styled.div<VideoPlayerContainerProps>`
 
 interface LiveMapContainerProps {
   showMapAsOverlay: boolean;
+  mapOverlayPosition: "top-left" | "top-right";
 }
 const LiveMapContainer = styled.div<LiveMapContainerProps>`
   ${(props) =>
@@ -149,9 +162,15 @@ const LiveMapContainer = styled.div<LiveMapContainerProps>`
       ? css`
           position: absolute;
           top: 0;
-          right: 0;
           width: 30%;
           height: 30%;
+          ${props.mapOverlayPosition === "top-right"
+            ? css`
+                right: 0;
+              `
+            : css`
+                left: 0;
+              `}
         `
       : css`
           aspect-ratio: 16/9;
@@ -160,7 +179,7 @@ const LiveMapContainer = styled.div<LiveMapContainerProps>`
 
 function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
   const [track, setTrack] = useState(initialTrack);
-  const wrappedSetTrack: React.Dispatch<React.SetStateAction<Track>> = (newTrack) =>
+  const wrappedSetTrack: SetState<Track> = (newTrack) =>
     setTrack((prevTrack) => {
       const updatedTrack = typeof newTrack === "function" ? newTrack(prevTrack) : newTrack;
       TrackLocalStorageService.save(track);
@@ -176,6 +195,11 @@ const TopButtonPanel = styled.div`
   border-radius: 2px;
   padding: 0;
   color: #eee;
+  display: flex;
+`;
+
+const TopButtonSpacer = styled.div`
+  flex-grow: 1;
 `;
 
 const TopButton = styled.button`
@@ -233,4 +257,43 @@ const TrackPlayerContainer = styled.div<TrackPlayerContainerProps>`
 const TrackPointsCol = styled.div`
   width: 300px;
   margin-right: 10px;
+`;
+
+interface ViewOptions {
+  mapOverlayPosition: "top-left" | "top-right";
+}
+const DefaultViewOptions: ViewOptions = {
+  mapOverlayPosition: "top-right",
+};
+
+interface ViewOptionsDialogProps {
+  viewOptionsState: UseState<ViewOptions>;
+}
+const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState }) => {
+  const y = pickState(viewOptionsState, "mapOverlayPosition");
+  return (
+    <ViewOptionsDialogContainer>
+      <h3 style={{ marginTop: 0 }}>Map Options</h3>
+      <div>
+        <Checkbox
+          id="id"
+          checkedState={[y[0] === "top-right", () => y[1]((p) => (p === "top-left" ? "top-right" : "top-left"))]}
+        >
+          Map overlay on top right (else top left)
+        </Checkbox>
+      </div>
+    </ViewOptionsDialogContainer>
+  );
+};
+
+const ViewOptionsDialogContainer = styled.div`
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: #333;
+  border: 2px solid gray;
+  border-radius: 3px;
+  padding: 0.5em 1em;
+  max-width: min(100%, 300px);
+  z-index: 2000;
 `;

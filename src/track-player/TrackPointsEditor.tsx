@@ -2,7 +2,7 @@ import { LatLngLiteral } from "leaflet";
 import { FC, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
-import { UseState } from "../common-components/UseState";
+import { SetState, UseState } from "../common-components/UseState";
 import { TrackPoint } from "../track-models";
 
 interface TrackPointsEditorProps {
@@ -278,7 +278,7 @@ const TrackPointListEntryContainerLabel = styled.div`
   text-align: right;
 `;
 
-function addTrackPoint(newTrackPoint: TrackPoint, setTrackPoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
+function addTrackPoint(newTrackPoint: TrackPoint, setTrackPoints: SetState<TrackPoint[]>) {
   setTrackPoints((oldTrackPoints) => {
     const trackPoints = [...oldTrackPoints];
     const newIdx = trackPoints.findIndex((wp) => wp.t > newTrackPoint.t);
@@ -291,7 +291,7 @@ function addTrackPoint(newTrackPoint: TrackPoint, setTrackPoints: React.Dispatch
   });
 }
 
-function deleteTrackPoint(index: number, setTrackPoints: React.Dispatch<React.SetStateAction<TrackPoint[]>>) {
+function deleteTrackPoint(index: number, setTrackPoints: SetState<TrackPoint[]>) {
   setTrackPoints((oldTrackPoints) => {
     const trackPoints = [...oldTrackPoints];
     trackPoints.splice(index, 1);
