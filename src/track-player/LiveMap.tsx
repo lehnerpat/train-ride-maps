@@ -2,7 +2,6 @@ import { LatLngLiteral, Map as LeafletMap } from "leaflet";
 import { FC, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import styled from "styled-components";
-import { Panel } from "../common-components/Panel";
 import { UseState } from "../common-components/UseState";
 import { TrackPoint } from "../track-models";
 import useResizeObserver from "@react-hook/resize-observer";
