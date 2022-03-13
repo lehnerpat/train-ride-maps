@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC } from "react";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import { Coordinate } from "ol/coordinate";
@@ -6,8 +6,6 @@ import { RMap, ROSM, RLayerVector, RStyle, RFeature, ROverlay } from "rlayers";
 import styled from "styled-components";
 import "ol/ol.css";
 import locationIcon from "./location.svg";
-import { Checkbox } from "./common-components/Checkbox";
-import { ROverlayProps } from "rlayers/ROverlay";
 
 const coords: Record<string, Coordinate> = {
   origin: [2.364, 48.82],

@@ -23,10 +23,12 @@ export const LiveMap: FC<LiveMapProps> = ({
   isEditingModeOn,
 }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [isAutopanOn, setAutopanOn] = useState(true);
   const [isTrackPolylineOn, setTrackPolylineOn] = useState(true);
   const [isTrackPointMarkersOn, setTrackPointMarkersOn] = useState(false);
   const [isCrosshairOverlayOn, setCrosshairOverlayOn] = useState(true);
+  /* eslint-enable */
 
   const containerRef = useRef(null);
 
@@ -134,6 +136,7 @@ interface CheckBoxProps {
   id: string;
   checkedState: UseState<boolean>;
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CheckBox: FC<CheckBoxProps> = ({ id, checkedState: [isChecked, setChecked], children }) => (
   <label htmlFor={id} style={{ whiteSpace: "nowrap" }}>
     <input
