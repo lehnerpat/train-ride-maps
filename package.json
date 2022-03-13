@@ -61,5 +61,5 @@
   "devDependencies": {
     "ts-node": "^10.5.0"
   },
-  "homepage": "."
+  "homepage": "/"
 }
