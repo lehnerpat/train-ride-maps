@@ -2,9 +2,9 @@ import { LatLngLiteral, Map as LeafletMap } from "leaflet";
 import { FC, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import styled from "styled-components";
-import { UseState } from "../common-components/UseState";
 import { TrackPoint } from "../track-models";
 import useResizeObserver from "@react-hook/resize-observer";
+import { MapViewOptions } from "./ViewOptions";
 
 interface LiveMapProps {
   trackPoints: TrackPoint[];
@@ -13,6 +13,7 @@ interface LiveMapProps {
   currentCenter: LatLngLiteral;
   playedSeconds: number;
   isEditingModeOn: boolean;
+  viewOptions: MapViewOptions;
 }
 
 export const LiveMap: FC<LiveMapProps> = ({
@@ -21,14 +22,9 @@ export const LiveMap: FC<LiveMapProps> = ({
   currentCenter,
   onMapMoved,
   isEditingModeOn,
+  viewOptions: { isAutopanOn, isAllTrackPointMarkersOn, isCrosshairOverlayOn, isTrackPolylineOn },
 }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const [isAutopanOn, setAutopanOn] = useState(true);
-  const [isTrackPolylineOn, setTrackPolylineOn] = useState(true);
-  const [isTrackPointMarkersOn, setTrackPointMarkersOn] = useState(false);
-  const [isCrosshairOverlayOn, setCrosshairOverlayOn] = useState(true);
-  /* eslint-enable */
 
   const containerRef = useRef(null);
 
@@ -72,31 +68,13 @@ export const LiveMap: FC<LiveMapProps> = ({
         />
         <AllTrackPointsPane name="all-trackPoints-pane">
           {isTrackPolylineOn && <Polyline color="purple" positions={trackPoints.map((wp) => wp.p)} />}
-          {isTrackPointMarkersOn && trackPoints.map((tc, idx) => <Marker position={tc.p} key={idx} />)}
+          {isAllTrackPointMarkersOn && trackPoints.map((tc, idx) => <Marker position={tc.p} key={idx} />)}
         </AllTrackPointsPane>
         <CurrentPositionPane name="current-position-pane">
           <Marker position={currentCenter} title="Current" />
         </CurrentPositionPane>
         {isEditingModeOn && isCrosshairOverlayOn && <CrosshairOverlay />}
       </MapContainer>
-      {/* <Panel>
-        <CheckBox id="autopan" checkedState={[isAutopanOn, setAutopanOn]}>
-          Auto-pan map to current position
-        </CheckBox>
-        <CheckBox id="trackPoint-markers" checkedState={[isTrackPointMarkersOn, setTrackPointMarkersOn]}>
-          Show markers for all track points
-        </CheckBox>
-        <CheckBox id="track-polyline" checkedState={[isTrackPolylineOn, setTrackPolylineOn]}>
-          Show polyline for track
-        </CheckBox>
-        {isEditingModeOn && (
-          <>
-            <CheckBox id="crosshair-overlay" checkedState={[isCrosshairOverlayOn, setCrosshairOverlayOn]}>
-              Show crosshair overlay for map center
-            </CheckBox>
-          </>
-        )}
-      </Panel> */}
     </LiveMapContainer>
   );
 };
@@ -131,25 +109,6 @@ const AllTrackPointsPane = styled(Pane)`
 const CurrentPositionPane = styled(Pane)`
   z-index: 800;
 `;
-
-interface CheckBoxProps {
-  id: string;
-  checkedState: UseState<boolean>;
-}
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CheckBox: FC<CheckBoxProps> = ({ id, checkedState: [isChecked, setChecked], children }) => (
-  <label htmlFor={id} style={{ whiteSpace: "nowrap" }}>
-    <input
-      type="checkbox"
-      id={id}
-      checked={isChecked}
-      onChange={(ev) => {
-        setChecked(ev.target.checked);
-      }}
-    />{" "}
-    {children}
-  </label>
-);
 
 const crosshairColor = "#0077ff";
 const CrosshairOverlay: FC = () => (

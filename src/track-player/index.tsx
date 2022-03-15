@@ -8,8 +8,7 @@ import { LiveMap } from "./LiveMap";
 import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
 import { SetState, UseState } from "../common-components/UseState";
-import { Checkbox } from "../common-components/Checkbox";
-import { pickState } from "../common-components/pickState";
+import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
 
 interface TrackPlayerProps {
   initialTrack: Track;
@@ -109,6 +108,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 trackPoints={trackPoints}
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
+                viewOptions={viewOptions.mapViewOptions}
               />
             </LiveMapContainer>
           </VideoAndMapContainer>
@@ -257,43 +257,4 @@ const TrackPlayerContainer = styled.div<TrackPlayerContainerProps>`
 const TrackPointsCol = styled.div`
   width: 300px;
   margin-right: 10px;
-`;
-
-interface ViewOptions {
-  mapOverlayPosition: "top-left" | "top-right";
-}
-const DefaultViewOptions: ViewOptions = {
-  mapOverlayPosition: "top-right",
-};
-
-interface ViewOptionsDialogProps {
-  viewOptionsState: UseState<ViewOptions>;
-}
-const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState }) => {
-  const y = pickState(viewOptionsState, "mapOverlayPosition");
-  return (
-    <ViewOptionsDialogContainer>
-      <h3 style={{ marginTop: 0 }}>Map Options</h3>
-      <div>
-        <Checkbox
-          id="id"
-          checkedState={[y[0] === "top-right", () => y[1]((p) => (p === "top-left" ? "top-right" : "top-left"))]}
-        >
-          Map overlay on top right (else top left)
-        </Checkbox>
-      </div>
-    </ViewOptionsDialogContainer>
-  );
-};
-
-const ViewOptionsDialogContainer = styled.div`
-  position: absolute;
-  top: 30px;
-  right: 0;
-  background: #333;
-  border: 2px solid gray;
-  border-radius: 3px;
-  padding: 0.5em 1em;
-  max-width: min(100%, 300px);
-  z-index: 2000;
 `;
