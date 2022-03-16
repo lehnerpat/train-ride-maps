@@ -4,14 +4,17 @@ import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
 import { SetState, UseState } from "../common-components/UseState";
 import { TrackPoint } from "../track-models";
+import { TrackPointsEditorOptions } from "./ViewOptions";
 
 interface TrackPointsEditorProps {
+  options: TrackPointsEditorOptions;
   trackPointsState: UseState<TrackPoint[]>;
   playedSeconds: number;
   mapCenter: LatLngLiteral | undefined;
   precedingTrackPointIndex: number;
 }
 export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
+  options,
   trackPointsState: [trackPoints, setTrackPoints],
   playedSeconds,
   mapCenter,
@@ -37,6 +40,7 @@ export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
         trackPoints={trackPoints}
         precedingTrackPointIndex={precedingTrackPointIndex}
         isStartEditingPossible={!isEditing}
+        isAutoScrollOn={options.isAutoscrollTrackPointsListOn}
         editingIndex={editingIndex}
         onStartEditing={(index) => {
           setEditingIndex(index);
@@ -148,6 +152,7 @@ interface TrackPointListProps {
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
   editingIndex: number | null;
+  isAutoScrollOn: boolean;
 }
 
 const previousTrackPointClassName = "previous";
@@ -158,12 +163,13 @@ const TrackPointList: FC<TrackPointListProps> = ({
   isStartEditingPossible,
   onStartEditing,
   editingIndex,
+  isAutoScrollOn,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ref = containerRef.current;
-    if (ref === null) return;
+    if (!isAutoScrollOn || ref === null) return;
     const prevEntryEl = ref.querySelector<HTMLElement>(`.${previousTrackPointClassName}`);
     const nextEntryEl = ref.querySelector<HTMLElement>(`.${nextTrackPointClassName}`);
 
@@ -180,7 +186,7 @@ const TrackPointList: FC<TrackPointListProps> = ({
     } else if (ref.scrollTop + ref.clientHeight < bottom) {
       ref.scrollTo({ top: bottom - ref.clientHeight, behavior: "smooth" });
     }
-  }, [precedingTrackPointIndex]);
+  }, [precedingTrackPointIndex, isAutoScrollOn]);
 
   return (
     <TrackPointListContainer ref={containerRef}>

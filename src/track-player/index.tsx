@@ -81,6 +81,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         {isEditingModeOn && (
           <TrackPointsCol>
             <TrackPointsEditor
+              options={viewOptions.trackPointsEditorOptions}
               trackPointsState={[trackPoints, setTrackPoints]}
               playedSeconds={playedSeconds}
               mapCenter={interactionMapCenter}

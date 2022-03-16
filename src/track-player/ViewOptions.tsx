@@ -1,3 +1,4 @@
+import { boolean } from "fp-ts";
 import { FC } from "react";
 import styled from "styled-components";
 import { Checkbox } from "../common-components/Checkbox";
@@ -10,10 +11,17 @@ export interface MapViewOptions {
   isAllTrackPointMarkersOn: boolean;
   isCrosshairOverlayOn: boolean;
 }
+
+export interface TrackPointsEditorOptions {
+  isAutoscrollTrackPointsListOn: boolean;
+}
+
 export interface ViewOptions {
   mapOverlayPosition: "top-left" | "top-right";
   mapViewOptions: MapViewOptions;
+  trackPointsEditorOptions: TrackPointsEditorOptions;
 }
+
 export const DefaultViewOptions: ViewOptions = {
   mapOverlayPosition: "top-right",
   mapViewOptions: {
@@ -21,6 +29,9 @@ export const DefaultViewOptions: ViewOptions = {
     isTrackPolylineOn: true,
     isAllTrackPointMarkersOn: false,
     isCrosshairOverlayOn: true,
+  },
+  trackPointsEditorOptions: {
+    isAutoscrollTrackPointsListOn: true,
   },
 };
 
@@ -30,6 +41,7 @@ interface ViewOptionsDialogProps {
 export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState }) => {
   const mapOverlayPositionState = pickState(viewOptionsState, "mapOverlayPosition");
   const mapViewOptionsState = pickState(viewOptionsState, "mapViewOptions");
+  const trackPointsEditorOptionsState = pickState(viewOptionsState, "trackPointsEditorOptions");
 
   return (
     <ViewOptionsDialogContainer>
@@ -58,6 +70,15 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
         </Checkbox>
         <Checkbox id="isCrosshairOverlayOn" checkedState={pickState(mapViewOptionsState, "isCrosshairOverlayOn")}>
           Show crosshair overlay for map center (only in editing mode)
+        </Checkbox>
+      </CheckboxListContainer>
+      <h3>Track points editor options</h3>
+      <CheckboxListContainer>
+        <Checkbox
+          id="isAutoscrollTrackPointsListOn"
+          checkedState={pickState(trackPointsEditorOptionsState, "isAutoscrollTrackPointsListOn")}
+        >
+          Auto-scroll track points list to current track points
         </Checkbox>
       </CheckboxListContainer>
     </ViewOptionsDialogContainer>
