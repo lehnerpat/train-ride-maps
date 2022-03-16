@@ -9,13 +9,13 @@ interface TrackPointsEditorProps {
   trackPointsState: UseState<TrackPoint[]>;
   playedSeconds: number;
   mapCenter: LatLngLiteral | undefined;
-  adjactedCoordinateIndex: [number | null, number | null];
+  adjacentCoordinateIndex: [number | null, number | null];
 }
 export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
   trackPointsState: [trackPoints, setTrackPoints],
   playedSeconds,
   mapCenter,
-  adjactedCoordinateIndex,
+  adjacentCoordinateIndex,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -35,7 +35,7 @@ export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
       <h3 style={{ marginLeft: "15px" }}>Track points:</h3>
       <TrackPointList
         trackPoints={trackPoints}
-        adjactedCoordinateIndex={adjactedCoordinateIndex}
+        adjacentCoordinateIndex={adjacentCoordinateIndex}
         isStartEditingPossible={!isEditing}
         editingIndex={editingIndex}
         onStartEditing={(index) => {
@@ -144,7 +144,7 @@ const EditingInputField = styled.input`
 
 interface TrackPointListProps {
   trackPoints: TrackPoint[];
-  adjactedCoordinateIndex: [number | null, number | null];
+  adjacentCoordinateIndex: [number | null, number | null];
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
   editingIndex: number | null;
@@ -152,7 +152,7 @@ interface TrackPointListProps {
 
 const TrackPointList: FC<TrackPointListProps> = ({
   trackPoints,
-  adjactedCoordinateIndex,
+  adjacentCoordinateIndex,
   isStartEditingPossible,
   onStartEditing,
   editingIndex,
@@ -160,7 +160,7 @@ const TrackPointList: FC<TrackPointListProps> = ({
   <TrackPointListContainer>
     {trackPoints.map((wp, idx) => {
       const prevNextClass =
-        idx === adjactedCoordinateIndex[0] ? "previous" : idx === adjactedCoordinateIndex[1] ? "next" : "";
+        idx === adjacentCoordinateIndex[0] ? "previous" : idx === adjacentCoordinateIndex[1] ? "next" : "";
       const editingClass = idx === editingIndex ? "editing" : "";
       return (
         <TrackPointListEntry

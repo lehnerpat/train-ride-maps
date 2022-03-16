@@ -86,7 +86,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               trackPointsState={[trackPoints, setTrackPoints]}
               playedSeconds={playedSeconds}
               mapCenter={interactionMapCenter}
-              adjactedCoordinateIndex={adjacentCoordIndexes}
+              adjacentCoordinateIndex={adjacentCoordIndexes}
             />
           </TrackPointsCol>
         )}
