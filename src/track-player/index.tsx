@@ -19,10 +19,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
-  const [adjacentCoordIndexes, setAdjacentCoordIndex] = useState<[number | null, number | null]>([
-    null,
-    track.trackPoints.length > 0 ? 0 : null,
-  ]);
+  const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
   const [viewOptions, setViewOptions] = useState(DefaultViewOptions);
   const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
@@ -30,8 +27,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const trackPoints = track.trackPoints;
 
   useEffect(() => {
+    // TODO: refactor to return only one index
     const [prev, next] = findAdjacentCoordinates(playedSeconds, trackPoints);
-    setAdjacentCoordIndex([prev, next]);
+    setPrecedingTrackPointIndex(prev === null ? -1 : prev);
     let interpolated: LatLngLiteral | undefined;
     if (prev === null) {
       if (next !== null) {
@@ -86,7 +84,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               trackPointsState={[trackPoints, setTrackPoints]}
               playedSeconds={playedSeconds}
               mapCenter={interactionMapCenter}
-              adjacentCoordinateIndex={adjacentCoordIndexes}
+              precedingTrackPointIndex={precedingTrackPointIndex}
             />
           </TrackPointsCol>
         )}

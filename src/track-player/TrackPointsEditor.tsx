@@ -1,5 +1,5 @@
 import { LatLngLiteral } from "leaflet";
-import { FC, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
 import { SetState, UseState } from "../common-components/UseState";
@@ -9,13 +9,13 @@ interface TrackPointsEditorProps {
   trackPointsState: UseState<TrackPoint[]>;
   playedSeconds: number;
   mapCenter: LatLngLiteral | undefined;
-  adjacentCoordinateIndex: [number | null, number | null];
+  precedingTrackPointIndex: number;
 }
 export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
   trackPointsState: [trackPoints, setTrackPoints],
   playedSeconds,
   mapCenter,
-  adjacentCoordinateIndex,
+  precedingTrackPointIndex,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -35,7 +35,7 @@ export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
       <h3 style={{ marginLeft: "15px" }}>Track points:</h3>
       <TrackPointList
         trackPoints={trackPoints}
-        adjacentCoordinateIndex={adjacentCoordinateIndex}
+        precedingTrackPointIndex={precedingTrackPointIndex}
         isStartEditingPossible={!isEditing}
         editingIndex={editingIndex}
         onStartEditing={(index) => {
@@ -144,40 +144,72 @@ const EditingInputField = styled.input`
 
 interface TrackPointListProps {
   trackPoints: TrackPoint[];
-  adjacentCoordinateIndex: [number | null, number | null];
+  precedingTrackPointIndex: number;
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
   editingIndex: number | null;
 }
 
+const previousTrackPointClassName = "previous";
+const nextTrackPointClassName = "next";
 const TrackPointList: FC<TrackPointListProps> = ({
   trackPoints,
-  adjacentCoordinateIndex,
+  precedingTrackPointIndex,
   isStartEditingPossible,
   onStartEditing,
   editingIndex,
-}) => (
-  <TrackPointListContainer>
-    {trackPoints.map((wp, idx) => {
-      const prevNextClass =
-        idx === adjacentCoordinateIndex[0] ? "previous" : idx === adjacentCoordinateIndex[1] ? "next" : "";
-      const editingClass = idx === editingIndex ? "editing" : "";
-      return (
-        <TrackPointListEntry
-          key={idx}
-          trackPoint={wp}
-          className={`${prevNextClass} ${editingClass}`}
-          index={idx}
-          isStartEditingPossible={isStartEditingPossible}
-          onStartEditing={onStartEditing}
-        />
-      );
-    })}
-  </TrackPointListContainer>
-);
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ref = containerRef.current;
+    if (ref === null) return;
+    const prevEntryEl = ref.querySelector<HTMLElement>(`.${previousTrackPointClassName}`);
+    const nextEntryEl = ref.querySelector<HTMLElement>(`.${nextTrackPointClassName}`);
+
+    const top = prevEntryEl?.offsetTop ?? nextEntryEl?.offsetTop ?? 0;
+    const bottom =
+      nextEntryEl !== null
+        ? nextEntryEl.offsetTop + nextEntryEl.offsetHeight
+        : prevEntryEl !== null
+        ? prevEntryEl.offsetTop + prevEntryEl.offsetHeight
+        : ref.scrollHeight;
+
+    if (ref.scrollTop > top) {
+      ref.scrollTo({ top, behavior: "smooth" });
+    } else if (ref.scrollTop + ref.clientHeight < bottom) {
+      ref.scrollTo({ top: bottom - ref.clientHeight, behavior: "smooth" });
+    }
+  }, [precedingTrackPointIndex]);
+
+  return (
+    <TrackPointListContainer ref={containerRef}>
+      {trackPoints.map((wp, idx) => {
+        const prevNextClass =
+          idx === precedingTrackPointIndex
+            ? previousTrackPointClassName
+            : idx === precedingTrackPointIndex + 1
+            ? nextTrackPointClassName
+            : "";
+        const editingClass = idx === editingIndex ? "editing" : "";
+        return (
+          <TrackPointListEntry
+            key={idx}
+            trackPoint={wp}
+            className={`${prevNextClass} ${editingClass}`}
+            index={idx}
+            isStartEditingPossible={isStartEditingPossible}
+            onStartEditing={onStartEditing}
+          />
+        );
+      })}
+    </TrackPointListContainer>
+  );
+};
 const TrackPointListContainer = styled.div`
   max-height: 600px;
   overflow-y: auto;
+  position: relative;
 `;
 
 interface TrackPointListEntryProps {
@@ -259,15 +291,14 @@ const TrackPointListEntryDataContainer = styled.div`
   column-gap: 5px;
   flex-grow: 1;
 
-  &.previous,
-  &.next {
+  &.${previousTrackPointClassName}, &.${nextTrackPointClassName} {
     border-left-color: ${activeTrackPointColor};
     border-right-color: ${activeTrackPointColor};
   }
-  &.previous {
+  &.${previousTrackPointClassName} {
     border-top-color: ${activeTrackPointColor};
   }
-  &.next {
+  &.${nextTrackPointClassName} {
     border-bottom-color: ${activeTrackPointColor};
   }
   &.editing {
