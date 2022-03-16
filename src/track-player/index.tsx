@@ -8,7 +8,7 @@ import { LiveMap } from "./LiveMap";
 import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
 import { SetState, UseState } from "../common-components/UseState";
-import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
+import { DefaultViewOptions, StraightTrackOverlayOptions, ViewOptionsDialog } from "./ViewOptions";
 
 interface TrackPlayerProps {
   initialTrack: Track;
@@ -98,7 +98,43 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                   setPlayedSeconds(ev.playedSeconds);
                 }}
               />
+              <StraightTracksOverlay options={viewOptions.straightTrackOverlayOptions} />
             </VideoPlayerContainer>
+            {/* <div
+              css="
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    pointer-events: none;
+    overflow: hidden;
+"
+            >
+              <div
+                css="
+    position: absolute;
+    height:  100%;
+    width: 1px;
+    border-left:  1px solid red;
+    left:  44.1%;
+    transform-origin: bottom left;
+    transform: rotate(8.6deg);
+    opacity: 0.8;
+"
+              ></div>
+              <div
+                css="
+    position: absolute;
+    height:  100%;
+    width: 1px;
+    border-left:  1px solid red;
+    left: 30.7%;
+    transform-origin: bottom left;
+    transform: rotate(32.7deg);
+    opacity: 0.8;
+"
+              ></div>
+            </div> */}
             <LiveMapContainer showMapAsOverlay={showMapAsOverlay} mapOverlayPosition={viewOptions.mapOverlayPosition}>
               <LiveMap
                 initialCenter={initialCoord}
@@ -117,6 +153,36 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     </div>
   );
 };
+
+const StraightTracksOverlay: FC<{ options: StraightTrackOverlayOptions }> = ({ options }) =>
+  !options.isOn ? null : (
+    <StraightTracksOverlayContainer className="tracksoverlay">
+      <StraightTracksOverlayLine
+        style={{ "--left": `${options.line1LeftPercent}%`, "--rotate": `${options.line1RotateDeg}deg` } as any}
+      />
+      <StraightTracksOverlayLine
+        style={{ "--left": `${options.line2LeftPercent}%`, "--rotate": `${options.line2RotateDeg}deg` } as any}
+      />
+    </StraightTracksOverlayContainer>
+  );
+const StraightTracksOverlayContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  overflow: hidden;
+`;
+const StraightTracksOverlayLine = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  border-left: 1px solid red;
+  left: var(--left);
+  transform-origin: bottom left;
+  transform: rotate(var(--rotate));
+  opacity: 0.8;
+`;
 
 const PlayerMapCol = styled.div`
   flex-grow: 1;
@@ -143,6 +209,7 @@ interface VideoPlayerContainerProps {
 const VideoPlayerContainer = styled.div<VideoPlayerContainerProps>`
   width: 100%;
   aspect-ratio: 16/9;
+  position: relative;
   ${(props) =>
     !!props.showMapAsOverlay
       ? css`

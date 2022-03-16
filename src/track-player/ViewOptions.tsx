@@ -1,4 +1,3 @@
-import { boolean } from "fp-ts";
 import { FC } from "react";
 import styled from "styled-components";
 import { Checkbox } from "../common-components/Checkbox";
@@ -16,10 +15,19 @@ export interface TrackPointsEditorOptions {
   isAutoscrollTrackPointsListOn: boolean;
 }
 
+export interface StraightTrackOverlayOptions {
+  isOn: boolean;
+  line1LeftPercent: number;
+  line1RotateDeg: number;
+  line2LeftPercent: number;
+  line2RotateDeg: number;
+}
+
 export interface ViewOptions {
   mapOverlayPosition: "top-left" | "top-right";
   mapViewOptions: MapViewOptions;
   trackPointsEditorOptions: TrackPointsEditorOptions;
+  straightTrackOverlayOptions: StraightTrackOverlayOptions;
 }
 
 export const DefaultViewOptions: ViewOptions = {
@@ -33,6 +41,13 @@ export const DefaultViewOptions: ViewOptions = {
   trackPointsEditorOptions: {
     isAutoscrollTrackPointsListOn: true,
   },
+  straightTrackOverlayOptions: {
+    isOn: false,
+    line1LeftPercent: 30,
+    line1RotateDeg: 5,
+    line2LeftPercent: 40,
+    line2RotateDeg: -5,
+  },
 };
 
 interface ViewOptionsDialogProps {
@@ -42,6 +57,7 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
   const mapOverlayPositionState = pickState(viewOptionsState, "mapOverlayPosition");
   const mapViewOptionsState = pickState(viewOptionsState, "mapViewOptions");
   const trackPointsEditorOptionsState = pickState(viewOptionsState, "trackPointsEditorOptions");
+  const straightTrackOverlayOptionsState = pickState(viewOptionsState, "straightTrackOverlayOptions");
 
   return (
     <ViewOptionsDialogContainer>
@@ -79,6 +95,10 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
           checkedState={pickState(trackPointsEditorOptionsState, "isAutoscrollTrackPointsListOn")}
         >
           Auto-scroll track points list to current track points
+        </Checkbox>
+        <h4>Straight Track Overlay</h4>
+        <Checkbox id="straightTrackOverlay-isOn" checkedState={pickState(straightTrackOverlayOptionsState, "isOn")}>
+          Show straight track overlay
         </Checkbox>
       </CheckboxListContainer>
     </ViewOptionsDialogContainer>
