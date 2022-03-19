@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { Track, Tracks, TrackPoint } from "../track-models";
 import styled, { css } from "styled-components";
@@ -7,10 +7,11 @@ import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
-import { SetState, UseState } from "../common-components/UseState";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
-import { StraightTracksOverlay } from "./StraightTracksOverlay";
-import { pickState } from "../common-components/pickState";
+import { StraightTracksOverlay as StraightTracksOverlayOriginal } from "./StraightTracksOverlay";
+import { useMemoState, usePickedState, UseState, SetState } from "../common-components/state-utils";
+
+const StraightTracksOverlay = memo(StraightTracksOverlayOriginal);
 
 interface TrackPlayerProps {
   initialTrack: Track;
@@ -23,8 +24,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
-  const viewOptionsState = useState(DefaultViewOptions);
-  const [viewOptions, setViewOptions] = viewOptionsState;
+  const viewOptionsState = useMemoState(DefaultViewOptions);
+  const [viewOptions] = viewOptionsState;
+
   const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
 
   const trackPoints = track.trackPoints;
@@ -115,7 +117,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 viewOptions={viewOptions.mapViewOptions}
               />
             </LiveMapContainer>
-            <StraightTracksOverlay optionsState={pickState(viewOptionsState, "straightTrackOverlayOptions")} />
+            <StraightTracksOverlay optionsState={usePickedState(viewOptionsState, "straightTrackOverlayOptions")} />
           </VideoAndMapContainer>
         </PlayerMapCol>
       </TrackPlayerContainer>

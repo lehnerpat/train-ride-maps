@@ -1,7 +1,6 @@
-import { boolean } from "fp-ts";
-import { createContext, FC, RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, FC, RefObject, useMemo, useRef, useState } from "react";
 import styled, { css } from "styled-components";
-import { UseState } from "../common-components/UseState";
+import { UseState } from "../common-components/state-utils";
 import { StraightTrackOverlayOptions } from "./ViewOptions";
 
 interface PercentagePoint {

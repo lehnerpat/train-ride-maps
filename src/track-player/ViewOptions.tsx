@@ -1,8 +1,7 @@
 import { FC } from "react";
 import styled from "styled-components";
 import { Checkbox } from "../common-components/Checkbox";
-import { pickState } from "../common-components/pickState";
-import { UseState } from "../common-components/UseState";
+import { UseState, pickState } from "../common-components/state-utils";
 
 export interface MapViewOptions {
   isAutopanOn: boolean;

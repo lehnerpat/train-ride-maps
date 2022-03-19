@@ -1,17 +1,16 @@
 import { LatLngLiteral, Map as LeafletMap } from "leaflet";
 import { FC, useEffect, useRef, useState } from "react";
-import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
+import { Pane, TileLayer, useMapEvent } from "react-leaflet";
 import styled from "styled-components";
-import { UseState } from "../common-components/UseState";
 import { TrackPoint } from "../track-models";
 import useResizeObserver from "@react-hook/resize-observer";
-import { RFeature, RLayerTile, RLayerTileWebGL, RLayerVector, RMap, ROSM, ROSMWebGL } from "rlayers";
+import { RFeature, RLayerTileWebGL, RLayerVector, RMap, ROSMWebGL } from "rlayers";
 import { fromLonLat } from "ol/proj";
 import { Coordinate } from "ol/coordinate";
 import { RAttribution, RZoom } from "rlayers/control";
 import { LineString, MultiPoint, Point } from "ol/geom";
 import { RCircle, RRegularShape, RStroke, RStyle } from "rlayers/style";
-import RImage from "rlayers/style/RImage";
+import { UseState } from "../common-components/state-utils";
 
 function c(lll: LatLngLiteral): Coordinate {
   return fromLonLat([lll.lng, lll.lat]);
