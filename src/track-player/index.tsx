@@ -10,6 +10,7 @@ import { LoadSaveFile } from "../LoadSaveFile";
 import { SetState, UseState } from "../common-components/UseState";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightTracksOverlay } from "./StraightTracksOverlay";
+import { pickState } from "../common-components/pickState";
 
 interface TrackPlayerProps {
   initialTrack: Track;
@@ -22,7 +23,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
-  const [viewOptions, setViewOptions] = useState(DefaultViewOptions);
+  const viewOptionsState = useState(DefaultViewOptions);
+  const [viewOptions, setViewOptions] = viewOptionsState;
   const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
 
   const trackPoints = track.trackPoints;
@@ -77,7 +79,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           Map options
         </TopButton>
       </TopButtonPanel>
-      {isViewOptionsDialogOpen && <ViewOptionsDialog viewOptionsState={[viewOptions, setViewOptions]} />}
+      {isViewOptionsDialogOpen && (
+        <ViewOptionsDialog viewOptionsState={viewOptionsState} onCloseDialog={() => setViewOptionsDialogOpen(false)} />
+      )}
       <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
@@ -99,7 +103,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                   setPlayedSeconds(ev.playedSeconds);
                 }}
               />
-              <StraightTracksOverlay options={viewOptions.straightTrackOverlayOptions} />
             </VideoPlayerContainer>
             <LiveMapContainer showMapAsOverlay={showMapAsOverlay} mapOverlayPosition={viewOptions.mapOverlayPosition}>
               <LiveMap
@@ -112,6 +115,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 viewOptions={viewOptions.mapViewOptions}
               />
             </LiveMapContainer>
+            <StraightTracksOverlay optionsState={pickState(viewOptionsState, "straightTrackOverlayOptions")} />
           </VideoAndMapContainer>
         </PlayerMapCol>
       </TrackPlayerContainer>
@@ -129,12 +133,12 @@ interface VideoAndMapContainerProps {
   showMapAsOverlay: boolean;
 }
 const VideoAndMapContainer = styled.div<VideoAndMapContainerProps>`
+  position: relative;
   ${(props) =>
     !!props.showMapAsOverlay &&
     css`
       aspect-ratio: 16/9;
       max-height: 90vh;
-      position: relative;
       margin: 0 auto;
     `}
 `;

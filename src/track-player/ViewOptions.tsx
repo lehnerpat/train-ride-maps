@@ -17,6 +17,7 @@ export interface TrackPointsEditorOptions {
 
 export interface StraightTrackOverlayOptions {
   isOn: boolean;
+  isEditing: boolean;
   line1LeftPercent: number;
   line1RotateDeg: number;
   line2LeftPercent: number;
@@ -43,6 +44,7 @@ export const DefaultViewOptions: ViewOptions = {
   },
   straightTrackOverlayOptions: {
     isOn: false,
+    isEditing: false,
     line1LeftPercent: 30,
     line1RotateDeg: 5,
     line2LeftPercent: 40,
@@ -52,8 +54,9 @@ export const DefaultViewOptions: ViewOptions = {
 
 interface ViewOptionsDialogProps {
   viewOptionsState: UseState<ViewOptions>;
+  onCloseDialog: () => void;
 }
-export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState }) => {
+export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState, onCloseDialog }) => {
   const mapOverlayPositionState = pickState(viewOptionsState, "mapOverlayPosition");
   const mapViewOptionsState = pickState(viewOptionsState, "mapViewOptions");
   const trackPointsEditorOptionsState = pickState(viewOptionsState, "trackPointsEditorOptions");
@@ -100,6 +103,15 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
         <Checkbox id="straightTrackOverlay-isOn" checkedState={pickState(straightTrackOverlayOptionsState, "isOn")}>
           Show straight track overlay
         </Checkbox>
+        <button
+          disabled={!straightTrackOverlayOptionsState[0].isOn}
+          onClick={() => {
+            straightTrackOverlayOptionsState[1]((prev) => ({ ...prev, isEditing: true }));
+            onCloseDialog();
+          }}
+        >
+          Edit overlay lines
+        </button>
       </CheckboxListContainer>
     </ViewOptionsDialogContainer>
   );
