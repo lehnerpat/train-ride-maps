@@ -1,4 +1,4 @@
-import { createContext, FC, RefObject, useMemo, useRef, useState } from "react";
+import { createContext, FC, ReactNode, RefObject, useMemo, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { UseState } from "../common-components/state-utils";
 import { StraightTrackOverlayOptions } from "./ViewOptions";
@@ -19,20 +19,60 @@ interface StraightTracksOverlayProps {
 const EditingContext = createContext({ isEditing: false });
 
 export const StraightTracksOverlay: FC<StraightTracksOverlayProps> = ({ optionsState: [options, setOptions] }) => {
-  const line1State = useState<PercentageLine>({ from: { x: 30, y: 95 }, to: { x: 40, y: 5 } });
-  const line2State = useState<PercentageLine>({ from: { x: 50, y: 95 }, to: { x: 45, y: 5 } });
+  const line1State = useState<PercentageLine>({ from: { x: 30, y: 95 }, to: { x: 40, y: 50 } });
+  const line2State = useState<PercentageLine>({ from: { x: 50, y: 95 }, to: { x: 45, y: 50 } });
+  const lineColorState = useState("#40e811");
+  const lineOpacityState = useState(100);
+  const lineWidthState = useState(1);
+  const backgroundColorState = useState("#FFFFFF");
+  const backgroundOpacityState = useState(50);
 
   return !options.isOn ? null : (
     <EditingContext.Provider value={{ isEditing: options.isEditing }}>
       <StraightTracksOverlayContainer className="tracksoverlay" isEditing={options.isEditing}>
-        <OverlayArea line1State={line1State} line2State={line2State} />
-        {/* <div style={{ background: "gray" }}>Test</div> */}
+        <OverlayArea
+          line1State={line1State}
+          line2State={line2State}
+          backgroundColor={backgroundColorState[0]}
+          backgroundOpacity={backgroundOpacityState[0]}
+          lineColor={lineColorState[0]}
+          lineOpacity={lineOpacityState[0]}
+          lineWidth={lineWidthState[0]}
+        />
         {options.isEditing && (
-          <FinishEditingButton onClick={() => setOptions((prev) => ({ ...prev, isEditing: false }))}>
-            Finish
-            <br />
-            editing
-          </FinishEditingButton>
+          <>
+            <EditingControlsBoxContainer>
+              <EditingControlSpannedRow>
+                <SectionHeading style={{ marginTop: 0 }}>Line Coordinates</SectionHeading>
+              </EditingControlSpannedRow>
+              <EditingControlLeftCell>Line 1</EditingControlLeftCell>
+              <EditingControlLineCoords line={line1State[0]} />
+              <EditingControlLeftCell>Line 2</EditingControlLeftCell>
+              <EditingControlLineCoords line={line2State[0]} />
+              <EditingControlSpannedRow>
+                <SectionHeading>Line style:</SectionHeading>
+              </EditingControlSpannedRow>
+              <EditingControlColor label="Color:" valueState={lineColorState} />
+              <EditingControlRange label="Opacity:" valueState={lineOpacityState} min={0} max={100} valueSuffix="%" />
+              <EditingControlRange label="Width:" valueState={lineWidthState} min={1} max={10} valueSuffix="px" />
+              <EditingControlSpannedRow>
+                <SectionHeading>Overlay background (while editing)</SectionHeading>
+              </EditingControlSpannedRow>
+              <EditingControlColor label="Color:" valueState={backgroundColorState} />
+              <EditingControlRange
+                label="Opacity:"
+                valueState={backgroundOpacityState}
+                min={0}
+                max={100}
+                valueSuffix="%"
+              />
+            </EditingControlsBoxContainer>
+            <FinishEditingButton onClick={() => setOptions((prev) => ({ ...prev, isEditing: false }))}>
+              Finish
+              <br />
+              editing
+            </FinishEditingButton>
+          </>
         )}
       </StraightTracksOverlayContainer>
     </EditingContext.Provider>
@@ -95,12 +135,35 @@ function useMovableLineRef(svgRef: RefObject<SVGSVGElement>, lineState: UseState
   return { lineRef, fromPi, toPi };
 }
 
+function opacityPercentToAlphaHex(opacityPercent: number): string {
+  if (opacityPercent < 0 || opacityPercent > 100) throw Error(`Opacity ${opacityPercent} is out of range 0-100`);
+  const alphaByte = Math.round((opacityPercent * 255) / 100.0);
+  const alphaStr = alphaByte.toString(16);
+  return alphaStr.length === 1 ? "0" + alphaStr : alphaStr;
+}
+function makeHexAlphaColor(backgroundColor: string, backgroundOpacity: number) {
+  return backgroundColor + opacityPercentToAlphaHex(backgroundOpacity);
+}
+
 interface OverlayAreaProps {
   line1State: UseState<PercentageLine>;
   line2State: UseState<PercentageLine>;
+  backgroundColor: string;
+  backgroundOpacity: number;
+  lineColor: string;
+  lineOpacity: number;
+  lineWidth: number;
 }
 
-const OverlayArea: FC<OverlayAreaProps> = ({ line1State, line2State }) => {
+const OverlayArea: FC<OverlayAreaProps> = ({
+  line1State,
+  line2State,
+  backgroundColor,
+  backgroundOpacity,
+  lineColor,
+  lineOpacity,
+  lineWidth,
+}) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const movableLine1Ref = useMovableLineRef(svgRef, line1State);
   const movableLine2Ref = useMovableLineRef(svgRef, line2State);
@@ -108,6 +171,10 @@ const OverlayArea: FC<OverlayAreaProps> = ({ line1State, line2State }) => {
 
   const [line1] = line1State;
   const [line2] = line2State;
+
+  const backgroundColorCss = makeHexAlphaColor(backgroundColor, backgroundOpacity);
+  const lineColorCss = makeHexAlphaColor(lineColor, lineOpacity);
+
   return (
     <EditingContext.Consumer>
       {({ isEditing }) => (
@@ -118,9 +185,10 @@ const OverlayArea: FC<OverlayAreaProps> = ({ line1State, line2State }) => {
           onMouseUp={isEditing ? unmanaged.endDrag : undefined}
           onMouseLeave={isEditing ? unmanaged.endDrag : undefined}
           isEditing={isEditing}
+          style={{ background: backgroundColorCss }}
         >
-          <MovableOverlayLine line={line1} lineInfo={movableLine1Ref} color="purple" />
-          <MovableOverlayLine line={line2} lineInfo={movableLine2Ref} color="purple" />
+          <MovableOverlayLine line={line1} lineInfo={movableLine1Ref} color={lineColorCss} lineWidth={lineWidth} />
+          <MovableOverlayLine line={line2} lineInfo={movableLine2Ref} color={lineColorCss} lineWidth={lineWidth} />
         </OverlayAreaSvg>
       )}
     </EditingContext.Consumer>
@@ -163,11 +231,14 @@ function useOverlay(svgRef: RefObject<SVGSVGElement>, getPointInfos: () => Point
   return ref;
 }
 
-const MovableOverlayLine: FC<{ line: PercentageLine; lineInfo: MovableLineInfo; color: string }> = ({
-  line,
-  lineInfo,
-  color,
-}) => {
+interface MovableOverlayLineProps {
+  line: PercentageLine;
+  lineInfo: MovableLineInfo;
+  color: string;
+  lineWidth: number;
+}
+
+const MovableOverlayLine: FC<MovableOverlayLineProps> = ({ line, lineInfo, color, lineWidth }) => {
   return (
     <EditingContext.Consumer>
       {({ isEditing }) => (
@@ -178,6 +249,7 @@ const MovableOverlayLine: FC<{ line: PercentageLine; lineInfo: MovableLineInfo; 
             x2={`${line.to.x}%`}
             y2={`${line.to.y}%`}
             stroke={color}
+            strokeWidth={lineWidth}
             ref={lineInfo.lineRef}
           />
 
@@ -186,8 +258,8 @@ const MovableOverlayLine: FC<{ line: PercentageLine; lineInfo: MovableLineInfo; 
               <DragHandleEllipse
                 cx={`${line.from.x}%`}
                 cy={`${line.from.y}%`}
-                rx="5"
-                ry="5"
+                rx={lineWidth + 5}
+                ry={lineWidth + 5}
                 fill={color}
                 className="draggable"
                 ref={lineInfo.fromPi.ref}
@@ -195,8 +267,8 @@ const MovableOverlayLine: FC<{ line: PercentageLine; lineInfo: MovableLineInfo; 
               <DragHandleEllipse
                 cx={`${line.to.x}%`}
                 cy={`${line.to.y}%`}
-                rx="5"
-                ry="5"
+                rx={lineWidth + 5}
+                ry={lineWidth + 5}
                 fill={color}
                 className="draggable"
                 ref={lineInfo.toPi.ref}
@@ -224,7 +296,6 @@ interface Point {
 }
 
 const DragHandleEllipse = styled.ellipse`
-  pointer-events: initial;
   cursor: move;
 `;
 const StraightTracksOverlayContainer = styled.div<{ isEditing: boolean }>`
@@ -247,7 +318,7 @@ const OverlayAreaSvg = styled.svg<{ isEditing: boolean }>`
   ${(props) =>
     props.isEditing &&
     css`
-      background: rgba(255, 255, 255, 0.5);
+      /* background: rgba(255, 255, 255, 0.5); */
       /* pointer-events: initial; */
     `}
 `;
@@ -256,4 +327,107 @@ const FinishEditingButton = styled.button`
   position: absolute;
   top: 0;
   right: 0;
+`;
+
+const EditingControlsBoxContainer = styled.div`
+  margin: 0 auto;
+  width: fit-content;
+  max-width: 100%;
+  padding: 1em;
+  background: #333;
+  border: 1px solid #444;
+  border-top: none;
+  display: grid;
+  grid-template-columns: [left] auto [mid] auto auto [right];
+`;
+
+const EditingControlSpannedRow = styled.div`
+  grid-column: left / right;
+`;
+const EditingControlLeftCell = styled.div`
+  grid-column: 1;
+`;
+const EditingControlMidCell = styled.div`
+  grid-column: 2;
+  text-align: center;
+`;
+const EditingControlRightCell = styled.div`
+  grid-column: 3;
+`;
+
+const EditingControlRow: FC<{ left: ReactNode; mid: ReactNode; right: ReactNode }> = ({ left, mid, right }) => (
+  <>
+    <EditingControlLeftCell>{left}</EditingControlLeftCell>
+    <EditingControlMidCell>{mid}</EditingControlMidCell>
+    <EditingControlRightCell>{right}</EditingControlRightCell>
+  </>
+);
+
+const EditingControlColor: FC<{ label: string; valueState: UseState<string> }> = ({
+  label,
+  valueState: [value, setValue],
+}) => (
+  <EditingControlRow
+    left={label}
+    mid={<input type="color" value={value} onChange={(e) => setValue(e.target.value)} />}
+    right={value}
+  />
+);
+
+const EditingControlRange: FC<{
+  label: string;
+  valueState: UseState<number>;
+  min?: number;
+  max?: number;
+  step?: number;
+  valueSuffix?: string;
+}> = ({ label, valueState: [value, setValue], min, max, step, valueSuffix }) => (
+  <EditingControlRow
+    left={label}
+    mid={
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => setValue(Number.parseFloat(e.target.value))}
+      />
+    }
+    right={`${value}${valueSuffix ?? ""}`}
+  />
+);
+
+const EditingControlLineCoords: FC<{ line: PercentageLine }> = ({ line }) => (
+  <EditingControlLineCoordsContainer>
+    <EditingControlLineCoordsCell>
+      <DisplayPercentagePoint point={line.from} />
+    </EditingControlLineCoordsCell>
+    <EditingControlLineCoordsCell>→</EditingControlLineCoordsCell>
+    <EditingControlLineCoordsCell>
+      <DisplayPercentagePoint point={line.to} />
+    </EditingControlLineCoordsCell>
+  </EditingControlLineCoordsContainer>
+);
+const EditingControlLineCoordsContainer = styled.div`
+  grid-column: mid / right;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+`;
+const EditingControlLineCoordsCell = styled.div`
+  text-align: center;
+  padding: 0 2px;
+`;
+
+function formatPercentagePointNumber(n: number): string {
+  return n.toFixed(1) + "%";
+}
+const DisplayPercentagePoint: FC<{ point: PercentagePoint }> = ({ point: { x, y } }) => (
+  <>
+    ({formatPercentagePointNumber(x)},{formatPercentagePointNumber(y)})
+  </>
+);
+
+const SectionHeading = styled.h4`
+  margin: 0.8em 0 0.4em;
 `;
