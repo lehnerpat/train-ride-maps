@@ -165,7 +165,7 @@ const OverlayArea: FC<OverlayAreaProps> = ({ settingsState }) => {
           onMouseUp={isEditing ? unmanaged.endDrag : undefined}
           onMouseLeave={isEditing ? unmanaged.endDrag : undefined}
           isEditing={isEditing}
-          style={{ background: backgroundColorCss }}
+          style={isEditing ? { background: backgroundColorCss } : {}}
         >
           <MovableOverlayLine line={line1} lineInfo={movableLine1Ref} color={lineColorCss} lineWidth={lineWidth} />
           <MovableOverlayLine line={line2} lineInfo={movableLine2Ref} color={lineColorCss} lineWidth={lineWidth} />
@@ -298,8 +298,7 @@ const OverlayAreaSvg = styled.svg<{ isEditing: boolean }>`
   ${(props) =>
     props.isEditing &&
     css`
-      /* background: rgba(255, 255, 255, 0.5); */
-      /* pointer-events: initial; */
+      pointer-events: initial;
     `}
 `;
 
