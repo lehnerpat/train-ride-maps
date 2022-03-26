@@ -1,7 +1,7 @@
 import { createContext, FC, ReactNode, RefObject, useMemo, useRef, useState } from "react";
 import styled, { css } from "styled-components";
-import { UseState } from "../common-components/state-utils";
-import { StraightTrackOverlayOptions } from "./ViewOptions";
+import { UseState } from "../../common-components/state-utils";
+import { StraightRailsOverlayViewOptions } from "../ViewOptions";
 
 interface PercentagePoint {
   x: number;
@@ -12,13 +12,13 @@ interface PercentageLine {
   to: PercentagePoint;
 }
 
-interface StraightTracksOverlayProps {
-  optionsState: UseState<StraightTrackOverlayOptions>;
+interface StraightRailsOverlayProps {
+  optionsState: UseState<StraightRailsOverlayViewOptions>;
 }
 
 const EditingContext = createContext({ isEditing: false });
 
-export const StraightTracksOverlay: FC<StraightTracksOverlayProps> = ({ optionsState: [options, setOptions] }) => {
+export const StraightRailsOverlay: FC<StraightRailsOverlayProps> = ({ optionsState: [options, setOptions] }) => {
   const line1State = useState<PercentageLine>({ from: { x: 30, y: 95 }, to: { x: 40, y: 50 } });
   const line2State = useState<PercentageLine>({ from: { x: 50, y: 95 }, to: { x: 45, y: 50 } });
   const lineColorState = useState("#40e811");

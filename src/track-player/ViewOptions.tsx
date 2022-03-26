@@ -14,20 +14,16 @@ export interface TrackPointsEditorOptions {
   isAutoscrollTrackPointsListOn: boolean;
 }
 
-export interface StraightTrackOverlayOptions {
+export interface StraightRailsOverlayViewOptions {
   isOn: boolean;
   isEditing: boolean;
-  line1LeftPercent: number;
-  line1RotateDeg: number;
-  line2LeftPercent: number;
-  line2RotateDeg: number;
 }
 
 export interface ViewOptions {
   mapOverlayPosition: "top-left" | "top-right";
   mapViewOptions: MapViewOptions;
   trackPointsEditorOptions: TrackPointsEditorOptions;
-  straightTrackOverlayOptions: StraightTrackOverlayOptions;
+  straightRailsOverlay: StraightRailsOverlayViewOptions;
 }
 
 export const DefaultViewOptions: ViewOptions = {
@@ -41,13 +37,9 @@ export const DefaultViewOptions: ViewOptions = {
   trackPointsEditorOptions: {
     isAutoscrollTrackPointsListOn: true,
   },
-  straightTrackOverlayOptions: {
+  straightRailsOverlay: {
     isOn: false,
     isEditing: false,
-    line1LeftPercent: 30,
-    line1RotateDeg: 5,
-    line2LeftPercent: 40,
-    line2RotateDeg: -5,
   },
 };
 
@@ -59,7 +51,7 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
   const mapOverlayPositionState = pickState(viewOptionsState, "mapOverlayPosition");
   const mapViewOptionsState = pickState(viewOptionsState, "mapViewOptions");
   const trackPointsEditorOptionsState = pickState(viewOptionsState, "trackPointsEditorOptions");
-  const straightTrackOverlayOptionsState = pickState(viewOptionsState, "straightTrackOverlayOptions");
+  const straightRailsOverlayViewOptionsState = pickState(viewOptionsState, "straightRailsOverlay");
 
   return (
     <ViewOptionsDialogContainer>
@@ -98,14 +90,14 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
         >
           Auto-scroll track points list to current track points
         </Checkbox>
-        <h4>Straight Track Overlay</h4>
-        <Checkbox id="straightTrackOverlay-isOn" checkedState={pickState(straightTrackOverlayOptionsState, "isOn")}>
-          Show straight track overlay
+        <h4>Straight Rail Overlay</h4>
+        <Checkbox id="straightRailsOverlay-isOn" checkedState={pickState(straightRailsOverlayViewOptionsState, "isOn")}>
+          Show straight rail overlay
         </Checkbox>
         <button
-          disabled={!straightTrackOverlayOptionsState[0].isOn}
+          disabled={!straightRailsOverlayViewOptionsState[0].isOn}
           onClick={() => {
-            straightTrackOverlayOptionsState[1]((prev) => ({ ...prev, isEditing: true }));
+            straightRailsOverlayViewOptionsState[1]((prev) => ({ ...prev, isEditing: true }));
             onCloseDialog();
           }}
         >

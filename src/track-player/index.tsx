@@ -8,10 +8,10 @@ import { LiveMap } from "./LiveMap";
 import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
 import { LoadSaveFile } from "../LoadSaveFile";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
-import { StraightTracksOverlay as StraightTracksOverlayOriginal } from "./StraightTracksOverlay";
+import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common-components/state-utils";
 
-const StraightTracksOverlay = memo(StraightTracksOverlayOriginal);
+const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
 interface TrackPlayerProps {
   initialTrack: Track;
@@ -117,7 +117,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 viewOptions={viewOptions.mapViewOptions}
               />
             </LiveMapContainer>
-            <StraightTracksOverlay optionsState={usePickedState(viewOptionsState, "straightTrackOverlayOptions")} />
+            <StraightRailsOverlay optionsState={usePickedState(viewOptionsState, "straightRailsOverlay")} />
           </VideoAndMapContainer>
         </PlayerMapCol>
       </TrackPlayerContainer>
