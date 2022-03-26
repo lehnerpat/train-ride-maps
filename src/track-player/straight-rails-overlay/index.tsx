@@ -1,16 +1,13 @@
-import { createContext, FC, ReactNode, RefObject, useMemo, useRef, useState } from "react";
+import { createContext, FC, ReactNode, RefObject, useMemo, useRef } from "react";
 import styled, { css } from "styled-components";
-import { UseState } from "../../common-components/state-utils";
+import { pickState, usePickedState, UseState } from "../../common-components/state-utils";
 import { StraightRailsOverlayViewOptions } from "../ViewOptions";
-
-interface PercentagePoint {
-  x: number;
-  y: number;
-}
-interface PercentageLine {
-  from: PercentagePoint;
-  to: PercentagePoint;
-}
+import {
+  PercentageLine,
+  PercentagePoint,
+  StraightRailsOverlaySettings,
+  useStraightRailsOverlaySettingsState,
+} from "./StraightRailsOverlaySettings";
 
 interface StraightRailsOverlayProps {
   optionsState: UseState<StraightRailsOverlayViewOptions>;
@@ -19,63 +16,55 @@ interface StraightRailsOverlayProps {
 const EditingContext = createContext({ isEditing: false });
 
 export const StraightRailsOverlay: FC<StraightRailsOverlayProps> = ({ optionsState: [options, setOptions] }) => {
-  const line1State = useState<PercentageLine>({ from: { x: 30, y: 95 }, to: { x: 40, y: 50 } });
-  const line2State = useState<PercentageLine>({ from: { x: 50, y: 95 }, to: { x: 45, y: 50 } });
-  const lineColorState = useState("#40e811");
-  const lineOpacityState = useState(100);
-  const lineWidthState = useState(1);
-  const backgroundColorState = useState("#FFFFFF");
-  const backgroundOpacityState = useState(50);
+  const settingsState = useStraightRailsOverlaySettingsState();
 
   return !options.isOn ? null : (
     <EditingContext.Provider value={{ isEditing: options.isEditing }}>
       <StraightTracksOverlayContainer className="tracksoverlay" isEditing={options.isEditing}>
-        <OverlayArea
-          line1State={line1State}
-          line2State={line2State}
-          backgroundColor={backgroundColorState[0]}
-          backgroundOpacity={backgroundOpacityState[0]}
-          lineColor={lineColorState[0]}
-          lineOpacity={lineOpacityState[0]}
-          lineWidth={lineWidthState[0]}
-        />
+        <OverlayArea settingsState={settingsState} />
         {options.isEditing && (
           <>
-            <EditingControlsBoxContainer>
-              <EditingControlSpannedRow>
-                <SectionHeading style={{ marginTop: 0 }}>Line Coordinates</SectionHeading>
-              </EditingControlSpannedRow>
-              <EditingControlLeftCell>Line 1</EditingControlLeftCell>
-              <EditingControlLineCoords line={line1State[0]} />
-              <EditingControlLeftCell>Line 2</EditingControlLeftCell>
-              <EditingControlLineCoords line={line2State[0]} />
-              <EditingControlSpannedRow>
-                <SectionHeading>Line style:</SectionHeading>
-              </EditingControlSpannedRow>
-              <EditingControlColor label="Color:" valueState={lineColorState} />
-              <EditingControlRange label="Opacity:" valueState={lineOpacityState} min={0} max={100} valueSuffix="%" />
-              <EditingControlRange label="Width:" valueState={lineWidthState} min={1} max={10} valueSuffix="px" />
-              <EditingControlSpannedRow>
-                <SectionHeading>Overlay background (while editing)</SectionHeading>
-              </EditingControlSpannedRow>
-              <EditingControlColor label="Color:" valueState={backgroundColorState} />
-              <EditingControlRange
-                label="Opacity:"
-                valueState={backgroundOpacityState}
-                min={0}
-                max={100}
-                valueSuffix="%"
-              />
-            </EditingControlsBoxContainer>
-            <FinishEditingButton onClick={() => setOptions((prev) => ({ ...prev, isEditing: false }))}>
-              Finish
-              <br />
-              editing
-            </FinishEditingButton>
+            <EditingControls settingsState={settingsState} />
+            <FinishEditingButton onClick={() => setOptions((prev) => ({ ...prev, isEditing: false }))} />
           </>
         )}
       </StraightTracksOverlayContainer>
     </EditingContext.Provider>
+  );
+};
+
+interface EditingControlsProps {
+  settingsState: UseState<StraightRailsOverlaySettings>;
+}
+const EditingControls: FC<EditingControlsProps> = ({ settingsState }) => {
+  const [settings] = settingsState;
+  const lineColorState = pickState(settingsState, "lineColorRgbHex");
+  const lineOpacityState = pickState(settingsState, "lineOpacityPercent");
+  const lineWidthState = pickState(settingsState, "lineWidthPx");
+  const backgroundColorState = pickState(settingsState, "backgroundColorRgbHex");
+  const backgroundOpacityState = pickState(settingsState, "backgroundOpacityPercent");
+
+  return (
+    <EditingControlsBoxContainer>
+      <EditingControlSpannedRow>
+        <SectionHeading style={{ marginTop: 0 }}>Line Coordinates</SectionHeading>
+      </EditingControlSpannedRow>
+      <EditingControlLeftCell>Line 1</EditingControlLeftCell>
+      <EditingControlLineCoords line={settings.line1} />
+      <EditingControlLeftCell>Line 2</EditingControlLeftCell>
+      <EditingControlLineCoords line={settings.line2} />
+      <EditingControlSpannedRow>
+        <SectionHeading>Line style:</SectionHeading>
+      </EditingControlSpannedRow>
+      <EditingControlColor label="Color:" valueState={lineColorState} />
+      <EditingControlRange label="Opacity:" valueState={lineOpacityState} min={0} max={100} valueSuffix="%" />
+      <EditingControlRange label="Width:" valueState={lineWidthState} min={1} max={10} valueSuffix="px" />
+      <EditingControlSpannedRow>
+        <SectionHeading>Overlay background (while editing)</SectionHeading>
+      </EditingControlSpannedRow>
+      <EditingControlColor label="Color:" valueState={backgroundColorState} />
+      <EditingControlRange label="Opacity:" valueState={backgroundOpacityState} min={0} max={100} valueSuffix="%" />
+    </EditingControlsBoxContainer>
   );
 };
 
@@ -146,34 +135,25 @@ function makeHexAlphaColor(backgroundColor: string, backgroundOpacity: number) {
 }
 
 interface OverlayAreaProps {
-  line1State: UseState<PercentageLine>;
-  line2State: UseState<PercentageLine>;
-  backgroundColor: string;
-  backgroundOpacity: number;
-  lineColor: string;
-  lineOpacity: number;
-  lineWidth: number;
+  settingsState: UseState<StraightRailsOverlaySettings>;
 }
 
-const OverlayArea: FC<OverlayAreaProps> = ({
-  line1State,
-  line2State,
-  backgroundColor,
-  backgroundOpacity,
-  lineColor,
-  lineOpacity,
-  lineWidth,
-}) => {
+const OverlayArea: FC<OverlayAreaProps> = ({ settingsState }) => {
+  const line1State = usePickedState(settingsState, "line1");
+  const line2State = usePickedState(settingsState, "line2");
+
   const svgRef = useRef<SVGSVGElement>(null);
   const movableLine1Ref = useMovableLineRef(svgRef, line1State);
   const movableLine2Ref = useMovableLineRef(svgRef, line2State);
   const unmanaged = useOverlay(svgRef, () => [movableLine1Ref, movableLine2Ref].flatMap((r) => [r.fromPi, r.toPi]));
 
+  const [settings] = settingsState;
   const [line1] = line1State;
   const [line2] = line2State;
 
-  const backgroundColorCss = makeHexAlphaColor(backgroundColor, backgroundOpacity);
-  const lineColorCss = makeHexAlphaColor(lineColor, lineOpacity);
+  const backgroundColorCss = makeHexAlphaColor(settings.backgroundColorRgbHex, settings.backgroundOpacityPercent);
+  const lineColorCss = makeHexAlphaColor(settings.lineColorRgbHex, settings.lineOpacityPercent);
+  const lineWidth = settings.lineWidthPx;
 
   return (
     <EditingContext.Consumer>
@@ -323,7 +303,14 @@ const OverlayAreaSvg = styled.svg<{ isEditing: boolean }>`
     `}
 `;
 
-const FinishEditingButton = styled.button`
+const FinishEditingButton: FC<{ onClick: React.MouseEventHandler<HTMLButtonElement> }> = ({ onClick }) => (
+  <FinishEditingButtonBtn onClick={onClick}>
+    Finish
+    <br />
+    editing
+  </FinishEditingButtonBtn>
+);
+const FinishEditingButtonBtn = styled.button`
   position: absolute;
   top: 0;
   right: 0;
