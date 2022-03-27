@@ -33,8 +33,9 @@
     "wouter": "^2.8.0-alpha.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "update-build-info": "echo 'export const gitCommitSha = \"'$(git rev-parse HEAD)'\";' > src/build-info.ts",
+    "start": "yarn update-build-info && react-scripts start",
+    "build": "yarn update-build-info && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "postinstall": "node fix-rlayers.mjs"

@@ -10,6 +10,7 @@ import { TrackLocalStorageService } from "./common-components/TrackLocalStorageS
 import { IncludedDataMap } from "./included-data";
 import { Panel } from "./common-components/Panel";
 import { OlTest } from "./OlTest";
+import { gitCommitSha } from "./build-info";
 
 function App() {
   return (
@@ -26,6 +27,10 @@ function App() {
           <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
         </Switch>
         <ReturnLinkContainer>
+          <span>
+            Built from commit <code>{gitCommitSha}</code>
+          </span>{" "}
+          |{" "}
           <GithubLink href="https://github.com/lehnerpat/train-ride-maps" target={"_blank"} rel="noopener noreferrer">
             Source code on GitHub
           </GithubLink>
