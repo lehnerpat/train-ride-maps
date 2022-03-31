@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { MapContainer, Pane, Polyline, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Pane, Polyline, TileLayer } from "react-leaflet";
 import styled from "styled-components";
 import { OsmNode, parseOsmXml } from "./parse-osm-xml";
 
@@ -7,11 +7,14 @@ export const OsmTest: FC = () => {
   const [osmNodes, setOsmNodes] = useState<OsmNode[]>();
 
   useEffect(() => {
-    osmNodesPromise.then((nodes) => setOsmNodes(nodes));
-  });
+    osmNodesPromise.then((nodes) => {
+      console.log("initing nodes");
+      return setOsmNodes(nodes);
+    });
+  }, []);
 
   return (
-    <div style={{ aspectRatio: "16/9", maxHeight: "100vh", margin: "0 auto" }}>
+    <div style={{ aspectRatio: "16/9", maxHeight: "100vh", margin: "0 auto", position: "relative" }}>
       <MapContainer center={{ lat: 35.5282457, lng: 135.271744 }} zoom={17} style={{ height: "100%", width: "100%" }}>
         <BaseTileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -31,9 +34,23 @@ export const OsmTest: FC = () => {
           detectRetina
         />
         <AllTrackPointsPane name="all-trackPoints-pane">
-          {!!osmNodes && <Polyline color="purple" positions={osmNodes.map((n) => n.coord)} />}
+          {!!osmNodes && (
+            <>
+              <Polyline color="purple" positions={osmNodes.map((n) => n.coord)} />
+              <Marker position={osmNodes[0].coord} />
+            </>
+          )}
         </AllTrackPointsPane>
       </MapContainer>
+      <button
+        style={{ position: "absolute", top: 0, right: 0, zIndex: 10000 }}
+        onClick={() => {
+          console.log("reversing nodes");
+          setOsmNodes((nodes) => [...(nodes ?? [])].reverse());
+        }}
+      >
+        Reverse path (first={osmNodes && osmNodes[0].id})
+      </button>
     </div>
   );
 };
@@ -52,7 +69,7 @@ const AllTrackPointsPane = styled(Pane)`
 `;
 
 const osmNodesPromise = (async () => {
-  const r = await fetch("/miyamai_line.osm");
+  const r = await fetch("/miyamai_line_miyafuku_line.osm");
   const xml = await r.text();
   console.log("got xml, length", xml.length);
   const osmNodes = parseOsmXml(xml);
