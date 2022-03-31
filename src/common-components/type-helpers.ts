@@ -4,3 +4,7 @@ export function isFunction(x: any): x is Function {
 export function isString(x: any): x is string {
   return typeof x === "string";
 }
+
+export function isUndefined(x: any): x is undefined {
+  return typeof x === "undefined";
+}
