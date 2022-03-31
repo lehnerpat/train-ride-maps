@@ -1,0 +1,2185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="Overpass API 0.7.57 93a4d346">
+  <note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>
+  <meta osm_base="2022-03-27T18:31:25Z" />
+
+  <node id="359805463" lat="35.4668700" lon="135.2862440" />
+  <node id="359805465" lat="35.4679520" lon="135.2861610" />
+  <node id="359805467" lat="35.4695302" lon="135.2860184">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="359805469" lat="35.4708900" lon="135.2859110" />
+  <node id="359805471" lat="35.4643560" lon="135.2869710" />
+  <node id="359805473" lat="35.4653520" lon="135.2866240" />
+  <node id="359805475" lat="35.4660530" lon="135.2863960" />
+  <node id="359805477" lat="35.4664390" lon="135.2862820" />
+  <node id="359805479" lat="35.4611330" lon="135.2876760" />
+  <node id="359805481" lat="35.4618100" lon="135.2877740" />
+  <node id="359805483" lat="35.4622110" lon="135.2877440" />
+  <node id="359805485" lat="35.4628310" lon="135.2875540" />
+  <node id="359805486" lat="35.4590600" lon="135.2871680" />
+  <node id="359805489" lat="35.4594150" lon="135.2873420" />
+  <node id="359805491" lat="35.4599600" lon="135.2874930" />
+  <node id="359805493" lat="35.4608213" lon="135.2876222" />
+  <node id="359805516" lat="35.4735366" lon="135.2853726" />
+  <node id="359805518" lat="35.4720980" lon="135.2856920" />
+  <node id="359805524" lat="35.4539904" lon="135.2844589" />
+  <node id="359805526" lat="35.4543357" lon="135.2842740" />
+  <node id="359805528" lat="35.4532073" lon="135.2851233" />
+  <node id="359805530" lat="35.4533873" lon="135.2849235" />
+  <node id="359805532" lat="35.4523130" lon="135.2861330" />
+  <node id="359805533" lat="35.4528140" lon="135.2855847" />
+  <node id="359805535" lat="35.4519280" lon="135.2863730" />
+  <node id="359805538" lat="35.4521570" lon="135.2862530" />
+  <node id="359805539" lat="35.4508740" lon="135.2865490" />
+  <node id="359805541" lat="35.4516930" lon="135.2864250" />
+  <node id="359805543" lat="35.4489570" lon="135.2868290" />
+  <node id="359805545" lat="35.4491660" lon="135.2867860" />
+  <node id="359805547" lat="35.4483070" lon="135.2870720" />
+  <node id="359805549" lat="35.4485640" lon="135.2869580" />
+  <node id="359805551" lat="35.4478890" lon="135.2874170" />
+  <node id="359805553" lat="35.4481940" lon="135.2871400" />
+  <node id="359805555" lat="35.4586345" lon="135.2868698" />
+  <node id="359805557" lat="35.4584591" lon="135.2867470" />
+  <node id="359805559" lat="35.4583208" lon="135.2865984" />
+  <node id="359805561" lat="35.4581210" lon="135.2863376" />
+  <node id="359805563" lat="35.4575280" lon="135.2854180" />
+  <node id="359805565" lat="35.4571880" lon="135.2849490" />
+  <node id="359805566" lat="35.4567870" lon="135.2845480" />
+  <node id="359805568" lat="35.4565520" lon="135.2843820" />
+  <node id="359805572" lat="35.4561327" lon="135.2841774" />
+  <node id="359805575" lat="35.4558187" lon="135.2840783" />
+  <node id="359805579" lat="35.4556355" lon="135.2840313" />
+  <node id="359805582" lat="35.4554404" lon="135.2840143" />
+  <node id="359805585" lat="35.4553044" lon="135.2840093" />
+  <node id="359805587" lat="35.4550986" lon="135.2840243" />
+  <node id="359805589" lat="35.4548138" lon="135.2840891" />
+  <node id="359805591" lat="35.4544464" lon="135.2842198" />
+  <node id="359805628" lat="35.4465830" lon="135.2897480" />
+  <node id="359805629" lat="35.4472324" lon="135.2883422" />
+  <node id="359805631" lat="35.4470349" lon="135.2887842" />
+  <node id="359805634" lat="35.4474460" lon="135.2878830" />
+  <node id="359805636" lat="35.4472870" lon="135.2881260" />
+  <node id="359805858" lat="35.4349712" lon="135.3291243" />
+  <node id="359805860" lat="35.4367708" lon="135.3295248" />
+  <node id="359805908" lat="35.4356800" lon="135.2955640" />
+  <node id="359805910" lat="35.4352216" lon="135.2963146" />
+  <node id="359805914" lat="35.4366020" lon="135.2941260" />
+  <node id="359805945" lat="35.4360000" lon="135.2950240" />
+  <node id="359805982" lat="35.4377010" lon="135.2928660" />
+  <node id="359806024" lat="35.4372940" lon="135.2932860" />
+  <node id="359806057" lat="35.4382190" lon="135.2926030" />
+  <node id="359806059" lat="35.4380120" lon="135.2926640" />
+  <node id="359806060" lat="35.4391344" lon="135.2925590" />
+  <node id="359806062" lat="35.4385824" lon="135.2925210" />
+  <node id="359806089" lat="35.4408170" lon="135.2928747" />
+  <node id="359806105" lat="35.4400553" lon="135.2927394" />
+  <node id="359806107" lat="35.4420492" lon="135.2930582" />
+  <node id="359806109" lat="35.4415921" lon="135.2930131" />
+  <node id="359806111" lat="35.4426310" lon="135.2930440" />
+  <node id="359806113" lat="35.4423370" lon="135.2930730" />
+  <node id="359806115" lat="35.4427400" lon="135.2930170" />
+  <node id="359806117" lat="35.4430090" lon="135.2929510" />
+  <node id="359806119" lat="35.4433810" lon="135.2928380" />
+  <node id="359806121" lat="35.4435890" lon="135.2927720" />
+  <node id="359806122" lat="35.4438990" lon="135.2926360" />
+  <node id="359806124" lat="35.4439920" lon="135.2925810" />
+  <node id="359806126" lat="35.4443070" lon="135.2923940" />
+  <node id="359806128" lat="35.4445410" lon="135.2922340" />
+  <node id="359806130" lat="35.4448160" lon="135.2920110" />
+  <node id="359806132" lat="35.4452654" lon="135.2916081" />
+  <node id="359806134" lat="35.4455918" lon="135.2912544" />
+  <node id="359806136" lat="35.4396286" lon="135.3300067" />
+  <node id="359806138" lat="35.4392955" lon="135.3299643" />
+  <node id="359806142" lat="35.4370080" lon="135.3295725" />
+  <node id="359806144" lat="35.4334929" lon="135.3282440" />
+  <node id="359806146" lat="35.4337909" lon="135.3285269" />
+  <node id="359806148" lat="35.4340486" lon="135.3287293" />
+  <node id="359806149" lat="35.4344036" lon="135.3289087" />
+  <node id="359806151" lat="35.4322077" lon="135.3258023" />
+  <node id="359806153" lat="35.4327385" lon="135.3271384" />
+  <node id="359806155" lat="35.4329827" lon="135.3275733" />
+  <node id="359806157" lat="35.4332575" lon="135.3279702" />
+  <node id="359806159" lat="35.4305532" lon="135.3214327" />
+  <node id="359806161" lat="35.4306650" lon="135.3217620" />
+  <node id="359806163" lat="35.4308090" lon="135.3221560" />
+  <node id="359806165" lat="35.4312190" lon="135.3231800" />
+  <node id="359806167" lat="35.4304680" lon="135.3192340" />
+  <node id="359806169" lat="35.4304230" lon="135.3199840" />
+  <node id="359806171" lat="35.4304257" lon="135.3202602" />
+  <node id="359806175" lat="35.4304618" lon="135.3207924" />
+  <node id="359806177" lat="35.4313010" lon="135.3128410" />
+  <node id="359806178" lat="35.4315210" lon="135.3109660" />
+  <node id="359806180" lat="35.4305970" lon="135.3183040" />
+  <node id="359806182" lat="35.4310360" lon="135.3149070" />
+  <node id="359806184" lat="35.4318553" lon="135.3082993" />
+  <node id="359806186" lat="35.4320741" lon="135.3072028" />
+  <node id="359806188" lat="35.4316991" lon="135.3094439" />
+  <node id="359806190" lat="35.4317251" lon="135.3092802" />
+  <node id="359806192" lat="35.4325880" lon="135.3046950" />
+  <node id="359806194" lat="35.4333460" lon="135.3008470" />
+  <node id="359806196" lat="35.4321555" lon="135.3068109" />
+  <node id="359806198" lat="35.4321953" lon="135.3066136" />
+  <node id="359806200" lat="35.4339670" lon="135.2985190" />
+  <node id="359806201" lat="35.4346550" lon="135.2972860" />
+  <node id="359806202" lat="35.4336640" lon="135.2993220" />
+  <node id="359806203" lat="35.4337700" lon="135.2989430" />
+  <node id="359806301" lat="35.4461900" lon="135.2904810" />
+  <node id="359806303" lat="35.4458460" lon="135.2909710" />
+  <node id="359806309" lat="35.4465350" lon="135.2898340" />
+  <node id="359806311" lat="35.4463107" lon="135.2902812">
+    <tag k="name" v="四所" />
+    <tag k="name:en" v="Shisho" />
+    <tag k="name:fr" v="Shisho" />
+    <tag k="name:ja" v="四所" />
+    <tag k="name:ja_rm" v="Shisho" />
+    <tag k="name:ko" v="시쇼" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="public_transport" v="stop_position" />
+    <tag k="railway" v="stop" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="train" v="yes" />
+    <tag k="wikidata" v="Q7499097" />
+    <tag k="wikipedia" v="ja:四所駅" />
+  </node>
+  <node id="359806531" lat="35.5509240" lon="135.2275130" />
+  <node id="359806533" lat="35.5507880" lon="135.2278380" />
+  <node id="359806537" lat="35.5505860" lon="135.2283330" />
+  <node id="359806543" lat="35.5504830" lon="135.2285890" />
+  <node id="359806545" lat="35.5504060" lon="135.2287870" />
+  <node id="359806547" lat="35.5503390" lon="135.2289390" />
+  <node id="359806549" lat="35.5502984" lon="135.2290731" />
+  <node id="359806551" lat="35.5502470" lon="135.2292060" />
+  <node id="359806553" lat="35.5501934" lon="135.2293481" />
+  <node id="359806557" lat="35.5500416" lon="135.2296533" />
+  <node id="359806559" lat="35.5495198" lon="135.2305081" />
+  <node id="359806560" lat="35.5489440" lon="135.2313696" />
+  <node id="359806562" lat="35.5483774" lon="135.2322293" />
+  <node id="359806564" lat="35.5480476" lon="135.2327313" />
+  <node id="359806566" lat="35.5478399" lon="135.2330140" />
+  <node id="359806568" lat="35.5476684" lon="135.2331927" />
+  <node id="359806570" lat="35.5510090" lon="135.2228830" />
+  <node id="359806572" lat="35.5508890" lon="135.2224040" />
+  <node id="359806574" lat="35.5512530" lon="135.2238210" />
+  <node id="359806576" lat="35.5511200" lon="135.2233130" />
+  <node id="359806578" lat="35.5513150" lon="135.2242060" />
+  <node id="359806580" lat="35.5512840" lon="135.2240240" />
+  <node id="359806582" lat="35.5513910" lon="135.2247840" />
+  <node id="359806583" lat="35.5513630" lon="135.2245170" />
+  <node id="359806585" lat="35.5513990" lon="135.2252210" />
+  <node id="359806587" lat="35.5513970" lon="135.2249610" />
+  <node id="359806589" lat="35.5513540" lon="135.2256780" />
+  <node id="359806591" lat="35.5513930" lon="135.2254180" />
+  <node id="359806593" lat="35.5512110" lon="135.2264080" />
+  <node id="359806595" lat="35.5512760" lon="135.2261280" />
+  <node id="359806597" lat="35.5510610" lon="135.2270330" />
+  <node id="359806599" lat="35.5511200" lon="135.2267920" />
+  <node id="359806640" lat="35.5470371" lon="135.2337603" />
+  <node id="359806642" lat="35.5472715" lon="135.2335655" />
+  <node id="359806644" lat="35.5473330" lon="135.2335064" />
+  <node id="359806646" lat="35.5475400" lon="135.2333140" />
+  <node id="359806655" lat="35.5449542" lon="135.2345644" />
+  <node id="359806656" lat="35.5456415" lon="135.2343169" />
+  <node id="359806658" lat="35.5463387" lon="135.2341007" />
+  <node id="359806660" lat="35.5468443" lon="135.2338777" />
+  <node id="359806680" lat="35.5381441" lon="135.2054834">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="359806682" lat="35.5384792" lon="135.2060112" />
+  <node id="359806684" lat="35.5390377" lon="135.2068045" />
+  <node id="359806686" lat="35.5394071" lon="135.2072912" />
+  <node id="359806688" lat="35.5355783" lon="135.2017047" />
+  <node id="359806690" lat="35.5361007" lon="135.2024521" />
+  <node id="359806692" lat="35.5369249" lon="135.2036695" />
+  <node id="359806696" lat="35.5380208" lon="135.2052881" />
+  <node id="359806698" lat="35.5409490" lon="135.2086090" />
+  <node id="359806700" lat="35.5415672" lon="135.2089480">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="359806716" lat="35.5421304" lon="135.2092992" />
+  <node id="359806720" lat="35.5426419" lon="135.2095836" />
+  <node id="359806724" lat="35.5397050" lon="135.2076237" />
+  <node id="359806726" lat="35.5400088" lon="135.2079187" />
+  <node id="359806728" lat="35.5403574" lon="135.2081995" />
+  <node id="359806731" lat="35.5131690" lon="135.2828140" />
+  <node id="359806733" lat="35.5127430" lon="135.2833680" />
+  <node id="359806735" lat="35.5138760" lon="135.2818990" />
+  <node id="359806737" lat="35.5136530" lon="135.2822077">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="359806738" lat="35.5123470" lon="135.2840940" />
+  <node id="359806740" lat="35.5122860" lon="135.2842610" />
+  <node id="359806742" lat="35.5125570" lon="135.2836710" />
+  <node id="359806744" lat="35.5124180" lon="135.2839400" />
+  <node id="359806762" lat="35.5143550" lon="135.2812740" />
+  <node id="359806771" lat="35.5484733" lon="135.2128398" />
+  <node id="359806773" lat="35.5486073" lon="135.2132253" />
+  <node id="359806779" lat="35.5483017" lon="135.2124916" />
+  <node id="359806786" lat="35.5480809" lon="135.2121442" />
+  <node id="359806791" lat="35.5498710" lon="135.2182630" />
+  <node id="359806793" lat="35.5504590" lon="135.2206390" />
+  <node id="359806795" lat="35.5491940" lon="135.2155920" />
+  <node id="359806797" lat="35.5494560" lon="135.2166900" />
+  <node id="359806798" lat="35.5487075" lon="135.2135857" />
+  <node id="359806807" lat="35.5489385" lon="135.2145476" />
+  <node id="359806813" lat="35.5457129" lon="135.2108530" />
+  <node id="359806815" lat="35.5452112" lon="135.2107565" />
+  <node id="359806817" lat="35.5447229" lon="135.2105979" />
+  <node id="359806821" lat="35.5443289" lon="135.2104672" />
+  <node id="359806823" lat="35.5440147" lon="135.2103530" />
+  <node id="359806825" lat="35.5437115" lon="135.2101812" />
+  <node id="359806827" lat="35.5433519" lon="135.2099958" />
+  <node id="359806829" lat="35.5430424" lon="135.2098169" />
+  <node id="359806832" lat="35.5478443" lon="135.2118608" />
+  <node id="359806834" lat="35.5475395" lon="135.2115850" />
+  <node id="359806835" lat="35.5473154" lon="135.2114221" />
+  <node id="359806838" lat="35.5467741" lon="135.2111573" />
+  <node id="359806840" lat="35.5462054" lon="135.2109918" />
+  <node id="359806845" lat="35.4933863" lon="135.2905421" />
+  <node id="359806853" lat="35.4944047" lon="135.2909784" />
+  <node id="359806855" lat="35.4921576" lon="135.2898844" />
+  <node id="359806858" lat="35.4931570" lon="135.2904393" />
+  <node id="359806860" lat="35.4992877" lon="135.2923882" />
+  <node id="359806862" lat="35.4998775" lon="135.2925337" />
+  <node id="359806864" lat="35.4964562" lon="135.2915103" />
+  <node id="359806867" lat="35.4980631" lon="135.2919903" />
+  <node id="359806870" lat="35.4912630" lon="135.2888850" />
+  <node id="359806878" lat="35.4916025" lon="135.2893271" />
+  <node id="359806880" lat="35.4901200" lon="135.2870040" />
+  <node id="359806881" lat="35.4902790" lon="135.2872350" />
+  <node id="359806883" lat="35.4919223" lon="135.2896802" />
+  <node id="359806885" lat="35.4920311" lon="135.2897794" />
+  <node id="359806887" lat="35.4917173" lon="135.2894691" />
+  <node id="359806889" lat="35.4917970" lon="135.2895516" />
+  <node id="359806891" lat="35.5040120" lon="135.2932860" />
+  <node id="359806893" lat="35.5035110" lon="135.2931100" />
+  <node id="359806899" lat="35.5060275" lon="135.2936556" />
+  <node id="359806903" lat="35.5056780" lon="135.2936210" />
+  <node id="359806905" lat="35.5049709" lon="135.2935382">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="359806907" lat="35.5043820" lon="135.2933960" />
+  <node id="359806908" lat="35.5011292" lon="135.2924270" />
+  <node id="359806910" lat="35.5007417" lon="135.2924263" />
+  <node id="359806911" lat="35.5004781" lon="135.2924686" />
+  <node id="359806914" lat="35.5001134" lon="135.2925359" />
+  <node id="359806921" lat="35.5023650" lon="135.2926600" />
+  <node id="359806923" lat="35.5018730" lon="135.2925470" />
+  <node id="359806925" lat="35.5016368" lon="135.2924849" />
+  <node id="359806927" lat="35.5014041" lon="135.2924515" />
+  <node id="359806929" lat="35.5080323" lon="135.2934317" />
+  <node id="359806932" lat="35.5082075" lon="135.2933311" />
+  <node id="359806934" lat="35.5086544" lon="135.2929868" />
+  <node id="359806938" lat="35.5088512" lon="135.2928099" />
+  <node id="359806940" lat="35.5089885" lon="135.2926120" />
+  <node id="359806942" lat="35.5091121" lon="135.2924281" />
+  <node id="359806943" lat="35.5092407" lon="135.2922146" />
+  <node id="359806945" lat="35.5094554" lon="135.2917788" />
+  <node id="359806947" lat="35.5061050" lon="135.2936630" />
+  <node id="359806949" lat="35.5068762" lon="135.2936796">
+    <tag k="alt_name" v="神崎海水浴場駅" />
+    <tag k="alt_name:ja" v="神崎海水浴場駅" />
+    <tag k="name" v="丹後神崎" />
+    <tag k="name:en" v="Tango-Kanzaki" />
+    <tag k="name:fr" v="Tango-Kanzaki" />
+    <tag k="name:ja" v="丹後神崎" />
+    <tag k="name:ko" v="단고칸자키" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="public_transport" v="stop_position" />
+    <tag k="railway" v="stop" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="train" v="yes" />
+    <tag k="wikidata" v="Q7683072" />
+    <tag k="wikipedia" v="ja:丹後神崎駅" />
+  </node>
+  <node id="359806951" lat="35.5073921" lon="135.2936619" />
+  <node id="359806955" lat="35.5075982" lon="135.2936052" />
+  <node id="359806957" lat="35.5078420" lon="135.2935228" />
+  <node id="359806963" lat="35.5119133" lon="135.2852690" />
+  <node id="359806965" lat="35.5117598" lon="135.2856719" />
+  <node id="359806967" lat="35.5121370" lon="135.2846610" />
+  <node id="359806969" lat="35.5120590" lon="135.2848770" />
+  <node id="359806971" lat="35.5122050" lon="135.2844760" />
+  <node id="359806973" lat="35.5121730" lon="135.2845590" />
+  <node id="359806975" lat="35.5098150" lon="135.2907776" />
+  <node id="359806977" lat="35.5096144" lon="135.2913967" />
+  <node id="359806979" lat="35.5099774" lon="135.2903512" />
+  <node id="359807126" lat="35.4893443" lon="135.2860777" />
+  <node id="359807128" lat="35.4888740" lon="135.2857859" />
+  <node id="359807130" lat="35.4897745" lon="135.2864881" />
+  <node id="359807133" lat="35.4895779" lon="135.2862872" />
+  <node id="359807135" lat="35.4845892" lon="135.2839477" />
+  <node id="359807137" lat="35.4839988" lon="135.2836859" />
+  <node id="359807141" lat="35.4879326" lon="135.2853156" />
+  <node id="359807150" lat="35.4856002" lon="135.2843712" />
+  <node id="359807152" lat="35.4822666" lon="135.2833070" />
+  <node id="359807154" lat="35.4812515" lon="135.2833428" />
+  <node id="359807155" lat="35.4832787" lon="135.2834382" />
+  <node id="359807157" lat="35.4829001" lon="135.2833745" />
+  <node id="359807161" lat="35.4807810" lon="135.2834634" />
+  <node id="359807163" lat="35.4788613" lon="135.2839254" />
+  <node id="359808516" lat="35.5336780" lon="135.2541820" />
+  <node id="359808518" lat="35.5336610" lon="135.2545450" />
+  <node id="359808520" lat="35.5337790" lon="135.2535830" />
+  <node id="359808522" lat="35.5337300" lon="135.2538330" />
+  <node id="359808523" lat="35.5340235" lon="135.2525869" />
+  <node id="359808525" lat="35.5338815" lon="135.2530762" />
+  <node id="359808527" lat="35.5344999" lon="135.2513274" />
+  <node id="359808529" lat="35.5342543" lon="135.2519787" />
+  <node id="359808531" lat="35.5340108" lon="135.2563820" />
+  <node id="359808533" lat="35.5340983" lon="135.2567023" />
+  <node id="359808535" lat="35.5339151" lon="135.2559845" />
+  <node id="359808537" lat="35.5339767" lon="135.2562470" />
+  <node id="359808539" lat="35.5337648" lon="135.2554747" />
+  <node id="359808541" lat="35.5338413" lon="135.2556859" />
+  <node id="359808543" lat="35.5336860" lon="135.2549170" />
+  <node id="359808544" lat="35.5337038" lon="135.2552103" />
+  <node id="359808546" lat="35.5351379" lon="135.2469104" />
+  <node id="359808548" lat="35.5350725" lon="135.2465579" />
+  <node id="359808550" lat="35.5347850" lon="135.2454577" />
+  <node id="359808552" lat="35.5347566" lon="135.2451460" />
+  <node id="359808554" lat="35.5347608" lon="135.2447604" />
+  <node id="359808556" lat="35.5347735" lon="135.2443648" />
+  <node id="359808558" lat="35.5348147" lon="135.2440321" />
+  <node id="359808560" lat="35.5348843" lon="135.2437129" />
+  <node id="359808562" lat="35.5347123" lon="135.2506745" />
+  <node id="359808564" lat="35.5349600" lon="135.2499140" />
+  <node id="359808566" lat="35.5351107" lon="135.2494580" />
+  <node id="359808568" lat="35.5352232" lon="135.2489790" />
+  <node id="359808570" lat="35.5352966" lon="135.2483434" />
+  <node id="359808572" lat="35.5352843" lon="135.2479158" />
+  <node id="359808574" lat="35.5352105" lon="135.2472302" />
+  <node id="359808576" lat="35.5351802" lon="135.2471048" />
+  <node id="359808578" lat="35.5327459" lon="135.2623950" />
+  <node id="359808580" lat="35.5327246" lon="135.2626194" />
+  <node id="359808581" lat="35.5327036" lon="135.2629665" />
+  <node id="359808583" lat="35.5327417" lon="135.2638662" />
+  <node id="359808585" lat="35.5332574" lon="135.2609626" />
+  <node id="359808587" lat="35.5330095" lon="135.2614087" />
+  <node id="359808589" lat="35.5329009" lon="135.2617310" />
+  <node id="359808591" lat="35.5327948" lon="135.2620910" />
+  <node id="359808593" lat="35.5327794" lon="135.2658256" />
+  <node id="359808595" lat="35.5327212" lon="135.2661642" />
+  <node id="359808597" lat="35.5326463" lon="135.2664162" />
+  <node id="359808599" lat="35.5325450" lon="135.2666974" />
+  <node id="359808601" lat="35.5327792" lon="135.2643554" />
+  <node id="359808602" lat="35.5328093" lon="135.2647781" />
+  <node id="359808604" lat="35.5327964" lon="135.2654134" />
+  <node id="359808606" lat="35.5327905" lon="135.2656706" />
+  <node id="359808608" lat="35.5343745" lon="135.2584146" />
+  <node id="359808618" lat="35.5343911" lon="135.2581584" />
+  <node id="359808620" lat="35.5343160" lon="135.2587506" />
+  <node id="359808622" lat="35.5343584" lon="135.2585194" />
+  <node id="359808624" lat="35.5342654" lon="135.2572733" />
+  <node id="359808628" lat="35.5341778" lon="135.2569627" />
+  <node id="359808630" lat="35.5344062" lon="135.2578655" />
+  <node id="359808653" lat="35.5343471" lon="135.2575831" />
+  <node id="359808663" lat="35.5338053" lon="135.2599723" />
+  <node id="359808664" lat="35.5339198" lon="135.2597531" />
+  <node id="359808666" lat="35.5335447" lon="135.2604594" />
+  <node id="359808668" lat="35.5336675" lon="135.2602154" />
+  <node id="359808670" lat="35.5342265" lon="135.2590819" />
+  <node id="359808672" lat="35.5342794" lon="135.2589275" />
+  <node id="359808674" lat="35.5340099" lon="135.2595848" />
+  <node id="359808676" lat="35.5341204" lon="135.2593501" />
+  <node id="359808749" lat="35.5412600" lon="135.2369757">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="359808752" lat="35.5395365" lon="135.2381318" />
+  <node id="359808756" lat="35.5381200" lon="135.2390950" />
+  <node id="359808759" lat="35.5371050" lon="135.2397800" />
+  <node id="359808762" lat="35.5369560" lon="135.2399160" />
+  <node id="359808765" lat="35.5367020" lon="135.2402390" />
+  <node id="359808776" lat="35.5360136" lon="135.2411482" />
+  <node id="359808779" lat="35.5358293" lon="135.2414388" />
+  <node id="359808785" lat="35.5355219" lon="135.2420324" />
+  <node id="359808789" lat="35.5354628" lon="135.2421650" />
+  <node id="359808792" lat="35.5353969" lon="135.2423134" />
+  <node id="359808794" lat="35.5353365" lon="135.2424467" />
+  <node id="359808796" lat="35.5351576" lon="135.2428784" />
+  <node id="359808798" lat="35.5349800" lon="135.2433412" />
+  <node id="359808832" lat="35.5191220" lon="135.2753860" />
+  <node id="359808834" lat="35.5182849" lon="135.2764398" />
+  <node id="359808836" lat="35.5204439" lon="135.2738004" />
+  <node id="359808839" lat="35.5198220" lon="135.2745780" />
+  <node id="359808845" lat="35.5221520" lon="135.2725270" />
+  <node id="359808847" lat="35.5212897" lon="135.2730974" />
+  <node id="359808848" lat="35.5233423" lon="135.2717988" />
+  <node id="359808850" lat="35.5227542" lon="135.2721505" />
+  <node id="359808852" lat="35.5240261" lon="135.2714497" />
+  <node id="359808854" lat="35.5237849" lon="135.2715267" />
+  <node id="359808856" lat="35.5243721" lon="135.2713699" />
+  <node id="359808858" lat="35.5242461" lon="135.2713938" />
+  <node id="359808860" lat="35.5247659" lon="135.2713206" />
+  <node id="359808862" lat="35.5244908" lon="135.2713509" />
+  <node id="359808864" lat="35.5254161" lon="135.2714009" />
+  <node id="359808866" lat="35.5250194" lon="135.2713209" />
+  <node id="359808868" lat="35.5169630" lon="135.2780660" />
+  <node id="359808870" lat="35.5174268" lon="135.2775375">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="359808871" lat="35.5179236" lon="135.2769228" />
+  <node id="359808873" lat="35.5304398" lon="135.2687716" />
+  <node id="359808875" lat="35.5303755" lon="135.2688334" />
+  <node id="359808877" lat="35.5301335" lon="135.2690537" />
+  <node id="359808879" lat="35.5299089" lon="135.2692881" />
+  <node id="359808881" lat="35.5312700" lon="135.2683210" />
+  <node id="359808883" lat="35.5311519" lon="135.2683997" />
+  <node id="359808885" lat="35.5309280" lon="135.2685220" />
+  <node id="359808887" lat="35.5306274" lon="135.2686675" />
+  <node id="359808889" lat="35.5321280" lon="135.2674790" />
+  <node id="359808893" lat="35.5319260" lon="135.2677150" />
+  <node id="359808896" lat="35.5317170" lon="135.2679250" />
+  <node id="359808898" lat="35.5315580" lon="135.2680720" />
+  <node id="359808901" lat="35.5325133" lon="135.2667803" />
+  <node id="359808904" lat="35.5324830" lon="135.2668440" />
+  <node id="359808906" lat="35.5323950" lon="135.2670450" />
+  <node id="359808908" lat="35.5322250" lon="135.2673440" />
+  <node id="359808910" lat="35.5265644" lon="135.2718177" />
+  <node id="359808912" lat="35.5267878" lon="135.2719603" />
+  <node id="359808914" lat="35.5260503" lon="135.2715852" />
+  <node id="359808916" lat="35.5263763" lon="135.2717274" />
+  <node id="359808918" lat="35.5278165" lon="135.2720085" />
+  <node id="359808920" lat="35.5280497" lon="135.2719050" />
+  <node id="359808924" lat="35.5272551" lon="135.2721024" />
+  <node id="359808926" lat="35.5276122" lon="135.2720659" />
+  <node id="359808928" lat="35.5288575" lon="135.2709316" />
+  <node id="359808930" lat="35.5292134" lon="135.2703425" />
+  <node id="359808931" lat="35.5282457" lon="135.2717440" />
+  <node id="359808933" lat="35.5284470" lon="135.2715267" />
+  <node id="359808935" lat="35.5295284" lon="135.2698527" />
+  <node id="359808937" lat="35.5298277" lon="135.2693966" />
+  <node id="359808939" lat="35.5293053" lon="135.2701976" />
+  <node id="359808941" lat="35.5293614" lon="135.2700925" />
+  <node id="518283022" lat="35.4384600" lon="135.3298486">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="528652154" lat="35.5358104" lon="135.2020478">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="528753138" lat="35.4318879" lon="135.3081162">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="539379746" lat="35.4351436" lon="135.2964280">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="589993685" lat="35.5083673" lon="135.2932307">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="850727859" lat="35.5364928" lon="135.2404825">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1659025575" lat="35.4864277" lon="135.2847637">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1659025785" lat="35.4920607" lon="135.2898076">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1659025839" lat="35.4928452" lon="135.2903092">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1659026068" lat="35.4988303" lon="135.2922760">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1659043499" lat="35.4778926" lon="135.2841850">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1660391256" lat="35.4304995" lon="135.3189496">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1660391383" lat="35.4305493" lon="135.3213884">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1660394332" lat="35.4393553" lon="135.2925992">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="1667085346" lat="35.5191829" lon="135.2753248">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="2841015692" lat="35.5030951" lon="135.2929561">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826491856" lat="35.5362972" lon="135.2027369">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826541560" lat="35.5406667" lon="135.2084091">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826551770" lat="35.5447927" lon="135.2106227">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826569603" lat="35.5481125" lon="135.2326225">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826577395" lat="35.5454897" lon="135.2343694">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826595294" lat="35.5377881" lon="135.2393190">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826595301" lat="35.5393967" lon="135.2382268">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4826736404" lat="35.5201055" lon="135.2742244">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4827947673" lat="35.4328058" lon="135.3272684">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4827960427" lat="35.4403519" lon="135.3301347" />
+  <node id="4827960486" lat="35.4354225" lon="135.3292560">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="name" v="公文名踏切" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4827960512" lat="35.4345864" lon="135.3289757">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4828071097" lat="35.4381329" lon="135.3297512" />
+  <node id="4828071109" lat="35.4387169" lon="135.3298816" />
+  <node id="4829423837" lat="35.4311102" lon="135.3143030">
+    <tag k="crossing:barrier" v="double_half" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4829446648" lat="35.4315644" lon="135.3105955">
+    <tag k="crossing:barrier" v="full" />
+    <tag k="crossing:bell" v="yes" />
+    <tag k="crossing:light" v="yes" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="4829823713" lat="35.5163086" lon="135.2789100" />
+  <node id="4829823714" lat="35.5160761" lon="135.2791997" />
+  <node id="4829823715" lat="35.5159658" lon="135.2793297" />
+  <node id="4829823716" lat="35.5157257" lon="135.2796328" />
+  <node id="4829823717" lat="35.5155117" lon="135.2799024" />
+  <node id="4829823718" lat="35.5150587" lon="135.2804670" />
+  <node id="4829823719" lat="35.5144896" lon="135.2811037" />
+  <node id="4830375338" lat="35.5209458" lon="135.2733533">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="no" />
+    <tag k="crossing:light" v="no" />
+    <tag k="railway" v="crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="5247040257" lat="35.4398309" lon="135.3300286" />
+  <node id="5247072761" lat="35.4379992" lon="135.3297344" />
+  <node id="5329303009" lat="35.4327926" lon="135.3272429" />
+  <node id="5329303010" lat="35.4325506" lon="135.3266890" />
+  <node id="5900852717" lat="35.5348160" lon="135.2005005" />
+  <node id="5900852718" lat="35.5350659" lon="135.2008646" />
+  <node id="5900852720" lat="35.5351805" lon="135.2010289" />
+  <node id="5900852721" lat="35.5353770" lon="135.2013333" />
+  <node id="5920358871" lat="35.5470337" lon="135.2112588" />
+  <node id="5928911072" lat="35.5365993" lon="135.2031840" />
+  <node id="5928911298" lat="35.5393220" lon="135.2071846" />
+  <node id="5937911477" lat="35.5374723" lon="135.2044822" />
+  <node id="8227779905" lat="35.5342791" lon="135.1996972">
+    <tag k="name" v="宮津" />
+    <tag k="name:en" v="Miyazu" />
+    <tag k="name:ja" v="宮津" />
+    <tag k="name:ko" v="미야즈" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="public_transport" v="stop_position" />
+    <tag k="railway" v="stop" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="train" v="yes" />
+    <tag k="wikidata" v="Q6884476" />
+    <tag k="wikipedia" v="ja:宮津駅" />
+  </node>
+  <node id="8227779907" lat="35.4413178" lon="135.3302684">
+    <tag k="name" v="西舞鶴" />
+    <tag k="name:de" v="Maizuru West" />
+    <tag k="name:en" v="Nishi-Maizuru" />
+    <tag k="name:ja" v="西舞鶴" />
+    <tag k="public_transport" v="stop_position" />
+    <tag k="railway" v="stop" />
+    <tag k="train" v="yes" />
+  </node>
+  <node id="8227779912" lat="35.4411488" lon="135.3302478" />
+  <node id="8227779913" lat="35.4409594" lon="135.3302497" />
+  <node id="8230991502" lat="35.4926596" lon="135.2902204" />
+  <node id="8230991503" lat="35.5167371" lon="135.2783497" />
+  <node id="8230991504" lat="35.5168069" lon="135.2782443" />
+  <node id="8230991506" lat="35.5446292" lon="135.2347516" />
+  <node id="8230991507" lat="35.5438023" lon="135.2352994">
+    <tag k="name" v="栗田" />
+    <tag k="name:en" v="Kunda" />
+    <tag k="name:fr" v="Kunda" />
+    <tag k="name:ja" v="栗田" />
+    <tag k="name:ko" v="군다" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="public_transport" v="stop_position" />
+    <tag k="railway" v="stop" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="train" v="yes" />
+    <tag k="wikidata" v="Q6444245" />
+    <tag k="wikipedia" v="ja:栗田駅" />
+  </node>
+  <node id="8230991508" lat="35.5426403" lon="135.2360832" />
+  <node id="8230991509" lat="35.5417730" lon="135.2366352" />
+  <node id="8230991511" lat="35.5158894" lon="135.2794258">
+    <tag k="name" v="丹後由良" />
+    <tag k="name:en" v="Tango-Yura" />
+    <tag k="name:fr" v="Tango-Yura" />
+    <tag k="name:ja" v="丹後由良" />
+    <tag k="name:ko" v="단고유라" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="public_transport" v="stop_position" />
+    <tag k="railway" v="stop" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="train" v="yes" />
+    <tag k="wikidata" v="Q7683073" />
+    <tag k="wikipedia" v="ja:丹後由良駅" />
+  </node>
+  <node id="8230991512" lat="35.4765842" lon="135.2845671" />
+  <node id="8230991513" lat="35.4755390" lon="135.2848412">
+    <tag k="crossing:barrier" v="no" />
+    <tag k="crossing:bell" v="no" />
+    <tag k="crossing:light" v="no" />
+    <tag k="railway" v="level_crossing" />
+    <tag k="supervised" v="no" />
+  </node>
+  <node id="8230991514" lat="35.4748440" lon="135.2850368">
+    <tag k="name" v="東雲" />
+    <tag k="name:en" v="Shinonome" />
+    <tag k="name:fr" v="Shinonome" />
+    <tag k="name:ja" v="東雲" />
+    <tag k="name:ja_rm" v="Shinonome" />
+    <tag k="name:ko" v="시노노메" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="public_transport" v="stop_position" />
+    <tag k="railway" v="stop" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="train" v="yes" />
+    <tag k="wikidata" v="Q7497733" />
+    <tag k="wikipedia" v="ja:東雲駅 (京都府)" />
+  </node>
+  <node id="8230991515" lat="35.4743125" lon="135.2851849" />
+  <node id="8230991516" lat="35.4742730" lon="135.2851958" />
+  <node id="8231019017" lat="35.4737457" lon="135.2853479" />
+  <node id="8231019019" lat="35.4768082" lon="135.2844819" />
+  <node id="8231019029" lat="35.4469314" lon="135.2890147" />
+  <way id="32052880">
+    <nd ref="359806167" />
+    <nd ref="1660391256" />
+    <nd ref="359806180" />
+    <nd ref="359806182" />
+    <nd ref="4829423837" />
+    <nd ref="359806177" />
+    <nd ref="359806178" />
+    <nd ref="4829446648" />
+    <nd ref="359806188" />
+    <nd ref="359806190" />
+    <nd ref="359806184" />
+    <nd ref="528753138" />
+    <nd ref="359806186" />
+    <nd ref="359806196" />
+    <nd ref="359806198" />
+    <nd ref="359806192" />
+    <nd ref="359806194" />
+    <nd ref="359806202" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052887">
+    <nd ref="359805541" />
+    <nd ref="359805535" />
+    <nd ref="359805538" />
+    <nd ref="359805532" />
+    <nd ref="359805533" />
+    <nd ref="359805528" />
+    <nd ref="359805530" />
+    <nd ref="359805524" />
+    <nd ref="359805526" />
+    <nd ref="359805591" />
+    <nd ref="359805589" />
+    <nd ref="359805587" />
+    <nd ref="359805585" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052907">
+    <nd ref="359808906" />
+    <nd ref="359808904" />
+    <nd ref="359808901" />
+    <nd ref="359808599" />
+    <nd ref="359808597" />
+    <nd ref="359808595" />
+    <nd ref="359808593" />
+    <nd ref="359808606" />
+    <nd ref="359808604" />
+    <nd ref="359808602" />
+    <nd ref="359808601" />
+    <nd ref="359808583" />
+    <nd ref="359808581" />
+    <nd ref="359808580" />
+    <nd ref="359808578" />
+    <nd ref="359808591" />
+    <nd ref="359808589" />
+    <nd ref="359808587" />
+    <nd ref="359808585" />
+    <nd ref="359808666" />
+    <nd ref="359808668" />
+    <nd ref="359808663" />
+    <nd ref="359808664" />
+    <nd ref="359808674" />
+    <nd ref="359808676" />
+    <nd ref="359808670" />
+    <nd ref="359808672" />
+    <nd ref="359808620" />
+    <nd ref="359808622" />
+    <nd ref="359808608" />
+    <nd ref="359808618" />
+    <nd ref="359808630" />
+    <nd ref="359808653" />
+    <nd ref="359808624" />
+    <nd ref="359808628" />
+    <nd ref="359808533" />
+    <nd ref="359808531" />
+    <nd ref="359808537" />
+    <nd ref="359808535" />
+    <nd ref="359808541" />
+    <nd ref="359808539" />
+    <nd ref="359808544" />
+    <nd ref="359808543" />
+    <nd ref="359808518" />
+    <nd ref="359808516" />
+    <nd ref="359808522" />
+    <nd ref="359808520" />
+    <nd ref="359808525" />
+    <nd ref="359808523" />
+    <nd ref="359808529" />
+    <nd ref="359808527" />
+    <nd ref="359808562" />
+    <nd ref="359808564" />
+    <nd ref="359808566" />
+    <nd ref="359808568" />
+    <nd ref="359808570" />
+    <nd ref="359808572" />
+    <nd ref="359808574" />
+    <nd ref="359808576" />
+    <nd ref="359808546" />
+    <nd ref="359808548" />
+    <nd ref="359808550" />
+    <nd ref="359808552" />
+    <nd ref="359808554" />
+    <nd ref="359808556" />
+    <nd ref="359808558" />
+    <nd ref="359808560" />
+    <nd ref="359808798" />
+    <nd ref="359808796" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052911">
+    <nd ref="359807141" />
+    <nd ref="359807128" />
+    <nd ref="359807126" />
+    <nd ref="359807133" />
+    <nd ref="359807130" />
+    <nd ref="359806880" />
+    <nd ref="359806881" />
+    <nd ref="359806870" />
+    <nd ref="359806878" />
+    <nd ref="359806887" />
+    <nd ref="359806889" />
+    <nd ref="359806883" />
+    <nd ref="359806885" />
+    <nd ref="1659025785" />
+    <nd ref="359806855" />
+    <nd ref="8230991502" />
+    <nd ref="1659025839" />
+    <nd ref="359806858" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052916">
+    <nd ref="359805860" />
+    <nd ref="4827960486" />
+    <nd ref="359805858" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052919">
+    <nd ref="359806060" />
+    <nd ref="1660394332" />
+    <nd ref="359806105" />
+    <nd ref="359806089" />
+    <nd ref="359806109" />
+    <nd ref="359806107" />
+    <nd ref="359806113" />
+    <nd ref="359806111" />
+    <nd ref="359806115" />
+    <nd ref="359806117" />
+    <nd ref="359806119" />
+    <nd ref="359806121" />
+    <nd ref="359806122" />
+    <nd ref="359806124" />
+    <nd ref="359806126" />
+    <nd ref="359806128" />
+    <nd ref="359806130" />
+    <nd ref="359806132" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052920">
+    <nd ref="359806655" />
+    <nd ref="4826577395" />
+    <nd ref="359806656" />
+    <nd ref="359806658" />
+    <nd ref="359806660" />
+    <nd ref="359806640" />
+    <nd ref="359806642" />
+    <nd ref="359806644" />
+    <nd ref="359806646" />
+    <nd ref="359806568" />
+    <nd ref="359806566" />
+    <nd ref="359806564" />
+    <nd ref="4826569603" />
+    <nd ref="359806562" />
+    <nd ref="359806560" />
+    <nd ref="359806559" />
+    <nd ref="359806557" />
+    <nd ref="359806553" />
+    <nd ref="359806551" />
+    <nd ref="359806549" />
+    <nd ref="359806547" />
+    <nd ref="359806545" />
+    <nd ref="359806543" />
+    <nd ref="359806537" />
+    <nd ref="359806533" />
+    <nd ref="359806531" />
+    <nd ref="359806597" />
+    <nd ref="359806599" />
+    <nd ref="359806593" />
+    <nd ref="359806595" />
+    <nd ref="359806589" />
+    <nd ref="359806591" />
+    <nd ref="359806585" />
+    <nd ref="359806587" />
+    <nd ref="359806582" />
+    <nd ref="359806583" />
+    <nd ref="359806578" />
+    <nd ref="359806580" />
+    <nd ref="359806574" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052921">
+    <nd ref="359806963" />
+    <nd ref="359806969" />
+    <nd ref="359806967" />
+    <nd ref="359806973" />
+    <nd ref="359806971" />
+    <nd ref="359806740" />
+    <nd ref="359806738" />
+    <nd ref="359806744" />
+    <nd ref="359806742" />
+    <nd ref="359806733" />
+    <nd ref="359806731" />
+    <nd ref="359806737" />
+    <nd ref="359806735" />
+    <nd ref="359806762" />
+    <nd ref="4829823719" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052926">
+    <nd ref="359808794" />
+    <nd ref="359808792" />
+    <nd ref="359808789" />
+    <nd ref="359808785" />
+    <nd ref="359808779" />
+    <nd ref="359808776" />
+    <nd ref="850727859" />
+    <nd ref="359808765" />
+    <nd ref="359808762" />
+    <nd ref="359808759" />
+    <nd ref="4826595294" />
+    <nd ref="359808756" />
+    <nd ref="4826595301" />
+    <nd ref="359808752" />
+    <nd ref="359808749" />
+    <nd ref="8230991509" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32052929">
+    <nd ref="359806947" />
+    <nd ref="359806949" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32056037">
+    <nd ref="359806574" />
+    <nd ref="359806576" />
+    <nd ref="359806570" />
+    <nd ref="359806572" />
+    <nd ref="359806793" />
+    <nd ref="359806791" />
+    <nd ref="359806797" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="layer" v="-1" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線;下山トンネル" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="tunnel" v="yes" />
+    <tag k="tunnel:name" v="下山トンネル" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="32056048">
+    <nd ref="359806838" />
+    <nd ref="359806840" />
+    <nd ref="359806813" />
+    <nd ref="359806815" />
+    <nd ref="4826551770" />
+    <nd ref="359806817" />
+    <nd ref="359806821" />
+    <nd ref="359806823" />
+    <nd ref="359806825" />
+    <nd ref="359806827" />
+    <nd ref="359806829" />
+    <nd ref="359806720" />
+    <nd ref="359806716" />
+    <nd ref="359806700" />
+    <nd ref="359806698" />
+    <nd ref="4826541560" />
+    <nd ref="359806728" />
+    <nd ref="359806726" />
+    <nd ref="359806724" />
+    <nd ref="359806686" />
+    <nd ref="5928911298" />
+    <nd ref="359806684" />
+    <nd ref="359806682" />
+    <nd ref="359806680" />
+    <nd ref="359806696" />
+    <nd ref="5937911477" />
+    <nd ref="359806692" />
+    <nd ref="5928911072" />
+    <nd ref="4826491856" />
+    <nd ref="359806690" />
+    <nd ref="528652154" />
+    <nd ref="359806688" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="109076351">
+    <nd ref="359806142" />
+    <nd ref="359805860" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="bridge" v="yes" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="layer" v="1" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="279925990">
+    <nd ref="359806949" />
+    <nd ref="359806951" />
+    <nd ref="359806955" />
+    <nd ref="359806957" />
+    <nd ref="359806929" />
+    <nd ref="359806932" />
+    <nd ref="589993685" />
+    <nd ref="359806934" />
+    <nd ref="359806938" />
+    <nd ref="359806940" />
+    <nd ref="359806942" />
+    <nd ref="359806943" />
+    <nd ref="359806945" />
+    <nd ref="359806977" />
+    <nd ref="359806975" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="279926000">
+    <nd ref="359806975" />
+    <nd ref="359806979" />
+    <nd ref="359806965" />
+    <nd ref="359806963" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="bridge" v="yes" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490481656">
+    <nd ref="359808796" />
+    <nd ref="359808794" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="embankment" v="yes" />
+    <tag k="gauge" v="1067" />
+    <tag k="layer" v="1" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490489508">
+    <nd ref="8230991504" />
+    <nd ref="359808868" />
+    <nd ref="359808870" />
+    <nd ref="359808871" />
+    <nd ref="359808834" />
+    <nd ref="359808832" />
+    <nd ref="1667085346" />
+    <nd ref="359808839" />
+    <nd ref="4826736404" />
+    <nd ref="359808836" />
+    <nd ref="4830375338" />
+    <nd ref="359808847" />
+    <nd ref="359808845" />
+    <nd ref="359808850" />
+    <nd ref="359808848" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490489509">
+    <nd ref="359808910" />
+    <nd ref="359808912" />
+    <nd ref="359808924" />
+    <nd ref="359808926" />
+    <nd ref="359808918" />
+    <nd ref="359808920" />
+    <nd ref="359808931" />
+    <nd ref="359808933" />
+    <nd ref="359808928" />
+    <nd ref="359808930" />
+    <nd ref="359808939" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="60" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="tunnel" v="yes" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490489510">
+    <nd ref="359808939" />
+    <nd ref="359808941" />
+    <nd ref="359808935" />
+    <nd ref="359808937" />
+    <nd ref="359808879" />
+    <nd ref="359808877" />
+    <nd ref="359808875" />
+    <nd ref="359808873" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490489511">
+    <nd ref="359808873" />
+    <nd ref="359808887" />
+    <nd ref="359808885" />
+    <nd ref="359808883" />
+    <nd ref="359808881" />
+    <nd ref="359808898" />
+    <nd ref="359808896" />
+    <nd ref="359808893" />
+    <nd ref="359808889" />
+    <nd ref="359808908" />
+    <nd ref="359808906" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="tunnel" v="yes" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490489512">
+    <nd ref="359808848" />
+    <nd ref="359808854" />
+    <nd ref="359808852" />
+    <nd ref="359808858" />
+    <nd ref="359808856" />
+    <nd ref="359808862" />
+    <nd ref="359808860" />
+    <nd ref="359808866" />
+    <nd ref="359808864" />
+    <nd ref="359808914" />
+    <nd ref="359808916" />
+    <nd ref="359808910" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490591038">
+    <nd ref="359805471" />
+    <nd ref="359805473" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="tunnel" v="yes" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490591039">
+    <nd ref="359805473" />
+    <nd ref="359805475" />
+    <nd ref="359805477" />
+    <nd ref="359805463" />
+    <nd ref="359805465" />
+    <nd ref="359805467" />
+    <nd ref="359805469" />
+    <nd ref="359805518" />
+    <nd ref="359805516" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490593563">
+    <nd ref="359805493" />
+    <nd ref="359805479" />
+    <nd ref="359805481" />
+    <nd ref="359805483" />
+    <nd ref="359805485" />
+    <nd ref="359805471" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="embankment" v="yes" />
+    <tag k="gauge" v="1067" />
+    <tag k="layer" v="1" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490593831">
+    <nd ref="359805545" />
+    <nd ref="359805539" />
+    <nd ref="359805541" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="tunnel" v="yes" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490593834">
+    <nd ref="359805636" />
+    <nd ref="359805634" />
+    <nd ref="359805551" />
+    <nd ref="359805553" />
+    <nd ref="359805547" />
+    <nd ref="359805549" />
+    <nd ref="359805543" />
+    <nd ref="359805545" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490593837">
+    <nd ref="359805585" />
+    <nd ref="359805582" />
+    <nd ref="359805579" />
+    <nd ref="359805575" />
+    <nd ref="359805572" />
+    <nd ref="359805568" />
+    <nd ref="359805566" />
+    <nd ref="359805565" />
+    <nd ref="359805563" />
+    <nd ref="359805561" />
+    <nd ref="359805559" />
+    <nd ref="359805557" />
+    <nd ref="359805555" />
+    <nd ref="359805486" />
+    <nd ref="359805489" />
+    <nd ref="359805491" />
+    <nd ref="359805493" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="embankment" v="yes" />
+    <tag k="gauge" v="1067" />
+    <tag k="layer" v="1" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490607149">
+    <nd ref="359805945" />
+    <nd ref="359805914" />
+    <nd ref="359806024" />
+    <nd ref="359805982" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="tunnel" v="yes" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490620743">
+    <nd ref="8227779913" />
+    <nd ref="4827960427" />
+    <nd ref="5247040257" />
+    <nd ref="359806136" />
+    <nd ref="359806138" />
+    <nd ref="4828071109" />
+    <nd ref="518283022" />
+    <nd ref="4828071097" />
+    <nd ref="5247072761" />
+    <nd ref="359806142" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="50" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="490791758">
+    <nd ref="8230991504" />
+    <nd ref="8230991503" />
+    <nd ref="4829823713" />
+    <nd ref="4829823714" />
+    <nd ref="4829823715" />
+    <nd ref="8230991511" />
+    <nd ref="4829823716" />
+    <nd ref="4829823717" />
+    <nd ref="4829823718" />
+    <nd ref="4829823719" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="35" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="oneway" v="yes" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="551900284">
+    <nd ref="5329303009" />
+    <nd ref="359806153" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="bridge" v="yes" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="layer" v="1" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="551900290">
+    <nd ref="359805858" />
+    <nd ref="4827960512" />
+    <nd ref="359806149" />
+    <nd ref="359806148" />
+    <nd ref="359806146" />
+    <nd ref="359806144" />
+    <nd ref="359806157" />
+    <nd ref="359806155" />
+    <nd ref="4827947673" />
+    <nd ref="5329303009" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="624961750">
+    <nd ref="8227779905" />
+    <nd ref="5900852717" />
+    <nd ref="5900852718" />
+    <nd ref="5900852720" />
+    <nd ref="5900852721" />
+    <nd ref="359806688" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="50" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="885105427">
+    <nd ref="359806655" />
+    <nd ref="8230991506" />
+    <nd ref="8230991507" />
+    <nd ref="8230991508" />
+    <nd ref="8230991509" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="35" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="oneway" v="yes" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="885105430">
+    <nd ref="8231019019" />
+    <nd ref="8230991512" />
+    <nd ref="8230991513" />
+    <nd ref="8230991514" />
+    <nd ref="8230991515" />
+    <nd ref="8230991516" />
+    <nd ref="8231019017" />
+    <nd ref="359805516" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="oneway" v="yes" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="885105432">
+    <nd ref="359806132" />
+    <nd ref="359806134" />
+    <nd ref="359806303" />
+    <nd ref="359806301" />
+    <nd ref="359806311" />
+    <nd ref="359806309" />
+    <nd ref="359805628" />
+    <nd ref="8231019029" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="50" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465713">
+    <nd ref="8227779907" />
+    <nd ref="8227779912" />
+    <nd ref="8227779913" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465714">
+    <nd ref="359806153" />
+    <nd ref="5329303010" />
+    <nd ref="359806151" />
+    <nd ref="359806165" />
+    <nd ref="359806163" />
+    <nd ref="359806161" />
+    <nd ref="359806159" />
+    <nd ref="1660391383" />
+    <nd ref="359806175" />
+    <nd ref="359806171" />
+    <nd ref="359806169" />
+    <nd ref="359806167" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465715">
+    <nd ref="359806202" />
+    <nd ref="359806203" />
+    <nd ref="359806200" />
+    <nd ref="359806201" />
+    <nd ref="539379746" />
+    <nd ref="359805910" />
+    <nd ref="359805908" />
+    <nd ref="359805945" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="75" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465716">
+    <nd ref="359805982" />
+    <nd ref="359806059" />
+    <nd ref="359806057" />
+    <nd ref="359806062" />
+    <nd ref="359806060" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465718">
+    <nd ref="8231019029" />
+    <nd ref="359805631" />
+    <nd ref="359805629" />
+    <nd ref="359805636" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="50" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465719">
+    <nd ref="8231019019" />
+    <nd ref="1659043499" />
+    <nd ref="359807163" />
+    <nd ref="359807161" />
+    <nd ref="359807154" />
+    <nd ref="359807152" />
+    <nd ref="359807157" />
+    <nd ref="359807155" />
+    <nd ref="359807137" />
+    <nd ref="359807135" />
+    <nd ref="359807150" />
+    <nd ref="1659025575" />
+    <nd ref="359807141" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465720">
+    <nd ref="359806858" />
+    <nd ref="359806845" />
+    <nd ref="359806853" />
+    <nd ref="359806864" />
+    <nd ref="359806867" />
+    <nd ref="1659026068" />
+    <nd ref="359806860" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465721">
+    <nd ref="359806860" />
+    <nd ref="359806862" />
+    <nd ref="359806914" />
+    <nd ref="359806911" />
+    <nd ref="359806910" />
+    <nd ref="359806908" />
+    <nd ref="359806927" />
+    <nd ref="359806925" />
+    <nd ref="359806923" />
+    <nd ref="359806921" />
+    <nd ref="2841015692" />
+    <nd ref="359806893" />
+    <nd ref="359806891" />
+    <nd ref="359806907" />
+    <nd ref="359806905" />
+    <nd ref="359806903" />
+    <nd ref="359806899" />
+    <nd ref="359806947" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465722">
+    <nd ref="359806797" />
+    <nd ref="359806795" />
+    <nd ref="359806807" />
+    <nd ref="359806798" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="85" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+  <way id="1044465723">
+    <nd ref="359806798" />
+    <nd ref="359806773" />
+    <nd ref="359806771" />
+    <nd ref="359806779" />
+    <nd ref="359806786" />
+    <nd ref="359806832" />
+    <nd ref="359806834" />
+    <nd ref="359806835" />
+    <nd ref="5920358871" />
+    <nd ref="359806838" />
+    <tag k="KSJ2:LIN" v="宮津線" />
+    <tag k="electrified" v="no" />
+    <tag k="gauge" v="1067" />
+    <tag k="maxspeed" v="65" />
+    <tag k="name" v="京都丹後鉄道宮舞線" />
+    <tag k="name:en" v="Kyoto Tango Railway Miyamai Line" />
+    <tag k="name:ja" v="京都丹後鉄道宮舞線" />
+    <tag k="note" v="National-Land Numerical Information (Railway) 2007, MLIT Japan" />
+    <tag k="note:ja" v="国土数値情報（鉄道データ）平成19年　国土交通省" />
+    <tag k="operator" v="京都丹後鉄道" />
+    <tag k="operator:en" v="Kyoto Tango Railway" />
+    <tag k="operator:ja" v="京都丹後鉄道" />
+    <tag k="railway" v="rail" />
+    <tag k="source" v="KSJ2" />
+    <tag k="source_ref" v="http://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N02-v1_1.html" />
+    <tag k="usage" v="main" />
+  </way>
+
+</osm>

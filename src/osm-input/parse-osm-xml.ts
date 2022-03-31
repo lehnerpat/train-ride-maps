@@ -3,7 +3,7 @@ import { isUndefined } from "../common-components/type-helpers";
 
 type TagSet = Record<string, string>;
 
-interface OsmNode {
+export interface OsmNode {
   id: string;
   coord: LatLngLiteral;
   tags: TagSet;
@@ -184,7 +184,7 @@ function deserializeOsmNode(e: Element): OsmNode {
   const tags: TagSet = {};
   for (const childNode of e.childNodes) {
     if (childNode.nodeType === Node.TEXT_NODE) {
-      if (childNode.textContent?.trim().length ?? 0 > 0) {
+      if ((childNode.textContent?.trim().length ?? 0) > 0) {
         throw new Error("Node has a non-blank text node as child: " + e.outerHTML);
       }
     } else if (childNode.nodeType === Node.ELEMENT_NODE) {
@@ -211,7 +211,7 @@ function deserializeOsmWay(e: Element): OsmWay {
   const tags: TagSet = {};
   for (const childNode of e.childNodes) {
     if (childNode.nodeType === Node.TEXT_NODE) {
-      if (childNode.textContent?.trim().length ?? 0 > 0) {
+      if ((childNode.textContent?.trim().length ?? 0) > 0) {
         throw new Error("Node has a non-blank text node as child: " + e.outerHTML);
       }
     } else if (childNode.nodeType === Node.ELEMENT_NODE) {

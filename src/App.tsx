@@ -11,6 +11,7 @@ import { IncludedDataMap } from "./included-data";
 import { Panel } from "./common-components/Panel";
 import { OlTest } from "./OlTest";
 import { gitCommitSha } from "./build-info";
+import { OsmTest } from "./osm-input/OsmTest";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
           </Route>
           <Route path="/ol-test">
             <OlTest />
+          </Route>
+          <Route path="/osm-test">
+            <OsmTest />
           </Route>
           <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
           <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
