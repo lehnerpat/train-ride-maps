@@ -11,4 +11,6 @@ export const IncludedData: TrackV1[] = [
 ];
 
 export const IncludedDataMap: Map<string, TrackV1> = new Map(IncludedData.map((r) => [r.uuid, r]));
+
+export const IncludedDataV2: TrackV2[] = [];
 export const IncludedDataMapV2: Map<string, TrackV2> = new Map(/* IncludedData.map((r) => [r.uuid, r]) */);
