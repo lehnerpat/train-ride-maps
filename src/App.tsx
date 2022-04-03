@@ -1,17 +1,17 @@
 import { FC } from "react";
 import { TrackPlayer } from "./track-player";
-import { LoadSaveFile } from "./LoadSaveFile";
 import styled from "styled-components";
 import { Track } from "./track-models";
-import { NewFileStarter } from "./NewFileStarter";
-import { IncludedTrackSelector } from "./IncludedTrackSelector";
-import { Route, Switch, Link } from "wouter";
+import { Route, Switch } from "wouter";
 import { TrackLocalStorageService } from "./common-components/TrackLocalStorageService";
 import { IncludedDataMap } from "./included-data";
 import { Panel } from "./common-components/Panel";
 import { OlTest } from "./OlTest";
 import { gitCommitSha } from "./build-info";
 import { OsmTest } from "./osm-input/OsmTest";
+import { ReturnLink, ReturnLinkContainer } from "./common/components/return-links";
+import { ViewTrackPage as ViewTrackPageV2 } from "./pages/ViewTrackPageV2";
+import { StartPage } from "./pages/StartPage";
 
 function App() {
   return (
@@ -28,6 +28,7 @@ function App() {
             <OsmTest />
           </Route>
           <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
+          <Route path="/trackv2/:id">{(params) => <ViewTrackPageV2 trackUuid={params.id} />}</Route>
           <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
         </Switch>
         <ReturnLinkContainer>
@@ -43,14 +44,6 @@ function App() {
     </MainCenterer>
   );
 }
-
-const StartPage = () => (
-  <>
-    <IncludedTrackSelector />
-    <LoadSaveFile />
-    <NewFileStarter />
-  </>
-);
 
 const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
   const track = loadTrackFromStorage(trackUuid);
@@ -97,23 +90,6 @@ const MainContainer = styled.div`
   margin: 0 auto;
 `;
 
-const ReturnLinkContainer = styled.div`
-  font-size: 60%;
-  text-align: center;
-  margin: 20px 0;
-`;
-const ReturnLink = styled(Link)`
-  &,
-  &:visited {
-    color: #ddd;
-  }
-
-  &:hover,
-  &:focus,
-  &:active {
-    color: white;
-  }
-`;
 const GithubLink = styled.a`
   &,
   &:visited {

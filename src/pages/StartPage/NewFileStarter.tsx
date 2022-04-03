@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
-import { Panel } from "./common-components/Panel";
+import { Panel } from "../../common-components/Panel";
 import { useLocation } from "wouter";
-import { Tracks } from "./track-models";
-import { TrackLocalStorageService } from "./common-components/TrackLocalStorageService";
-import { PageRouting } from "./page-routing";
+import { Tracks } from "../../track-models";
+import { TrackLocalStorageService } from "../../common-components/TrackLocalStorageService";
+import { PageRouting } from "../../page-routing";
 
 interface NewFileStarterProps {}
 export const NewFileStarter: FC<NewFileStarterProps> = () => {

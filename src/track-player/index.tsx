@@ -6,7 +6,7 @@ import { TrackPointsEditor } from "./TrackPointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { TrackLocalStorageService } from "../common-components/TrackLocalStorageService";
-import { LoadSaveFile } from "../LoadSaveFile";
+import { LoadSaveFile } from "../common/components/LoadSaveFile";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common-components/state-utils";
