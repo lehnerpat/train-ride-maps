@@ -1,7 +1,7 @@
 import { parseOsmXml } from "./parse-osm-xml";
 import * as fs from "fs-extra";
 import path from "path";
-import { distanceInM } from "../geo/distance";
+import { distanceInMM } from "../geo/distance";
 
 describe("parseOsmXml", () => {
   test("it works", async () => {
@@ -9,8 +9,8 @@ describe("parseOsmXml", () => {
     const nodes = parseOsmXml(osmXml);
     let distance = 0;
     for (let i = 0; i < nodes.length - 1; i++) {
-      distance += distanceInM(nodes[i].coord, nodes[i + 1].coord);
+      distance += distanceInMM(nodes[i].coord, nodes[i + 1].coord);
     }
-    console.log("overall distance", distance);
+    console.log("overall distance", distance, "mm");
   });
 });

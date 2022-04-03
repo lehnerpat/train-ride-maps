@@ -2,10 +2,11 @@ import { LatLngLiteral, CRS } from "leaflet";
 // import LatLonEllipsoidal_Vincenty from "geodesy/latlon-ellipsoidal-vincenty";
 // import LatLonSpherical from "geodesy/latlon-spherical";
 
-type DistanceInMFunction = (p1: LatLngLiteral, p2: LatLngLiteral) => number;
+type DistanceFunction = (p1: LatLngLiteral, p2: LatLngLiteral) => number;
 
 const radPerDeg = Math.PI / 180;
 const earthMeanRadiusInM = 6371000;
+const earthMeanRadiusInMM = 6371000000;
 
 // function geodesySpherical(p1: LatLngLiteral, p2: LatLngLiteral): number {
 //   return new LatLonSpherical(p1.lat, p1.lng).distanceTo(new LatLonSpherical(p2.lat, p2.lng));
@@ -15,26 +16,32 @@ const earthMeanRadiusInM = 6371000;
 //   return new LatLonEllipsoidal_Vincenty(p1.lat, p1.lng).distanceTo(new LatLonEllipsoidal_Vincenty(p2.lat, p2.lng));
 // }
 
-// based on https://www.movable-type.co.uk/scripts/latlong.html
-function geodesySphericalDirect(p1: LatLngLiteral, p2: LatLngLiteral): number {
-  // φ, λ in radians
-  const φ1 = p1.lat * radPerDeg;
-  const φ2 = p2.lat * radPerDeg;
-  const Δφ = (p2.lat - p1.lat) * radPerDeg;
-  const Δλ = (p2.lng - p1.lng) * radPerDeg;
+function makeGeodesySphericalDirect(sphereRadius: number): DistanceFunction {
+  // based on https://www.movable-type.co.uk/scripts/latlong.html
+  return function geodesySphericalDirect(p1: LatLngLiteral, p2: LatLngLiteral): number {
+    // φ, λ in radians
+    const φ1 = p1.lat * radPerDeg;
+    const φ2 = p2.lat * radPerDeg;
+    const Δφ = (p2.lat - p1.lat) * radPerDeg;
+    const Δλ = (p2.lng - p1.lng) * radPerDeg;
 
-  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  const d = earthMeanRadiusInM * c; // in metres
-  return d;
+    const d = sphereRadius * c;
+    return d;
+  };
 }
+const geodesySphericalDirectMeters = makeGeodesySphericalDirect(earthMeanRadiusInM);
+const geodesySphericalDirectMilliMeters = makeGeodesySphericalDirect(earthMeanRadiusInMM);
 
+// result in meters
 function distanceLeafletEarthCrs(p1: LatLngLiteral, p2: LatLngLiteral): number {
   return CRS.Earth.distance(p1, p2);
 }
 
 // based on https://www.movable-type.co.uk/scripts/latlong.html
+// result in meters
 function equirectangularApproximation(p1: LatLngLiteral, p2: LatLngLiteral): number {
   // φ, λ in radians
   const φ1 = p1.lat * radPerDeg;
@@ -47,6 +54,7 @@ function equirectangularApproximation(p1: LatLngLiteral, p2: LatLngLiteral): num
   return d;
 }
 
+// result in meters
 function naiveEuclidean(p1: LatLngLiteral, p2: LatLngLiteral): number {
   const dx = (p2.lng - p1.lng) * radPerDeg;
   const dy = (p2.lat - p1.lat) * radPerDeg;
@@ -54,11 +62,11 @@ function naiveEuclidean(p1: LatLngLiteral, p2: LatLngLiteral): number {
   return Math.sqrt(dx * dx + dy * dy) * earthMeanRadiusInM;
 }
 
-export const distanceInMFunctions: readonly DistanceInMFunction[] = Object.freeze([
+export const distanceInMFunctions: readonly DistanceFunction[] = Object.freeze([
   distanceLeafletEarthCrs,
   naiveEuclidean,
   equirectangularApproximation,
-  geodesySphericalDirect,
+  geodesySphericalDirectMeters,
   // geodesySpherical,
   // geodesyEllipsoidalVincenty,
 ]);
@@ -77,5 +85,9 @@ export const distanceInMFunctions: readonly DistanceInMFunction[] = Object.freez
 //   out;
 // ```
 // Overpass Turbo computed a total length of 55280.4 (meters), while our own sum using geodesySphericalDirect
-// came out to 55340.508692071424.
-export const distanceInM = geodesySphericalDirect;
+// came out to 55340.508692071424 meters or with (individual) mm-rounding 55340491 mm.
+export function distanceInMM(p1: LatLngLiteral, p2: LatLngLiteral): number {
+  // decided to go with integer millimeters so the distances can be used for reliable computation and indexing;
+  // compare https://www.avioconsulting.com/blog/overcoming-javascript-numeric-precision-issues
+  return Math.round(geodesySphericalDirectMilliMeters(p1, p2));
+}

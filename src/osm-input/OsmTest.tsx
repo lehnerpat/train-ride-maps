@@ -2,7 +2,7 @@ import { LatLngLiteral } from "leaflet";
 import { FC, useEffect, useState } from "react";
 import { MapContainer, Marker, Pane, Polyline, TileLayer } from "react-leaflet";
 import styled from "styled-components";
-import { distanceInM } from "../geo/distance";
+import { distanceInMM } from "../geo/distance";
 import { OsmNode, parseOsmXml } from "./parse-osm-xml";
 type DistanceWithNode = [number, OsmNode];
 
@@ -22,7 +22,7 @@ export const OsmTest: FC = () => {
       let prevNode = nodes[0];
       let distanceFromStartMap: [number, OsmNode][] = [[0, prevNode]];
       for (const n of nodes.slice(1)) {
-        totalDistance += distanceInM(prevNode.coord, n.coord);
+        totalDistance += distanceInMM(prevNode.coord, n.coord);
         distanceFromStartMap.push([totalDistance, n]);
         prevNode = n;
       }
