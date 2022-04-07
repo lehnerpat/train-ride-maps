@@ -1,44 +1,47 @@
+import { number } from "fp-ts";
 import { LatLngLiteral } from "leaflet";
 import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";
 import { SetState, UseState } from "../common-components/state-utils";
-import { TrackPoint } from "../track-models";
+import { TimingPoint } from "../track-models/new";
+
 import { TrackPointsEditorOptions } from "./ViewOptions";
 
-interface TrackPointsEditorProps {
+interface TimingPointsEditorProps {
   options: TrackPointsEditorOptions;
-  trackPointsState: UseState<TrackPoint[]>;
+  timingPointsState: UseState<TimingPoint[]>;
   playedSeconds: number;
-  mapCenter: LatLngLiteral | undefined;
-  precedingTrackPointIndex: number;
+  currentDistance: number; // TODO what to do here
+  precedingTimingPointIndex: number;
 }
-export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
+export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
   options,
-  trackPointsState: [trackPoints, setTrackPoints],
+  timingPointsState,
   playedSeconds,
-  mapCenter,
-  precedingTrackPointIndex,
+  currentDistance,
+  precedingTimingPointIndex,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [timingPoints] = timingPointsState;
 
   const isEditing = editingIndex !== null;
 
   return (
-    <TrackPointsEditorContainer>
+    <TimingPointsEditorContainer>
       <h3 style={{ marginLeft: "15px" }}>
-        {!isEditing ? "Add new track point:" : `Editing track point ${editingIndex}:`}
+        {!isEditing ? "Add new timing point:" : `Editing timing point ${editingIndex}:`}
       </h3>
       <EditingArea
-        trackPointsState={[trackPoints, setTrackPoints]}
+        timingPointsState={timingPointsState}
         timeSeconds={playedSeconds}
-        position={mapCenter}
+        distance={currentDistance}
         editingIndexState={[editingIndex, setEditingIndex]}
       />
-      <h3 style={{ marginLeft: "15px" }}>Track points:</h3>
-      <TrackPointList
-        trackPoints={trackPoints}
-        precedingTrackPointIndex={precedingTrackPointIndex}
+      <h3 style={{ marginLeft: "15px" }}>Timing points:</h3>
+      <TimingPointList
+        timingPoints={timingPoints}
+        precedingTimingPointIndex={precedingTimingPointIndex}
         isStartEditingPossible={!isEditing}
         isAutoScrollOn={options.isAutoscrollTrackPointsListOn}
         editingIndex={editingIndex}
@@ -46,48 +49,48 @@ export const TrackPointsEditor: FC<TrackPointsEditorProps> = ({
           setEditingIndex(index);
         }}
       />
-    </TrackPointsEditorContainer>
+    </TimingPointsEditorContainer>
   );
 };
-const TrackPointsEditorContainer = styled(Panel)`
+const TimingPointsEditorContainer = styled(Panel)`
   padding: 0;
   margin-top: 0;
 `;
 interface EditingAreaProps extends InputFieldProps {
-  trackPointsState: UseState<TrackPoint[]>;
+  timingPointsState: UseState<TimingPoint[]>;
   editingIndexState: UseState<number | null>;
 }
 const EditingArea: FC<EditingAreaProps> = ({
   timeSeconds,
-  position,
-  trackPointsState: [trackPoints, setTrackPoints],
+  distance,
+  timingPointsState: [timingPoints, setTimingPoints],
   editingIndexState: [editingIndex, setEditingIndex],
 }) => {
-  const editingTrackPoint = editingIndex !== null ? trackPoints[editingIndex] : null;
+  const editingTimingPoint = editingIndex !== null ? timingPoints[editingIndex] : null;
   return (
     <EditingAreaContainer>
       <EditingInputFieldsGrid
-        timeSeconds={editingTrackPoint !== null ? editingTrackPoint.t : timeSeconds}
-        position={editingTrackPoint !== null ? editingTrackPoint.p : position}
+        timeSeconds={editingTimingPoint !== null ? editingTimingPoint.t : timeSeconds}
+        distance={editingTimingPoint !== null ? editingTimingPoint.d : distance}
       />
       <div style={{ textAlign: "right", fontSize: "70%" }}>Position map to choose coordinate</div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
           onClick={() => {
-            if (typeof timeSeconds === "number" && typeof position === "object") {
-              addTrackPoint({ t: timeSeconds, p: position }, setTrackPoints);
+            if (typeof timeSeconds === "number" && typeof distance === "number") {
+              addTimingPoint({ t: timeSeconds, d: distance }, setTimingPoints);
             }
           }}
         >
-          Add new track point
+          Add new timing point
         </button>
       </div>
-      {editingIndex !== null && editingTrackPoint !== null && (
+      {editingIndex !== null && editingTimingPoint !== null && (
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button
             onClick={() => {
               setEditingIndex(null);
-              deleteTrackPoint(editingIndex, setTrackPoints);
+              deleteTimingPoint(editingIndex, setTimingPoints);
             }}
           >
             Delete
@@ -111,22 +114,18 @@ const EditingAreaContainer = styled.div`
 
 interface InputFieldProps {
   timeSeconds: number;
-  position: LatLngLiteral | undefined;
+  distance: number;
 }
 
-const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, position }) => (
+const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, distance }) => (
   <EditingInputFieldsGridContainer>
     <>
       <EditingInputFieldLabel htmlFor="new-wp-time">t =</EditingInputFieldLabel>
       <EditingInputField id="new-wp-time" type="number" readOnly value={timeSeconds} />
     </>
     <>
-      <EditingInputFieldLabel htmlFor="new-wp-lat">lat =</EditingInputFieldLabel>
-      <EditingInputField id="new-wp-lat" type="number" readOnly value={position?.lat || ""} />
-    </>
-    <>
-      <EditingInputFieldLabel htmlFor="new-wp-lng">lng =</EditingInputFieldLabel>
-      <EditingInputField id="new-wp-lng" type="number" readOnly value={position?.lng || ""} />
+      <EditingInputFieldLabel htmlFor="new-wp-distance">d =</EditingInputFieldLabel>
+      <EditingInputField id="new-wp-distance" type="number" readOnly value={distance} />
     </>
   </EditingInputFieldsGridContainer>
 );
@@ -146,20 +145,20 @@ const EditingInputField = styled.input`
   color: #eee;
 `;
 
-interface TrackPointListProps {
-  trackPoints: TrackPoint[];
-  precedingTrackPointIndex: number;
+interface TimingPointListProps {
+  timingPoints: TimingPoint[];
+  precedingTimingPointIndex: number;
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
   editingIndex: number | null;
   isAutoScrollOn: boolean;
 }
 
-const previousTrackPointClassName = "previous";
-const nextTrackPointClassName = "next";
-const TrackPointList: FC<TrackPointListProps> = ({
-  trackPoints,
-  precedingTrackPointIndex,
+const previousPointClassName = "previous";
+const nextPointClassName = "next";
+const TimingPointList: FC<TimingPointListProps> = ({
+  timingPoints,
+  precedingTimingPointIndex,
   isStartEditingPossible,
   onStartEditing,
   editingIndex,
@@ -170,8 +169,8 @@ const TrackPointList: FC<TrackPointListProps> = ({
   useEffect(() => {
     const ref = containerRef.current;
     if (!isAutoScrollOn || ref === null) return;
-    const prevEntryEl = ref.querySelector<HTMLElement>(`.${previousTrackPointClassName}`);
-    const nextEntryEl = ref.querySelector<HTMLElement>(`.${nextTrackPointClassName}`);
+    const prevEntryEl = ref.querySelector<HTMLElement>(`.${previousPointClassName}`);
+    const nextEntryEl = ref.querySelector<HTMLElement>(`.${nextPointClassName}`);
 
     const top = prevEntryEl?.offsetTop ?? nextEntryEl?.offsetTop ?? 0;
     const bottom =
@@ -186,22 +185,22 @@ const TrackPointList: FC<TrackPointListProps> = ({
     } else if (ref.scrollTop + ref.clientHeight < bottom) {
       ref.scrollTo({ top: bottom - ref.clientHeight, behavior: "smooth" });
     }
-  }, [precedingTrackPointIndex, isAutoScrollOn]);
+  }, [precedingTimingPointIndex, isAutoScrollOn]);
 
   return (
-    <TrackPointListContainer ref={containerRef}>
-      {trackPoints.map((wp, idx) => {
+    <TimingPointListContainer ref={containerRef}>
+      {timingPoints.map((tp, idx) => {
         const prevNextClass =
-          idx === precedingTrackPointIndex
-            ? previousTrackPointClassName
-            : idx === precedingTrackPointIndex + 1
-            ? nextTrackPointClassName
+          idx === precedingTimingPointIndex
+            ? previousPointClassName
+            : idx === precedingTimingPointIndex + 1
+            ? nextPointClassName
             : "";
         const editingClass = idx === editingIndex ? "editing" : "";
         return (
-          <TrackPointListEntry
+          <TimingPointListEntry
             key={idx}
-            trackPoint={wp}
+            timingPoint={tp}
             className={`${prevNextClass} ${editingClass}`}
             index={idx}
             isStartEditingPossible={isStartEditingPossible}
@@ -209,74 +208,70 @@ const TrackPointList: FC<TrackPointListProps> = ({
           />
         );
       })}
-    </TrackPointListContainer>
+    </TimingPointListContainer>
   );
 };
-const TrackPointListContainer = styled.div`
+const TimingPointListContainer = styled.div`
   max-height: 600px;
   overflow-y: auto;
   position: relative;
 `;
 
-interface TrackPointListEntryProps {
-  trackPoint: TrackPoint;
+interface TimingPointListEntryProps {
+  timingPoint: TimingPoint;
   className?: string;
   index: number;
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
 }
 
-const TrackPointListEntry: FC<TrackPointListEntryProps> = ({
-  trackPoint,
+const TimingPointListEntry: FC<TimingPointListEntryProps> = ({
+  timingPoint,
   className,
   index,
   isStartEditingPossible,
   onStartEditing,
 }) => (
-  <TrackPointListEntryContainer>
-    <TrackPointListEntryInfoContainer>
+  <TimingPointListEntryContainer>
+    <TimingPointListEntryInfoContainer>
       <div>{index}</div>
-      <TrackPointEditButton
+      <TimingPointEditButton
         disabled={!isStartEditingPossible}
-        title="Edit this trackPoint"
+        title="Edit this timingPoint"
         onClick={() => {
           if (isStartEditingPossible && typeof onStartEditing === "function") onStartEditing(index);
         }}
       >
         E
-      </TrackPointEditButton>
-    </TrackPointListEntryInfoContainer>
-    <TrackPointListEntryDataContainer className={className}>
+      </TimingPointEditButton>
+    </TimingPointListEntryInfoContainer>
+    <TimingPointListEntryDataContainer className={className}>
       <>
-        <TrackPointListEntryContainerLabel>t =</TrackPointListEntryContainerLabel>
-        <span>{trackPoint.t}s</span>
+        <TimingPointListEntryContainerLabel>t =</TimingPointListEntryContainerLabel>
+        <span>{timingPoint.t}s</span>
       </>
       <>
-        <TrackPointListEntryContainerLabel>lat =</TrackPointListEntryContainerLabel>
-        <span>{trackPoint.p.lat}</span>
+        <TimingPointListEntryContainerLabel>d =</TimingPointListEntryContainerLabel>
+        <span>{timingPoint.d}</span>
       </>
-      <>
-        <TrackPointListEntryContainerLabel>lng =</TrackPointListEntryContainerLabel>
-        <span>{trackPoint.p.lng}</span>
-      </>
-    </TrackPointListEntryDataContainer>
-  </TrackPointListEntryContainer>
+    </TimingPointListEntryDataContainer>
+  </TimingPointListEntryContainer>
 );
-const TrackPointListEntryContainer = styled.div`
+const TimingPointListEntryContainer = styled.div`
   display: flex;
   font-family: monospace;
   gap: 5px;
   margin: 5px 10px;
 `;
 
-const TrackPointListEntryInfoContainer = styled.div`
+const TimingPointListEntryInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
   align-items: center;
   justify-content: center;
 `;
-const TrackPointEditButton = styled.button`
+const TimingPointEditButton = styled.button`
   color: #eee;
   background: #282828;
   border: 1px solid gray;
@@ -288,8 +283,8 @@ const TrackPointEditButton = styled.button`
   }
 `;
 
-const activeTrackPointColor = "#678fd4";
-const TrackPointListEntryDataContainer = styled.div`
+const activeTimingPointColor = "#678fd4";
+const TimingPointListEntryDataContainer = styled.div`
   border: 1px solid transparent;
   background: #333;
   display: grid;
@@ -297,41 +292,41 @@ const TrackPointListEntryDataContainer = styled.div`
   column-gap: 5px;
   flex-grow: 1;
 
-  &.${previousTrackPointClassName}, &.${nextTrackPointClassName} {
-    border-left-color: ${activeTrackPointColor};
-    border-right-color: ${activeTrackPointColor};
+  &.${previousPointClassName}, &.${nextPointClassName} {
+    border-left-color: ${activeTimingPointColor};
+    border-right-color: ${activeTimingPointColor};
   }
-  &.${previousTrackPointClassName} {
-    border-top-color: ${activeTrackPointColor};
+  &.${previousPointClassName} {
+    border-top-color: ${activeTimingPointColor};
   }
-  &.${nextTrackPointClassName} {
-    border-bottom-color: ${activeTrackPointColor};
+  &.${nextPointClassName} {
+    border-bottom-color: ${activeTimingPointColor};
   }
   &.editing {
     background: #594a33;
   }
 `;
-const TrackPointListEntryContainerLabel = styled.div`
+const TimingPointListEntryContainerLabel = styled.div`
   text-align: right;
 `;
 
-function addTrackPoint(newTrackPoint: TrackPoint, setTrackPoints: SetState<TrackPoint[]>) {
-  setTrackPoints((oldTrackPoints) => {
-    const trackPoints = [...oldTrackPoints];
-    const newIdx = trackPoints.findIndex((wp) => wp.t > newTrackPoint.t);
+function addTimingPoint(newTimingPoint: TimingPoint, setTimingPoints: SetState<TimingPoint[]>) {
+  setTimingPoints((oldTimingPoints) => {
+    const timingPoints = [...oldTimingPoints];
+    const newIdx = timingPoints.findIndex((wp) => wp.t > newTimingPoint.t);
     if (newIdx === -1) {
-      trackPoints.push(newTrackPoint);
+      timingPoints.push(newTimingPoint);
     } else {
-      trackPoints.splice(newIdx, 0, newTrackPoint);
+      timingPoints.splice(newIdx, 0, newTimingPoint);
     }
-    return trackPoints;
+    return timingPoints;
   });
 }
 
-function deleteTrackPoint(index: number, setTrackPoints: SetState<TrackPoint[]>) {
-  setTrackPoints((oldTrackPoints) => {
-    const trackPoints = [...oldTrackPoints];
-    trackPoints.splice(index, 1);
-    return trackPoints;
+function deleteTimingPoint(index: number, setTimingPoints: SetState<TimingPoint[]>) {
+  setTimingPoints((oldTimingPoints) => {
+    const timingPoints = [...oldTimingPoints];
+    timingPoints.splice(index, 1);
+    return timingPoints;
   });
 }

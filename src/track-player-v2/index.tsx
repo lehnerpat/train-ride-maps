@@ -2,7 +2,7 @@ import { FC, memo, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { Track, Tracks } from "../track-models/new";
 import styled, { css } from "styled-components";
-import { TrackPointsEditor } from "./TrackPointsEditor";
+import { TimingPointsEditor } from "./TimingPointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { LoadSaveFile } from "../common/components/LoadSaveFile";
@@ -20,7 +20,8 @@ interface TrackPlayerProps {
 }
 export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const initialCoord = initialTrack.path.length > 0 ? initialTrack.path[0] : { lat: 0, lng: 0 };
-  const [track, setTrack] = useAutosavingTrackState(initialTrack);
+  const trackState = useAutosavingTrackState(initialTrack);
+  const [track, setTrack] = trackState;
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
@@ -71,6 +72,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   //     };
   //   });
   // };
+  const timingPointsState = usePickedState(trackState, "timingPoints");
 
   const showMapAsOverlay = !isEditingModeOn;
 
@@ -117,13 +119,13 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
       <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
-            {/* <TrackPointsEditor
+            <TimingPointsEditor
               options={viewOptions.trackPointsEditorOptions}
-              trackPointsState={[trackPoints, setTrackPoints]}
+              timingPointsState={timingPointsState}
               playedSeconds={playedSeconds}
-              mapCenter={interactionMapCenter}
-              precedingTrackPointIndex={precedingTrackPointIndex}
-            /> */}
+              currentDistance={0}
+              precedingTimingPointIndex={precedingTrackPointIndex}
+            />
           </TrackPointsCol>
         )}
         <PlayerMapCol>
