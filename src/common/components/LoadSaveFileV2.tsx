@@ -1,37 +1,26 @@
-import { FC, useRef } from "react";
+import { FC } from "react";
 import styled from "styled-components";
 import { Panel } from "../../common-components/Panel";
 import { useLocation } from "wouter";
 import { PageRouting } from "../../page-routing";
 import { TrackLocalStorageService } from "../../track-models/NewTrackLocalStorageService";
 import { Tracks } from "../../track-models/new";
+import { useFileUpload } from "./useFileUpload";
 
 interface LoadSaveFileProps {
   onDownloadRequested?: () => string;
 }
 
 export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
 
-  const onUploadButtonClicked = () => {
-    const inputEl = fileInputRef.current;
-    if (inputEl === null) return;
-
-    // reset the input so change event fires even when user selects same file as previously
-    inputEl.value = "";
-    inputEl.files = null;
-    inputEl.click();
+  const onTrackFileUploaded = async (file: File) => {
+    const j = await file.text();
+    const r = Tracks.readFromJson(j);
+    TrackLocalStorageService.save(r);
+    setLocation(PageRouting.viewTrackPageV2(r.uuid));
   };
-  const onFileSelectionChanged = async (ev: React.ChangeEvent<HTMLInputElement>) => {
-    const files = ev.target.files;
-    if (!!files && files.length > 0) {
-      const j = await files[0].text();
-      const r = Tracks.readFromJson(j);
-      TrackLocalStorageService.save(r);
-      setLocation(PageRouting.viewTrackPageV2(r.uuid));
-    }
-  };
+  const { showUploadDialog, HiddenFileInput } = useFileUpload("track-upload-v2", onTrackFileUploaded);
 
   const onDownloadButtonClicked = () => {
     if (!onDownloadRequested) return;
@@ -53,10 +42,10 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
   return (
     <Panel>
       <ButtonBar>
-        <Button onClick={onUploadButtonClicked}>Upload file...</Button>
+        <Button onClick={showUploadDialog}>Upload file...</Button>
         {!!onDownloadRequested && <Button onClick={onDownloadButtonClicked}>Download current file...</Button>}
       </ButtonBar>
-      <HiddenInput type="file" id="upload-file" ref={fileInputRef} onChange={onFileSelectionChanged} />
+      <HiddenFileInput />
     </Panel>
   );
 };
@@ -70,8 +59,4 @@ const ButtonBar = styled.div`
 const Button = styled.button`
   flex-grow: 1;
   padding: 1em 3em;
-`;
-
-const HiddenInput = styled.input`
-  display: none;
 `;

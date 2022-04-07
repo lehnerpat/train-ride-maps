@@ -4,6 +4,7 @@ import { ReturnLink, ReturnLinkContainer } from "../common/components/return-lin
 import { IncludedDataMapV2 } from "../included-data";
 import { Track } from "../track-models/new";
 import { TrackLocalStorageService } from "../track-models/NewTrackLocalStorageService";
+import { TrackPlayer } from "../track-player-v2";
 import { StartPage } from "./StartPage";
 
 export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
@@ -19,7 +20,7 @@ export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
 
   return (
     <>
-      {/* <TrackPlayer initialTrack={track} /> */}
+      <TrackPlayer initialTrack={track} />
       <ReturnLinkContainer>
         <ReturnLink href="/">Return to start page</ReturnLink>
       </ReturnLinkContainer>
