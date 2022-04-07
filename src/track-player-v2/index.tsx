@@ -11,6 +11,7 @@ import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight
 import { useMemoState, usePickedState, UseState, SetState } from "../common-components/state-utils";
 import { TrackLocalStorageService } from "../track-models/NewTrackLocalStorageService";
 import { useFileUpload } from "../common/components/useFileUpload";
+import { parseOsmXml } from "../osm-input/parse-osm-xml";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -30,8 +31,13 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
   const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
 
-  const onOsmFileUploaded = (file: File) => {
-    console.log(file);
+  const onOsmFileUploaded = async (file: File) => {
+    const osmXml = await file.text();
+    const nodes = parseOsmXml(osmXml);
+    console.log("parsed ", nodes.length, "nodes");
+    const path = nodes.map((n) => n.coord);
+    setTrack((track) => ({ ...track, path: path }));
+    setCurrentCenter(path[0]);
   };
   const { HiddenFileInput, showUploadDialog } = useFileUpload("osm-import", onOsmFileUploaded);
 
@@ -78,7 +84,24 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         >
           {isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
         </TopButton>
-        {isEditingModeOn && <TopButton onClick={() => showUploadDialog()}>Import OSM XML</TopButton>}
+        {isEditingModeOn && (
+          <>
+            <TopButton onClick={() => showUploadDialog()}>{"Import OSM XML"}</TopButton>
+            <TopButton onClick={() => showUploadDialog()} disabled={path.length > 0}>
+              {path.length > 0 ? "Path already present" : "Import OSM XML"}
+            </TopButton>
+            <TopButton
+              onClick={() => {
+                const path = [...track.path].reverse();
+                setTrack((track) => ({ ...track, path }));
+                setCurrentCenter(path[0]);
+              }}
+              disabled={path.length === 0}
+            >
+              Reverse path
+            </TopButton>
+          </>
+        )}
         <TopButtonSpacer />
         <TopButton
           onClick={() => {
