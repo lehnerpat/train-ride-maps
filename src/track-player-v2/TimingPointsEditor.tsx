@@ -14,6 +14,7 @@ interface TimingPointsEditorProps {
   playedSeconds: number;
   currentDistance: number; // TODO what to do here
   precedingTimingPointIndex: number;
+  pathLengthMM: number;
 }
 export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
   options,
@@ -21,6 +22,7 @@ export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
   playedSeconds,
   currentDistance,
   precedingTimingPointIndex,
+  pathLengthMM,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [timingPoints] = timingPointsState;
@@ -29,16 +31,16 @@ export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
 
   return (
     <TimingPointsEditorContainer>
-      <h3 style={{ marginLeft: "15px" }}>
-        {!isEditing ? "Add new timing point:" : `Editing timing point ${editingIndex}:`}
-      </h3>
+      <SectionHeading>Video Data:</SectionHeading>
+      <div style={{ margin: "0 10px" }}>Path length: {(pathLengthMM / 1000).toFixed(3)}m</div>
+      <SectionHeading>{!isEditing ? "Add new timing point:" : `Editing timing point ${editingIndex}:`}</SectionHeading>
       <EditingArea
         timingPointsState={timingPointsState}
         timeSeconds={playedSeconds}
         distance={currentDistance}
         editingIndexState={[editingIndex, setEditingIndex]}
       />
-      <h3 style={{ marginLeft: "15px" }}>Timing points:</h3>
+      <SectionHeading>Timing points:</SectionHeading>
       <TimingPointList
         timingPoints={timingPoints}
         precedingTimingPointIndex={precedingTimingPointIndex}
@@ -52,6 +54,11 @@ export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
     </TimingPointsEditorContainer>
   );
 };
+
+const SectionHeading = styled.h3`
+  margin-left: 15px;
+`;
+
 const TimingPointsEditorContainer = styled(Panel)`
   padding: 0;
   margin-top: 0;

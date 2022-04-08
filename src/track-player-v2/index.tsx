@@ -12,6 +12,7 @@ import { useMemoState, usePickedState, UseState, SetState } from "../common-comp
 import { TrackLocalStorageService } from "../track-models/NewTrackLocalStorageService";
 import { useFileUpload } from "../common/components/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
+import { distanceInMM } from "../geo/distance";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -23,6 +24,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const trackState = useAutosavingTrackState(initialTrack);
   const [track, setTrack] = trackState;
   const [playedSeconds, setPlayedSeconds] = useState(0);
+  const [pathLengthMM, setPathLengthMM] = useMemoState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
@@ -43,6 +45,10 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const { HiddenFileInput, showUploadDialog } = useFileUpload("osm-import", onOsmFileUploaded);
 
   const path = track.path;
+
+  useEffect(() => {
+    setPathLengthMM(computePathLength(path, distanceInMM));
+  }, [track.path]);
 
   // useEffect(() => {
   //   // TODO: refactor to return only one index
@@ -125,6 +131,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               playedSeconds={playedSeconds}
               currentDistance={0}
               precedingTimingPointIndex={precedingTrackPointIndex}
+              pathLengthMM={pathLengthMM}
             />
           </TrackPointsCol>
         )}
@@ -299,3 +306,17 @@ const TrackPointsCol = styled.div`
   width: 300px;
   margin-right: 10px;
 `;
+
+function computePathLength(
+  path: readonly LatLngLiteral[],
+  distanceFunction: (p1: LatLngLiteral, p2: LatLngLiteral) => number
+): number {
+  if (!path || path.length < 2) {
+    throw new Error(`Cannot compute length of path with less than 2 points, got ${path.length} nodes`);
+  }
+  let distance = 0;
+  for (let i = 0; i < path.length - 1; i++) {
+    distance += distanceFunction(path[i], path[i + 1]);
+  }
+  return distance;
+}

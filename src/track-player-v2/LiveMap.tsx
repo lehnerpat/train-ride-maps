@@ -1,9 +1,10 @@
-import { LatLngLiteral, Map as LeafletMap } from "leaflet";
-import { FC, useEffect, useRef, useState } from "react";
+import { LatLngLiteral, Map as LeafletMap, Point, Polyline as LeafletPolyline } from "leaflet";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
 import { MapViewOptions } from "./ViewOptions";
+import { SetState } from "../common-components/state-utils";
 
 interface LiveMapProps {
   path: LatLngLiteral[];
@@ -24,8 +25,10 @@ export const LiveMap: FC<LiveMapProps> = ({
   viewOptions: { isAutopanOn, isAllTrackPointMarkersOn, isCrosshairOverlayOn, isTrackPolylineOn },
 }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
+  const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
 
   const containerRef = useRef(null);
+  const polylineRef = useRef(null);
 
   useResizeObserver(containerRef, () => {
     if (map === null) return;
@@ -47,7 +50,7 @@ export const LiveMap: FC<LiveMapProps> = ({
           setMap(map);
         }}
       >
-        <MapEventHandler onMapMoved={onMapMoved} />
+        <MapEventHandler onMapMoved={onMapMoved} polylineRef={polylineRef} setProjectedPoint={setProjectedPoint} />
         <BaseTileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -66,8 +69,9 @@ export const LiveMap: FC<LiveMapProps> = ({
           detectRetina
         />
         <AllTrackPointsPane name="all-trackPoints-pane">
-          {isTrackPolylineOn && <Polyline color="purple" positions={path} />}
+          {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} />}
           {isAllTrackPointMarkersOn && path.map((p, idx) => <Marker position={p} key={idx} />)}
+          {!!projectedPoint && <Marker position={projectedPoint} />}
         </AllTrackPointsPane>
         <CurrentPositionPane name="current-position-pane">
           <Marker position={currentCenter} title="Current" />
@@ -84,10 +88,23 @@ const LiveMapContainer = styled.div`
 
 const MapEventHandler: FC<{
   onMapMoved: (newCenter: LatLngLiteral) => void;
-}> = ({ onMapMoved }) => {
+  polylineRef: React.MutableRefObject<null>;
+  setProjectedPoint: SetState<LatLngLiteral | undefined>;
+}> = ({ onMapMoved, polylineRef, setProjectedPoint }) => {
   useMapEvent("moveend", (ev) => {
-    const pos = (ev.target as LeafletMap).getCenter();
+    const map = ev.target as LeafletMap;
+    const pos = map.getCenter();
     onMapMoved(pos);
+    if (!!polylineRef.current) {
+      const pl = polylineRef.current as LeafletPolyline;
+      const mapCenterPoint = map.latLngToLayerPoint(pos);
+      console.log("mapCenterPoint", mapCenterPoint);
+      const closestOnLine = pl.closestLayerPoint(mapCenterPoint);
+      const projectedPoint = map.layerPointToLatLng(closestOnLine);
+      console.log("closestOnLine", closestOnLine, projectedPoint);
+      setProjectedPoint(projectedPoint);
+      // debugger;
+    }
   });
   return null;
 };
@@ -113,10 +130,26 @@ const crosshairColor = "#0077ff";
 const CrosshairOverlay: FC = () => (
   <>
     <CrosshairOverlayItem
-      style={{ left: 0, right: 0, top: "50%", bottom: "calc(50% - 1px)", borderTop: `1px solid ${crosshairColor}` }}
+      style={{
+        left: "calc(50% - 20px)",
+        right: "calc(50% - 20px)",
+        top: "50%",
+        bottom: "calc(50% - 1px)",
+        borderTop: `1px solid ${crosshairColor}`,
+        transformOrigin: "center",
+        transform: "rotate(45deg)",
+      }}
     />
     <CrosshairOverlayItem
-      style={{ left: "50%", right: "calc(50% - 1px)", top: 0, bottom: 0, borderLeft: `1px solid ${crosshairColor}` }}
+      style={{
+        left: "50%",
+        right: "calc(50% - 1px)",
+        top: "calc(50% - 20px)",
+        bottom: "calc(50% - 20px)",
+        borderLeft: `1px solid ${crosshairColor}`,
+        transformOrigin: "center",
+        transform: "rotate(45deg)",
+      }}
     />
   </>
 );
