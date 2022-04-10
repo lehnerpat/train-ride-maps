@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunktrm_react_ui=self.webpackChunktrm_react_ui||[]).push([[516],{516:function(r,t,e){e.r(t),e.d(t,{default:function(){return f}});var n=e(5671),u=e(3144),c=e(136),i=e(7277),a=e(8308),f=function(r){(0,c.Z)(e,r);var t=(0,i.Z)(e);function e(){return(0,n.Z)(this,e),t.apply(this,arguments)}return(0,u.Z)(e,[{key:"decodeBlock",value:function(r){return(0,a.rr)(new Uint8Array(r)).buffer}}]),e}(e(9878).Z)}}]);
-//# sourceMappingURL=516.fd96287a.chunk.js.map
