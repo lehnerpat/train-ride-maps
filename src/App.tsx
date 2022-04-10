@@ -1,7 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
 import { Route, Switch } from "wouter";
-import { OlTest } from "./OlTest";
 import { gitCommitSha } from "./build-info";
 import { OsmTest } from "./osm-input/OsmTest";
 import { ReturnLink, ReturnLinkContainer } from "./common/components/return-links";
@@ -15,9 +14,6 @@ function App() {
         <Switch>
           <Route path="/">
             <StartPage />
-          </Route>
-          <Route path="/ol-test">
-            <OlTest />
           </Route>
           <Route path="/osm-test">
             <OsmTest />
