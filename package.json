@@ -60,7 +60,7 @@
   },
   "prettier": {},
   "devDependencies": {
-    "ts-node": "^10.5.0"
+    "ts-node": "^10.7.0"
   },
   "homepage": "/"
 }
