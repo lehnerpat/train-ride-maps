@@ -27,6 +27,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
+  const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
   const viewOptionsState = useMemoState(DefaultViewOptions);
@@ -49,6 +50,13 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   useEffect(() => {
     setPathLengthMM(computePathLength(path, distanceInMM));
   }, [track.path]);
+
+  useEffect(() => {
+    if (!!interactionMapCenter) {
+      setCurrentDistanceMM(undefined);
+    } else {
+    }
+  }, [interactionMapCenter]);
 
   // useEffect(() => {
   //   // TODO: refactor to return only one index
@@ -129,7 +137,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               options={viewOptions.trackPointsEditorOptions}
               timingPointsState={timingPointsState}
               playedSeconds={playedSeconds}
-              currentDistance={0}
+              currentDistance={undefined}
               precedingTimingPointIndex={precedingTrackPointIndex}
               pathLengthMM={pathLengthMM}
             />
@@ -309,6 +317,21 @@ const TrackPointsCol = styled.div`
 
 function computePathLength(
   path: readonly LatLngLiteral[],
+  distanceFunction: (p1: LatLngLiteral, p2: LatLngLiteral) => number
+): number {
+  if (!path || path.length < 2) {
+    throw new Error(`Cannot compute length of path with less than 2 points, got ${path.length} nodes`);
+  }
+  let distance = 0;
+  for (let i = 0; i < path.length - 1; i++) {
+    distance += distanceFunction(path[i], path[i + 1]);
+  }
+  return distance;
+}
+
+function computePathLengthToPoint(
+  path: readonly LatLngLiteral[],
+  endPoint: LatLngLiteral,
   distanceFunction: (p1: LatLngLiteral, p2: LatLngLiteral) => number
 ): number {
   if (!path || path.length < 2) {

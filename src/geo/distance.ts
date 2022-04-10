@@ -25,15 +25,19 @@ function makeGeodesySphericalDirect(sphereRadius: number): DistanceFunction {
     const Δφ = (p2.lat - p1.lat) * radPerDeg;
     const Δλ = (p2.lng - p1.lng) * radPerDeg;
 
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    const d = sphereRadius * c;
-    return d;
+    return distanceBetweenPolarCoordinates(φ1, φ2, Δφ, Δλ, sphereRadius);
   };
 }
 const geodesySphericalDirectMeters = makeGeodesySphericalDirect(earthMeanRadiusInM);
 const geodesySphericalDirectMilliMeters = makeGeodesySphericalDirect(earthMeanRadiusInMM);
+
+function distanceBetweenPolarCoordinates(φ1: number, φ2: number, Δφ: number, Δλ: number, sphereRadius: number): number {
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const d = sphereRadius * c;
+  return d;
+}
 
 // result in meters
 function distanceLeafletEarthCrs(p1: LatLngLiteral, p2: LatLngLiteral): number {
@@ -90,4 +94,57 @@ export function distanceInMM(p1: LatLngLiteral, p2: LatLngLiteral): number {
   // decided to go with integer millimeters so the distances can be used for reliable computation and indexing;
   // compare https://www.avioconsulting.com/blog/overcoming-javascript-numeric-precision-issues
   return Math.round(geodesySphericalDirectMilliMeters(p1, p2));
+}
+
+// based on Leaflet's LineUtil._sqClosestPointOnSegment
+export function closestPointOnSegment(
+  p: LatLngLiteral,
+  p1: LatLngLiteral,
+  p2: LatLngLiteral
+): { closestOnSegment: LatLngLiteral; distanceFromPMM: number } {
+  const φ = p.lat * radPerDeg;
+  const λ = p.lng * radPerDeg;
+  const φ1 = p1.lat * radPerDeg;
+  const λ1 = p1.lng * radPerDeg;
+  const φ2 = p2.lat * radPerDeg;
+  const Δφ = (p2.lat - p1.lat) * radPerDeg;
+  const Δλ = (p2.lng - p1.lng) * radPerDeg;
+  const dot = Δφ * Δφ + Δλ * Δλ;
+
+  let φr = φ1;
+  let λr = λ1;
+
+  if (dot > 0) {
+    const t = ((φ - φ1) * Δφ + (λ - λ1) * Δλ) / dot;
+    if (t > 1) {
+      φr += Δφ;
+      λr += Δλ;
+    } else if (t > 0) {
+      φr += Δφ * t;
+      λr += Δλ * t;
+    }
+  }
+
+  const distanceFromPMM = distanceBetweenPolarCoordinates(φ, φr, φr - φ, λr - λ, earthMeanRadiusInMM);
+
+  return { distanceFromPMM, closestOnSegment: { lat: φr / radPerDeg, lng: λr / radPerDeg } };
+}
+
+let profileCounter = 0;
+export function closestPointOnPath(p: LatLngLiteral, path: LatLngLiteral[]) {
+  const profileId = `closestPointOnPath${profileCounter++}`;
+  console.time(profileId);
+  let closestDistance = Infinity;
+  let closestInfo;
+  for (let i = 0; i < path.length - 1; i++) {
+    const p1 = path[i],
+      p2 = path[i + 1];
+    const r = closestPointOnSegment(p, p1, p2);
+    if (r.distanceFromPMM < closestDistance) {
+      closestDistance = r.distanceFromPMM;
+      closestInfo = { ...r, p1, p2, index1: i };
+    }
+  }
+  console.timeEnd(profileId);
+  return closestInfo;
 }

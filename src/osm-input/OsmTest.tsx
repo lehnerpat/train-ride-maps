@@ -1,51 +1,67 @@
 import { LatLngLiteral } from "leaflet";
 import { FC, useEffect, useState } from "react";
-import { MapContainer, Marker, Pane, Polyline, TileLayer } from "react-leaflet";
+import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer } from "react-leaflet";
 import styled from "styled-components";
-import { distanceInMM } from "../geo/distance";
+import { closestPointOnPath, distanceInMM } from "../geo/distance";
 import { OsmNode, parseOsmXml } from "./parse-osm-xml";
 type DistanceWithNode = [number, OsmNode];
 
 export const OsmTest: FC = () => {
-  const [osmNodes, setOsmNodes] = useState<OsmNode[]>();
+  const n0 = { lat: 35.2564587, lng: 139.1564383 };
+  const n1 = { lat: 35.2566783, lng: 139.156592 };
+  const n2 = { lat: 35.2568798, lng: 139.1567186 };
+  const n3 = { lat: 35.2573469, lng: 139.1570074 };
+  const path = [n0, n1, n2, n3];
+
+  const c1 = { lat: 35.256584020886294, lng: 139.15733392721452 };
+  const p1 = { lat: 35.25684747559839, lng: 139.15669609123353 };
+
+  const c2 = { lat: 35.256091651659, lng: 139.15678726538317 };
+  const p2 = { lat: 35.2564570711282, lng: 139.15643692016604 };
+
+  const c3 = { lat: 35.257259482447424, lng: 139.15670774404137 };
+  const p3 = { lat: 35.25717769343186, lng: 139.156900949624 };
+  // const [osmNodes, setOsmNodes] = useState<OsmNode[]>();
 
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithNode[]>();
   const [totalDistance, setTotalDistance] = useState<number>();
   const [current, setCurrent] = useState<LatLngLiteral>();
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    osmNodesPromise.then((nodes) => {
-      setOsmNodes(nodes);
-      setCurrent(nodes[0].coord);
-      let totalDistance = 0;
-      let prevNode = nodes[0];
-      let distanceFromStartMap: [number, OsmNode][] = [[0, prevNode]];
-      for (const n of nodes.slice(1)) {
-        totalDistance += distanceInMM(prevNode.coord, n.coord);
-        distanceFromStartMap.push([totalDistance, n]);
-        prevNode = n;
-      }
-      setDistanceFromStartMap(distanceFromStartMap);
-      setTotalDistance(totalDistance);
-    });
-  }, []);
+  // useEffect(() => {
+  //   osmNodesPromise.then((nodes) => {
+  //     setOsmNodes(nodes);
+  //     setCurrent(nodes[0].coord);
+  //     let totalDistance = 0;
+  //     let prevNode = nodes[0];
+  //     let distanceFromStartMap: [number, OsmNode][] = [[0, prevNode]];
+  //     for (const n of nodes.slice(1)) {
+  //       totalDistance += distanceInMM(prevNode.coord, n.coord);
+  //       distanceFromStartMap.push([totalDistance, n]);
+  //       prevNode = n;
+  //     }
+  //     setDistanceFromStartMap(distanceFromStartMap);
+  //     setTotalDistance(totalDistance);
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    if (!distanceFromStartMap || !totalDistance) return;
-    const currentDistance = totalDistance * progress;
-    const nextIdx = distanceFromStartMap.findIndex((t) => t[0] > currentDistance);
-    const next = distanceFromStartMap[nextIdx];
-    const prev = distanceFromStartMap[nextIdx - 1];
-    const newCurrent = interpolateCoordinates(prev, next, currentDistance);
-    setCurrent(newCurrent);
-  }, [distanceFromStartMap, totalDistance, progress]);
+  // useEffect(() => {
+  //   if (!distanceFromStartMap || !totalDistance) return;
+  //   const currentDistance = totalDistance * progress;
+  //   const nextIdx = distanceFromStartMap.findIndex((t) => t[0] > currentDistance);
+  //   const next = distanceFromStartMap[nextIdx];
+  //   const prev = distanceFromStartMap[nextIdx - 1];
+  //   const newCurrent = interpolateCoordinates(prev, next, currentDistance);
+  //   setCurrent(newCurrent);
+  // }, [distanceFromStartMap, totalDistance, progress]);
+
+  const r2 = closestPointOnPath(c2, path)!;
 
   return (
     <div style={{ aspectRatio: "16/9", maxHeight: "100vh", margin: "0 auto", position: "relative" }}>
-      {!!osmNodes && (
+      {!!path && (
         <>
-          <MapContainer center={osmNodes[0].coord} zoom={17} style={{ height: "100%", width: "100%" }}>
+          <MapContainer center={path[0]} zoom={17} style={{ height: "100%", width: "100%" }}>
             <BaseTileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -64,31 +80,21 @@ export const OsmTest: FC = () => {
               detectRetina
             />
             <AllTrackPointsPane name="all-trackPoints-pane">
-              <Polyline color="purple" positions={osmNodes.map((n) => n.coord)} />
-              {!!current && <Marker position={current} />}
+              <Polyline color="purple" positions={path} />
+              {path.map((p, idx) => (
+                <Marker key={idx} position={p} title={`n${idx}`} />
+              ))}
             </AllTrackPointsPane>
+            <Pane name="other">
+              <CircleMarker center={p1} radius={4} />
+              <CircleMarker center={p2} radius={4} />
+              <CircleMarker center={p3} radius={4} />
+              <Marker position={c1} title="c1" />
+              <Marker position={c2} title="c2" />
+              <Marker position={c3} title="c3" />
+              <CircleMarker center={r2.closestOnSegment} color="red" />
+            </Pane>
           </MapContainer>
-          <button
-            style={{ position: "absolute", top: 0, right: 0, zIndex: 10000 }}
-            onClick={() => setOsmNodes((nodes) => [...(nodes ?? [])].reverse())}
-          >
-            Reverse path (first={osmNodes && osmNodes[0].id})
-          </button>
-          <div>
-            <label htmlFor="lerpslider">
-              <input
-                id="lerpslider"
-                type="range"
-                min={0}
-                max={1}
-                step={0.001}
-                value={progress}
-                onChange={(e) => setProgress(Number.parseFloat(e.target.value))}
-                style={{ width: "80%" }}
-              />{" "}
-              Progress: {progress.toFixed(3)}
-            </label>
-          </div>
         </>
       )}
     </div>

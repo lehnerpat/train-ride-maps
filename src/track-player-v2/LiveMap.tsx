@@ -5,6 +5,7 @@ import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
 import { MapViewOptions } from "./ViewOptions";
 import { SetState } from "../common-components/state-utils";
+import { closestPointOnPath } from "../geo/distance";
 
 interface LiveMapProps {
   path: LatLngLiteral[];
@@ -51,7 +52,12 @@ export const LiveMap: FC<LiveMapProps> = ({
         }}
       >
         {isEditingModeOn && (
-          <MapEventHandler onMapMoved={onMapMoved} polylineRef={polylineRef} setProjectedPoint={setProjectedPoint} />
+          <MapEventHandler
+            onMapMoved={onMapMoved}
+            polylineRef={polylineRef}
+            setProjectedPoint={setProjectedPoint}
+            path={path}
+          />
         )}
         <BaseTileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -97,17 +103,31 @@ const MapEventHandler: FC<{
   onMapMoved: (projectedPoint: LatLngLiteral | undefined) => void;
   polylineRef: React.MutableRefObject<null>;
   setProjectedPoint: SetState<LatLngLiteral | undefined>;
-}> = ({ onMapMoved, polylineRef, setProjectedPoint }) => {
+  path: LatLngLiteral[];
+}> = ({ onMapMoved, polylineRef, setProjectedPoint, path }) => {
   useMapEvent("moveend", (ev) => {
     const map = ev.target as LeafletMap;
     const pos = map.getCenter();
     if (!!polylineRef.current) {
       const pl = polylineRef.current as LeafletPolyline;
       const mapCenterPoint = map.latLngToLayerPoint(pos);
+      const cp = closestPointOnPath(pos, path);
       // Note: closestLayerPoint() returns null sometimes (e.g. if no part of the path is visible), even though typings don't reflect this
       const closestOnLine = pl.closestLayerPoint(mapCenterPoint);
       const projectedPoint = closestOnLine === null ? undefined : map.layerPointToLatLng(closestOnLine);
-      setProjectedPoint(projectedPoint);
+      console.table({
+        lat: {
+          custom: cp!.closestOnSegment.lat,
+          leaflet: projectedPoint?.lat,
+          delta: cp!.closestOnSegment.lat - projectedPoint!.lat,
+        },
+        lng: {
+          custom: cp!.closestOnSegment.lng,
+          leaflet: projectedPoint?.lng,
+          delta: cp!.closestOnSegment.lng - projectedPoint!.lng,
+        },
+      });
+      setProjectedPoint(cp?.closestOnSegment);
       onMapMoved(pos);
     }
   });

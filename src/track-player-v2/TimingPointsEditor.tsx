@@ -12,7 +12,7 @@ interface TimingPointsEditorProps {
   options: TrackPointsEditorOptions;
   timingPointsState: UseState<TimingPoint[]>;
   playedSeconds: number;
-  currentDistance: number; // TODO what to do here
+  currentDistance: number | undefined;
   precedingTimingPointIndex: number;
   pathLengthMM: number;
 }
@@ -121,7 +121,7 @@ const EditingAreaContainer = styled.div`
 
 interface InputFieldProps {
   timeSeconds: number;
-  distance: number;
+  distance: number | undefined;
 }
 
 const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, distance }) => (
@@ -132,7 +132,12 @@ const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, distance }) 
     </>
     <>
       <EditingInputFieldLabel htmlFor="new-wp-distance">d =</EditingInputFieldLabel>
-      <EditingInputField id="new-wp-distance" type="number" readOnly value={distance} />
+      <EditingInputField
+        id="new-wp-distance"
+        type="text"
+        readOnly
+        value={typeof distance === "number" ? distance : "--"}
+      />
     </>
   </EditingInputFieldsGridContainer>
 );
