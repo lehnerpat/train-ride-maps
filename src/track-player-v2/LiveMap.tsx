@@ -119,12 +119,12 @@ const MapEventHandler: FC<{
         lat: {
           custom: cp.closestOnPath.lat,
           leaflet: projectedPoint?.lat,
-          delta: cp.closestOnPath.lat - projectedPoint!.lat,
+          delta: !!projectedPoint && cp.closestOnPath.lat - projectedPoint.lat,
         },
         lng: {
           custom: cp.closestOnPath.lng,
           leaflet: projectedPoint?.lng,
-          delta: cp.closestOnPath.lng - projectedPoint!.lng,
+          delta: !!projectedPoint && cp.closestOnPath.lng - projectedPoint.lng,
         },
       });
       setProjectedPoint(cp.closestOnPath);

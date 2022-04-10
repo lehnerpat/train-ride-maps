@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useEffect, useMemo, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models/new";
 import styled, { css } from "styled-components";
@@ -20,7 +20,10 @@ interface TrackPlayerProps {
   initialTrack: Track;
 }
 export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
-  const initialCoord = initialTrack.path.length > 0 ? initialTrack.path[0] : { lat: 0, lng: 0 };
+  const initialCoord = useMemo(
+    () => (initialTrack.path.length > 0 ? initialTrack.path[0] : { lat: 0, lng: 0 }),
+    [initialTrack]
+  );
   const trackState = useAutosavingTrackState(initialTrack);
   const [track, setTrack] = trackState;
   const [playedSeconds, setPlayedSeconds] = useState(0);
@@ -32,10 +35,12 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [isEditingModeOn, setEditingModeOn] = useState(false);
   const viewOptionsState = useMemoState(DefaultViewOptions);
   const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
+  const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
 
   const [viewOptions] = viewOptionsState;
   const timingPointsState = usePickedState(trackState, "timingPoints");
   const [timingPoints] = timingPointsState;
+  const path = track.path;
 
   const onOsmFileUploaded = async (file: File) => {
     const osmXml = await file.text();
@@ -47,10 +52,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   };
   const { HiddenFileInput, showUploadDialog } = useFileUpload("osm-import", onOsmFileUploaded);
 
-  const path = track.path;
-
   useEffect(() => {
-    setPathLengthMM(computePathLength(path, distanceInMM));
+    const dfsMap = computeDistanceFromStartMap(path);
+    const pathLength = dfsMap[dfsMap.length - 1][0];
+    setPathLengthMM(pathLength);
+    setDistanceFromStartMap(dfsMap);
   }, [path, setPathLengthMM]);
 
   useEffect(() => {
@@ -58,34 +64,49 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
       setCurrentDistanceMM(undefined);
     } else {
       const currentDistance =
-        computePathLength(path, distanceInMM, projectedPointInfo.precedingPathIndex) +
+        computePathLength(path, projectedPointInfo.precedingPathIndex) +
         distanceInMM(path[projectedPointInfo.precedingPathIndex], projectedPointInfo.p);
       setCurrentDistanceMM(currentDistance);
     }
   }, [projectedPointInfo, path]);
 
   useEffect(() => {
-    setPrecedingTrackPointIndex(findPrecedingTimingPointIndex(playedSeconds, timingPoints));
-  }, [playedSeconds, timingPoints]);
-  // useEffect(() => {
-  //   // TODO: refactor to return only one index
-  //   const [prev, next] = findAdjacentCoordinates(playedSeconds, trackPoints);
-  //   setPrecedingTrackPointIndex(prev === null ? -1 : prev);
-  //   let interpolated: LatLngLiteral | undefined;
-  //   if (prev === null) {
-  //     if (next !== null) {
-  //       interpolated = trackPoints[next].p;
-  //     }
-  //   } else if (next === null) {
-  //     interpolated = trackPoints[prev].p;
-  //   } else {
-  //     interpolated = interpolateCoordinates(trackPoints[prev], trackPoints[next], playedSeconds);
-  //   }
+    if (!timingPoints || timingPoints.length === 0 || distanceFromStartMap.length === 0) {
+      setPrecedingTrackPointIndex(-1);
+      setCurrentCenter(initialCoord);
+      return;
+    }
 
-  //   if (!!interpolated) {
-  //     setCurrentCenter(interpolated);
-  //   }
-  // }, [playedSeconds, trackPoints]);
+    const precedingIndex = findPrecedingTimingPointIndex(playedSeconds, timingPoints);
+
+    let interpolatedDistance: number;
+    if (precedingIndex === -1) {
+      interpolatedDistance = timingPoints[0].d;
+    } else if (precedingIndex === timingPoints.length - 1) {
+      interpolatedDistance = timingPoints[timingPoints.length - 1].d;
+    } else {
+      interpolatedDistance = interpolateDistance(
+        timingPoints[precedingIndex],
+        timingPoints[precedingIndex + 1],
+        playedSeconds
+      );
+    }
+
+    const nextIdx = distanceFromStartMap.findIndex((t) => t[0] > interpolatedDistance);
+    let interpolatedCoord: LatLngLiteral;
+    if (nextIdx === 0) {
+      interpolatedCoord = distanceFromStartMap[0][1];
+    } else if (nextIdx === -1) {
+      interpolatedCoord = distanceFromStartMap[distanceFromStartMap.length - 1][1];
+    } else {
+      const next = distanceFromStartMap[nextIdx];
+      const prev = distanceFromStartMap[nextIdx - 1];
+      interpolatedCoord = interpolateCoordinates(prev, next, interpolatedDistance);
+    }
+
+    setPrecedingTrackPointIndex(precedingIndex);
+    setCurrentCenter(interpolatedCoord);
+  }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
 
   const showMapAsOverlay = !isEditingModeOn;
 
@@ -286,14 +307,28 @@ function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: TimingPo
   return nextIndex - 1;
 }
 
-// function interpolateCoordinates(prevCoord: TrackPoint, nextCoord: TrackPoint, offsetSec: number): LatLngLiteral {
-//   if (offsetSec < prevCoord.t || offsetSec > nextCoord.t)
-//     throw new Error(`Given offsetSec ${offsetSec} was outside of TimedCoord range [${prevCoord.t}, ${nextCoord.t}]`);
-//   const p = (offsetSec - prevCoord.t) / (nextCoord.t - prevCoord.t);
-//   const lat = prevCoord.p.lat + p * (nextCoord.p.lat - prevCoord.p.lat);
-//   const lng = prevCoord.p.lng + p * (nextCoord.p.lng - prevCoord.p.lng);
-//   return { lat, lng };
-// }
+function interpolateDistance(prevTP: TimingPoint, nextTP: TimingPoint, offsetSec: number): number {
+  if (offsetSec < prevTP.t || offsetSec > nextTP.t)
+    throw new Error(`Given offsetSec ${offsetSec} was outside of TimingPoint range [${prevTP.t}, ${nextTP.t}]`);
+  const p = (offsetSec - prevTP.t) / (nextTP.t - prevTP.t);
+  const d = prevTP.d + p * (nextTP.d - prevTP.d);
+  return d;
+}
+
+function interpolateCoordinates(
+  prevCoord: DistanceWithCoord,
+  nextCoord: DistanceWithCoord,
+  distance: number
+): LatLngLiteral {
+  if (distance < prevCoord[0] || distance > nextCoord[0])
+    throw new Error(
+      `Given distance ${distance} was outside of DistanceWithCoord range [${prevCoord[0]}, ${nextCoord[0]}]`
+    );
+  const p = (distance - prevCoord[0]) / (nextCoord[0] - prevCoord[0]);
+  const lat = prevCoord[1].lat + p * (nextCoord[1].lat - prevCoord[1].lat);
+  const lng = prevCoord[1].lng + p * (nextCoord[1].lng - prevCoord[1].lng);
+  return { lat, lng };
+}
 
 interface TrackPlayerContainerProps {
   isEditingModeOn: boolean;
@@ -314,18 +349,28 @@ const TrackPointsCol = styled.div`
   margin-right: 10px;
 `;
 
-function computePathLength(
-  path: readonly LatLngLiteral[],
-  distanceFunction: (p1: LatLngLiteral, p2: LatLngLiteral) => number,
-  lastPointIndex?: number
-): number {
+function computePathLength(path: readonly LatLngLiteral[], lastPointIndex?: number): number {
   if (!path || path.length < 2) {
     throw new Error(`Cannot compute length of path with less than 2 points, got ${path.length} nodes`);
   }
   const lpi = lastPointIndex ?? path.length - 1;
   let distance = 0;
   for (let i = 0; i < lpi; i++) {
-    distance += distanceFunction(path[i], path[i + 1]);
+    distance += distanceInMM(path[i], path[i + 1]);
   }
   return distance;
+}
+
+type DistanceWithCoord = [number, LatLngLiteral];
+function computeDistanceFromStartMap(path: LatLngLiteral[]): DistanceWithCoord[] {
+  let totalDistance = 0;
+  let prevPoint = path[0];
+  let distanceFromStartMap: DistanceWithCoord[] = [[0, prevPoint]];
+  for (let i = 1; i < path.length; i++) {
+    const point = path[i];
+    totalDistance += distanceInMM(prevPoint, point);
+    distanceFromStartMap.push([totalDistance, point]);
+    prevPoint = point;
+  }
+  return distanceFromStartMap;
 }
