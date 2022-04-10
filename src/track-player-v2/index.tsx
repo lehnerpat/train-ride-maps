@@ -5,7 +5,7 @@ import styled, { css } from "styled-components";
 import { TimingPointsEditor } from "./TimingPointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
-import { LoadSaveFile } from "../common/components/LoadSaveFile";
+import { LoadSaveFile } from "../common/components/LoadSaveFileV2";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common-components/state-utils";
