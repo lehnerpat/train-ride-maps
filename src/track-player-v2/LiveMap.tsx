@@ -1,6 +1,7 @@
-import { LatLngLiteral, Map as LeafletMap, Polyline as LeafletPolyline } from "leaflet";
+import { LatLngLiteral, Map as LeafletMap, Polyline as LeafletPolyline, Control as LeafletControl } from "leaflet";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
+import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
 import { MapViewOptions } from "./ViewOptions";
@@ -26,6 +27,7 @@ export const LiveMap: FC<LiveMapProps> = ({
   viewOptions: { isAutopanOn, isAllTrackPointMarkersOn, isCrosshairOverlayOn, isTrackPolylineOn },
 }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
+  const [attributionHtml, setAttributionHtml] = useState("");
   const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
 
   const containerRef = useRef(null);
@@ -49,7 +51,9 @@ export const LiveMap: FC<LiveMapProps> = ({
         style={{ height: "100%", width: "100%" }}
         whenCreated={(map) => {
           setMap(map);
+          setAttributionHtml(collectAttributions(map));
         }}
+        attributionControl={false}
       >
         {isEditingModeOn && (
           <MapEventHandler
@@ -90,10 +94,51 @@ export const LiveMap: FC<LiveMapProps> = ({
           <Marker position={currentCenter} title="Current" />
         </CurrentPositionPane>
         {isEditingModeOn && isCrosshairOverlayOn && <CrosshairOverlay />}
+        <CustomLeafletControl position="bottomright" style={{ border: "none", margin: 0 }}>
+          <CustomAttributionContainer>
+            <CustomAttributionTextContainer>
+              <div
+                className="leaflet-control-attribution leaflet-control"
+                dangerouslySetInnerHTML={{ __html: attributionHtml }}
+              />
+            </CustomAttributionTextContainer>
+            <CustomAttributionGlyphContainer>©</CustomAttributionGlyphContainer>
+          </CustomAttributionContainer>
+        </CustomLeafletControl>
       </MapContainer>
     </LiveMapContainer>
   );
 };
+
+const CustomAttributionGlyphContainer = styled.div``;
+
+const CustomAttributionTextContainer = styled.div``;
+
+const CustomAttributionContainer = styled.div`
+  background: #ffffffcc;
+  color: black;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 9px;
+  min-width: 30px;
+  border-radius: 15px;
+  box-sizing: border-box;
+
+  > ${CustomAttributionTextContainer} {
+    display: none;
+  }
+
+  &:hover {
+    > ${CustomAttributionTextContainer} {
+      display: block;
+    }
+    > ${CustomAttributionGlyphContainer} {
+      display: none;
+    }
+  }
+`;
 
 const LiveMapContainer = styled.div`
   height: 100%;
@@ -182,3 +227,17 @@ const CrosshairOverlayItem = styled.div`
   position: absolute;
   z-index: 500;
 `;
+
+function collectAttributions(map: LeafletMap) {
+  const prefix = new LeafletControl.Attribution().options.prefix;
+  const layerAttributions: string[] = [];
+  map.eachLayer((l) => {
+    if (l.getAttribution) {
+      const attribution = l.getAttribution();
+      if (attribution) layerAttributions.push(attribution);
+    }
+  });
+  const layerAttributionsHtml = layerAttributions.join(", ");
+  const overallHtml = [prefix, layerAttributionsHtml].join(" | ");
+  return overallHtml;
+}
