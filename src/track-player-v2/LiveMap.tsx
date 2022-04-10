@@ -1,6 +1,6 @@
 import { LatLngLiteral, Map as LeafletMap, Point, Polyline as LeafletPolyline } from "leaflet";
 import React, { FC, useEffect, useRef, useState } from "react";
-import { MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
+import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
 import { MapViewOptions } from "./ViewOptions";
@@ -8,7 +8,7 @@ import { SetState } from "../common-components/state-utils";
 
 interface LiveMapProps {
   path: LatLngLiteral[];
-  onMapMoved: (newCenter: LatLngLiteral) => void;
+  onMapMoved: (projectedPoint: LatLngLiteral | undefined) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
   playedSeconds: number;
@@ -50,7 +50,9 @@ export const LiveMap: FC<LiveMapProps> = ({
           setMap(map);
         }}
       >
-        <MapEventHandler onMapMoved={onMapMoved} polylineRef={polylineRef} setProjectedPoint={setProjectedPoint} />
+        {isEditingModeOn && (
+          <MapEventHandler onMapMoved={onMapMoved} polylineRef={polylineRef} setProjectedPoint={setProjectedPoint} />
+        )}
         <BaseTileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -71,7 +73,12 @@ export const LiveMap: FC<LiveMapProps> = ({
         <AllTrackPointsPane name="all-trackPoints-pane">
           {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} />}
           {isAllTrackPointMarkersOn && path.map((p, idx) => <Marker position={p} key={idx} />)}
-          {!!projectedPoint && <Marker position={projectedPoint} />}
+          {isEditingModeOn && !!projectedPoint && !!map && (
+            <>
+              <Polyline positions={[map.getCenter(), projectedPoint]} color="gray" dashArray={[4]} />
+              <CircleMarker center={projectedPoint} radius={3} fillOpacity={1} color="#3388ff" />
+            </>
+          )}
         </AllTrackPointsPane>
         <CurrentPositionPane name="current-position-pane">
           <Marker position={currentCenter} title="Current" />
@@ -87,23 +94,21 @@ const LiveMapContainer = styled.div`
 `;
 
 const MapEventHandler: FC<{
-  onMapMoved: (newCenter: LatLngLiteral) => void;
+  onMapMoved: (projectedPoint: LatLngLiteral | undefined) => void;
   polylineRef: React.MutableRefObject<null>;
   setProjectedPoint: SetState<LatLngLiteral | undefined>;
 }> = ({ onMapMoved, polylineRef, setProjectedPoint }) => {
   useMapEvent("moveend", (ev) => {
     const map = ev.target as LeafletMap;
     const pos = map.getCenter();
-    onMapMoved(pos);
     if (!!polylineRef.current) {
       const pl = polylineRef.current as LeafletPolyline;
       const mapCenterPoint = map.latLngToLayerPoint(pos);
-      console.log("mapCenterPoint", mapCenterPoint);
+      // Note: closestLayerPoint() returns null sometimes (e.g. if no part of the path is visible), even though typings don't reflect this
       const closestOnLine = pl.closestLayerPoint(mapCenterPoint);
-      const projectedPoint = map.layerPointToLatLng(closestOnLine);
-      console.log("closestOnLine", closestOnLine, projectedPoint);
+      const projectedPoint = closestOnLine === null ? undefined : map.layerPointToLatLng(closestOnLine);
       setProjectedPoint(projectedPoint);
-      // debugger;
+      onMapMoved(pos);
     }
   });
   return null;
