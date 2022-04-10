@@ -1,5 +1,3 @@
-import { number } from "fp-ts";
-import { LatLngLiteral } from "leaflet";
 import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../common-components/Panel";

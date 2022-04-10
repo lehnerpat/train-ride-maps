@@ -1,10 +1,7 @@
-import { LatLngLiteral } from "leaflet";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer } from "react-leaflet";
 import styled from "styled-components";
-import { closestPointOnPath, distanceInMM } from "../geo/distance";
-import { OsmNode, parseOsmXml } from "./parse-osm-xml";
-type DistanceWithNode = [number, OsmNode];
+import { closestPointOnPath } from "../geo/distance";
 
 export const OsmTest: FC = () => {
   const n0 = { lat: 35.2564587, lng: 139.1564383 };
@@ -21,39 +18,6 @@ export const OsmTest: FC = () => {
 
   const c3 = { lat: 35.257259482447424, lng: 139.15670774404137 };
   const p3 = { lat: 35.25717769343186, lng: 139.156900949624 };
-  // const [osmNodes, setOsmNodes] = useState<OsmNode[]>();
-
-  const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithNode[]>();
-  const [totalDistance, setTotalDistance] = useState<number>();
-  const [current, setCurrent] = useState<LatLngLiteral>();
-  const [progress, setProgress] = useState(0);
-
-  // useEffect(() => {
-  //   osmNodesPromise.then((nodes) => {
-  //     setOsmNodes(nodes);
-  //     setCurrent(nodes[0].coord);
-  //     let totalDistance = 0;
-  //     let prevNode = nodes[0];
-  //     let distanceFromStartMap: [number, OsmNode][] = [[0, prevNode]];
-  //     for (const n of nodes.slice(1)) {
-  //       totalDistance += distanceInMM(prevNode.coord, n.coord);
-  //       distanceFromStartMap.push([totalDistance, n]);
-  //       prevNode = n;
-  //     }
-  //     setDistanceFromStartMap(distanceFromStartMap);
-  //     setTotalDistance(totalDistance);
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!distanceFromStartMap || !totalDistance) return;
-  //   const currentDistance = totalDistance * progress;
-  //   const nextIdx = distanceFromStartMap.findIndex((t) => t[0] > currentDistance);
-  //   const next = distanceFromStartMap[nextIdx];
-  //   const prev = distanceFromStartMap[nextIdx - 1];
-  //   const newCurrent = interpolateCoordinates(prev, next, currentDistance);
-  //   setCurrent(newCurrent);
-  // }, [distanceFromStartMap, totalDistance, progress]);
 
   const r2 = closestPointOnPath(c2, path)!;
 
@@ -114,27 +78,27 @@ const AllTrackPointsPane = styled(Pane)`
   }
 `;
 
-const nodesOffset = 5;
-const nodesCount = 20;
-const osmNodesPromise = (async () => {
-  const r = await fetch("/miyamai_line_miyafuku_line.osm");
-  const xml = await r.text();
-  console.log("got xml, length", xml.length);
-  const osmNodes = parseOsmXml(xml);
-  console.log("parsed osm nodes, num", osmNodes.length);
-  console.log(`only using osmNodes.slice(${nodesOffset}, ${nodesOffset + nodesCount})`);
-  return osmNodes.slice(nodesOffset, nodesOffset + nodesCount);
-})();
+// const nodesOffset = 5;
+// const nodesCount = 20;
+// const osmNodesPromise = (async () => {
+//   const r = await fetch("/miyamai_line_miyafuku_line.osm");
+//   const xml = await r.text();
+//   console.log("got xml, length", xml.length);
+//   const osmNodes = parseOsmXml(xml);
+//   console.log("parsed osm nodes, num", osmNodes.length);
+//   console.log(`only using osmNodes.slice(${nodesOffset}, ${nodesOffset + nodesCount})`);
+//   return osmNodes.slice(nodesOffset, nodesOffset + nodesCount);
+// })();
 
-function interpolateCoordinates(
-  prevCoord: DistanceWithNode,
-  nextCoord: DistanceWithNode,
-  distance: number
-): LatLngLiteral {
-  if (distance < prevCoord[0] || distance > nextCoord[0])
-    throw new Error(`Given offsetSec ${distance} was outside of TimedCoord range [${prevCoord[0]}, ${nextCoord[0]}]`);
-  const p = (distance - prevCoord[0]) / (nextCoord[0] - prevCoord[0]);
-  const lat = prevCoord[1].coord.lat + p * (nextCoord[1].coord.lat - prevCoord[1].coord.lat);
-  const lng = prevCoord[1].coord.lng + p * (nextCoord[1].coord.lng - prevCoord[1].coord.lng);
-  return { lat, lng };
-}
+// function interpolateCoordinates(
+//   prevCoord: DistanceWithNode,
+//   nextCoord: DistanceWithNode,
+//   distance: number
+// ): LatLngLiteral {
+//   if (distance < prevCoord[0] || distance > nextCoord[0])
+//     throw new Error(`Given offsetSec ${distance} was outside of TimedCoord range [${prevCoord[0]}, ${nextCoord[0]}]`);
+//   const p = (distance - prevCoord[0]) / (nextCoord[0] - prevCoord[0]);
+//   const lat = prevCoord[1].coord.lat + p * (nextCoord[1].coord.lat - prevCoord[1].coord.lat);
+//   const lng = prevCoord[1].coord.lng + p * (nextCoord[1].coord.lng - prevCoord[1].coord.lng);
+//   return { lat, lng };
+// }

@@ -106,7 +106,6 @@ export function closestPointOnSegment(
   const λ = p.lng * radPerDeg;
   const φ1 = p1.lat * radPerDeg;
   const λ1 = p1.lng * radPerDeg;
-  const φ2 = p2.lat * radPerDeg;
   const Δφ = (p2.lat - p1.lat) * radPerDeg;
   const Δλ = (p2.lng - p1.lng) * radPerDeg;
   const dot = Δφ * Δφ + Δλ * Δλ;

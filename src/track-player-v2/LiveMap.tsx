@@ -1,4 +1,4 @@
-import { LatLngLiteral, Map as LeafletMap, Point, Polyline as LeafletPolyline } from "leaflet";
+import { LatLngLiteral, Map as LeafletMap, Polyline as LeafletPolyline } from "leaflet";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import styled from "styled-components";

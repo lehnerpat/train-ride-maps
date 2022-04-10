@@ -49,7 +49,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
   useEffect(() => {
     setPathLengthMM(computePathLength(path, distanceInMM));
-  }, [track.path]);
+  }, [path, setPathLengthMM]);
 
   useEffect(() => {
     if (!projectedPointInfo) {
@@ -60,7 +60,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         distanceInMM(path[projectedPointInfo.precedingPathIndex], projectedPointInfo.p);
       setCurrentDistanceMM(currentDistance);
     }
-  }, [projectedPointInfo]);
+  }, [projectedPointInfo, path]);
 
   // useEffect(() => {
   //   // TODO: refactor to return only one index
