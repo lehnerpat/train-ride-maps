@@ -18,7 +18,7 @@ function App() {
           <Route path="/osm-test">
             <OsmTest />
           </Route>
-          <Route path="/trackv2/:id">{(params) => <ViewTrackPageV2 trackUuid={params.id} />}</Route>
+          <Route path="/track/:id">{(params) => <ViewTrackPageV2 trackUuid={params.id} />}</Route>
           <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
         </Switch>
         <ReturnLinkContainer>
