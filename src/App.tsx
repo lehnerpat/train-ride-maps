@@ -11,7 +11,7 @@ import { gitCommitSha } from "./build-info";
 import { OsmTest } from "./osm-input/OsmTest";
 import { ReturnLink, ReturnLinkContainer } from "./common/components/return-links";
 import { ViewTrackPage as ViewTrackPageV2 } from "./pages/ViewTrackPageV2";
-import { StartPage } from "./pages/StartPage";
+import { StartPage } from "./pages/StartPageV2";
 
 function App() {
   return (

@@ -5,7 +5,7 @@ import { IncludedDataMapV2 } from "../included-data";
 import { Track } from "../track-models/new";
 import { TrackLocalStorageService } from "../track-models/NewTrackLocalStorageService";
 import { TrackPlayer } from "../track-player-v2";
-import { StartPage } from "./StartPage";
+import { StartPage } from "./StartPageV2";
 
 export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
   const track = loadTrackFromStorage(trackUuid);
