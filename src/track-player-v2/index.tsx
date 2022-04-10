@@ -1,6 +1,6 @@
 import { FC, memo, useEffect, useState } from "react";
 import { LatLngLiteral } from "leaflet";
-import { Track, Tracks } from "../track-models/new";
+import { TimingPoint, Track, Tracks } from "../track-models/new";
 import styled, { css } from "styled-components";
 import { TimingPointsEditor } from "./TimingPointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
@@ -31,9 +31,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
   const viewOptionsState = useMemoState(DefaultViewOptions);
-  const [viewOptions] = viewOptionsState;
-
   const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
+
+  const [viewOptions] = viewOptionsState;
+  const timingPointsState = usePickedState(trackState, "timingPoints");
+  const [timingPoints] = timingPointsState;
 
   const onOsmFileUploaded = async (file: File) => {
     const osmXml = await file.text();
@@ -62,6 +64,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     }
   }, [projectedPointInfo, path]);
 
+  useEffect(() => {
+    setPrecedingTrackPointIndex(findPrecedingTimingPointIndex(playedSeconds, timingPoints));
+  }, [playedSeconds, timingPoints]);
   // useEffect(() => {
   //   // TODO: refactor to return only one index
   //   const [prev, next] = findAdjacentCoordinates(playedSeconds, trackPoints);
@@ -81,16 +86,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   //     setCurrentCenter(interpolated);
   //   }
   // }, [playedSeconds, trackPoints]);
-
-  // const setTrackPoints = (newTrackPoints: React.SetStateAction<TrackPoint[]>) => {
-  //   setTrack((prevTrack) => {
-  //     return {
-  //       ...prevTrack,
-  //       trackPoints: typeof newTrackPoints === "function" ? newTrackPoints(prevTrack.trackPoints) : newTrackPoints,
-  //     };
-  //   });
-  // };
-  const timingPointsState = usePickedState(trackState, "timingPoints");
 
   const showMapAsOverlay = !isEditingModeOn;
 
@@ -280,16 +275,16 @@ const TopButton = styled.button`
   }
 `;
 
-// function findAdjacentCoordinates(offsetSec: number, coordinates: TrackPoint[]): [number | null, number | null] {
-//   const coordinatesCount = coordinates.length;
-//   if (!coordinates || !Array.isArray(coordinates) || coordinatesCount === 0) return [null, null];
-//   if (offsetSec < coordinates[0].t) return [null, 0];
-//   if (offsetSec >= coordinates[coordinatesCount - 1].t) return [coordinatesCount - 1, null];
-//   const nextIndex = coordinates.findIndex((tc) => tc.t > offsetSec);
-//   if (nextIndex === -1) throw new Error("nextIndex was -1 but should never be here");
-//   if (nextIndex === 0) throw new Error("nextIndex was 0 but should never be here");
-//   return [nextIndex - 1, nextIndex];
-// }
+function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: TimingPoint[]): number {
+  const timingPointsCount = timingPoints.length;
+  if (!timingPoints || !Array.isArray(timingPoints) || timingPointsCount === 0) return -1;
+  if (offsetSec < timingPoints[0].t) return -1;
+  if (offsetSec >= timingPoints[timingPointsCount - 1].t) return timingPointsCount - 1;
+  const nextIndex = timingPoints.findIndex((tc) => tc.t > offsetSec);
+  if (nextIndex === -1) throw new Error("nextIndex was -1 but should never be here");
+  if (nextIndex === 0) throw new Error("nextIndex was 0 but should never be here");
+  return nextIndex - 1;
+}
 
 // function interpolateCoordinates(prevCoord: TrackPoint, nextCoord: TrackPoint, offsetSec: number): LatLngLiteral {
 //   if (offsetSec < prevCoord.t || offsetSec > nextCoord.t)

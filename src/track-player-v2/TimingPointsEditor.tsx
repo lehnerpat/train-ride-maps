@@ -30,7 +30,7 @@ export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
   return (
     <TimingPointsEditorContainer>
       <SectionHeading>Video Data:</SectionHeading>
-      <div style={{ margin: "0 10px" }}>Path length: {(pathLengthMM / 1000).toFixed(3)}m</div>
+      <div style={{ margin: "0 10px" }}>Path length: {formatDistanceMeters(pathLengthMM)}</div>
       <SectionHeading>{!isEditing ? "Add new timing point:" : `Editing timing point ${editingIndex}:`}</SectionHeading>
       <EditingArea
         timingPointsState={timingPointsState}
@@ -126,7 +126,7 @@ const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, distance }) 
   <EditingInputFieldsGridContainer>
     <>
       <EditingInputFieldLabel htmlFor="new-wp-time">t =</EditingInputFieldLabel>
-      <EditingInputField id="new-wp-time" type="text" readOnly value={timeSeconds.toFixed(1) + "s"} />
+      <EditingInputField id="new-wp-time" type="text" readOnly value={formatTimeSec(timeSeconds)} />
     </>
     <>
       <EditingInputFieldLabel htmlFor="new-wp-distance">d =</EditingInputFieldLabel>
@@ -134,7 +134,7 @@ const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, distance }) 
         id="new-wp-distance"
         type="text"
         readOnly
-        value={typeof distance === "number" ? (distance / 1000).toFixed(3) + "m" : "--"}
+        value={typeof distance === "number" ? formatDistanceMeters(distance) : "--"}
       />
     </>
   </EditingInputFieldsGridContainer>
@@ -258,11 +258,11 @@ const TimingPointListEntry: FC<TimingPointListEntryProps> = ({
     <TimingPointListEntryDataContainer className={className}>
       <>
         <TimingPointListEntryContainerLabel>t =</TimingPointListEntryContainerLabel>
-        <span>{timingPoint.t}s</span>
+        <span>{formatTimeSec(timingPoint.t)}</span>
       </>
       <>
         <TimingPointListEntryContainerLabel>d =</TimingPointListEntryContainerLabel>
-        <span>{timingPoint.d}</span>
+        <span>{formatDistanceMeters(timingPoint.d)}</span>
       </>
     </TimingPointListEntryDataContainer>
   </TimingPointListEntryContainer>
@@ -339,4 +339,12 @@ function deleteTimingPoint(index: number, setTimingPoints: SetState<TimingPoint[
     timingPoints.splice(index, 1);
     return timingPoints;
   });
+}
+
+function formatTimeSec(tSec: number): string {
+  return tSec.toFixed(1) + "s";
+}
+
+function formatDistanceMeters(dMM: number): string {
+  return (dMM / 1000).toFixed(3) + "m";
 }
