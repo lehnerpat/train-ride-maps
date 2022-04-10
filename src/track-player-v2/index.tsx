@@ -242,7 +242,7 @@ function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
   const wrappedSetTrack: SetState<Track> = (newTrack) =>
     setTrack((prevTrack) => {
       const updatedTrack = typeof newTrack === "function" ? newTrack(prevTrack) : newTrack;
-      TrackLocalStorageService.save(track);
+      TrackLocalStorageService.save(updatedTrack);
       return updatedTrack;
     });
   return [track, wrappedSetTrack];
