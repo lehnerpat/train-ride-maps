@@ -80,7 +80,7 @@ const EditingArea: FC<EditingAreaProps> = ({
         timeSeconds={editingTimingPoint !== null ? editingTimingPoint.t : timeSeconds}
         distance={editingTimingPoint !== null ? editingTimingPoint.d : distance}
       />
-      <div style={{ textAlign: "right", fontSize: "70%" }}>Position map to choose coordinate</div>
+      <div style={{ textAlign: "right", fontSize: "70%" }}>Position map to choose distance</div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
           onClick={() => {
@@ -128,7 +128,7 @@ const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, distance }) 
   <EditingInputFieldsGridContainer>
     <>
       <EditingInputFieldLabel htmlFor="new-wp-time">t =</EditingInputFieldLabel>
-      <EditingInputField id="new-wp-time" type="number" readOnly value={timeSeconds} />
+      <EditingInputField id="new-wp-time" type="text" readOnly value={timeSeconds.toFixed(1) + "s"} />
     </>
     <>
       <EditingInputFieldLabel htmlFor="new-wp-distance">d =</EditingInputFieldLabel>
@@ -136,7 +136,7 @@ const EditingInputFieldsGrid: FC<InputFieldProps> = ({ timeSeconds, distance }) 
         id="new-wp-distance"
         type="text"
         readOnly
-        value={typeof distance === "number" ? distance : "--"}
+        value={typeof distance === "number" ? (distance / 1000).toFixed(3) + "m" : "--"}
       />
     </>
   </EditingInputFieldsGridContainer>

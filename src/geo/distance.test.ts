@@ -68,7 +68,7 @@ describe("closestPointOnX", () => {
 
     test("example 1", () => {
       const r1 = closestPointOnPath(c1, path)!;
-      const pr1 = r1.closestOnSegment;
+      const pr1 = r1.closestOnPath;
       expect(pr1.lat).toBeCloseTo(p1.lat, 4);
       expect(pr1.lng).toBeCloseTo(p1.lng, 4);
       expect(r1.distanceFromPMM).toBeCloseTo(64832.59);
@@ -81,7 +81,7 @@ describe("closestPointOnX", () => {
         lng: 139.156592,
       };
       const r2 = closestPointOnPath(c2, path)!;
-      const pr2 = r2.closestOnSegment;
+      const pr2 = r2.closestOnPath;
       expect(pr2.lat).toBeCloseTo(n0.lat, 2);
       expect(pr2.lng).toBeCloseTo(n0.lng, 2);
       expect(r2.distanceFromPMM).toBeCloseTo(51669.795);
@@ -90,7 +90,7 @@ describe("closestPointOnX", () => {
 
     test("example 3", () => {
       const r3 = closestPointOnPath(c3, path)!;
-      const pr3 = r3.closestOnSegment;
+      const pr3 = r3.closestOnPath;
       expect(pr3.lat).toBeCloseTo(p3.lat, 4);
       expect(pr3.lng).toBeCloseTo(p3.lng, 4);
       expect(r3.distanceFromPMM).toBeCloseTo(20236.333);

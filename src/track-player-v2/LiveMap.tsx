@@ -9,7 +9,7 @@ import { closestPointOnPath } from "../geo/distance";
 
 interface LiveMapProps {
   path: LatLngLiteral[];
-  onMapMoved: (projectedPoint: LatLngLiteral | undefined) => void;
+  onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
   playedSeconds: number;
@@ -100,7 +100,7 @@ const LiveMapContainer = styled.div`
 `;
 
 const MapEventHandler: FC<{
-  onMapMoved: (projectedPoint: LatLngLiteral | undefined) => void;
+  onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   polylineRef: React.MutableRefObject<null>;
   setProjectedPoint: SetState<LatLngLiteral | undefined>;
   path: LatLngLiteral[];
@@ -117,18 +117,18 @@ const MapEventHandler: FC<{
       const projectedPoint = closestOnLine === null ? undefined : map.layerPointToLatLng(closestOnLine);
       console.table({
         lat: {
-          custom: cp!.closestOnSegment.lat,
+          custom: cp.closestOnPath.lat,
           leaflet: projectedPoint?.lat,
-          delta: cp!.closestOnSegment.lat - projectedPoint!.lat,
+          delta: cp.closestOnPath.lat - projectedPoint!.lat,
         },
         lng: {
-          custom: cp!.closestOnSegment.lng,
+          custom: cp.closestOnPath.lng,
           leaflet: projectedPoint?.lng,
-          delta: cp!.closestOnSegment.lng - projectedPoint!.lng,
+          delta: cp.closestOnPath.lng - projectedPoint!.lng,
         },
       });
-      setProjectedPoint(cp?.closestOnSegment);
-      onMapMoved(pos);
+      setProjectedPoint(cp.closestOnPath);
+      onMapMoved({ p: cp.closestOnPath, precedingPathIndex: cp.index1 });
     }
   });
   return null;

@@ -26,7 +26,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
-  const [interactionMapCenter, setInteractionMapCenter] = useState<LatLngLiteral>();
+  const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [isEditingModeOn, setEditingModeOn] = useState(false);
@@ -52,11 +52,15 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   }, [track.path]);
 
   useEffect(() => {
-    if (!!interactionMapCenter) {
+    if (!projectedPointInfo) {
       setCurrentDistanceMM(undefined);
     } else {
+      const currentDistance =
+        computePathLength(path, distanceInMM, projectedPointInfo.precedingPathIndex) +
+        distanceInMM(path[projectedPointInfo.precedingPathIndex], projectedPointInfo.p);
+      setCurrentDistanceMM(currentDistance);
     }
-  }, [interactionMapCenter]);
+  }, [projectedPointInfo]);
 
   // useEffect(() => {
   //   // TODO: refactor to return only one index
@@ -137,7 +141,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               options={viewOptions.trackPointsEditorOptions}
               timingPointsState={timingPointsState}
               playedSeconds={playedSeconds}
-              currentDistance={undefined}
+              currentDistance={currentDistanceMM}
               precedingTimingPointIndex={precedingTrackPointIndex}
               pathLengthMM={pathLengthMM}
             />
@@ -157,7 +161,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               <LiveMap
                 initialCenter={initialCoord}
                 currentCenter={currentCenter}
-                onMapMoved={(newCenter) => setInteractionMapCenter(newCenter)}
+                onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
                 path={path}
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
@@ -317,28 +321,15 @@ const TrackPointsCol = styled.div`
 
 function computePathLength(
   path: readonly LatLngLiteral[],
-  distanceFunction: (p1: LatLngLiteral, p2: LatLngLiteral) => number
+  distanceFunction: (p1: LatLngLiteral, p2: LatLngLiteral) => number,
+  lastPointIndex?: number
 ): number {
   if (!path || path.length < 2) {
     throw new Error(`Cannot compute length of path with less than 2 points, got ${path.length} nodes`);
   }
+  const lpi = lastPointIndex ?? path.length - 1;
   let distance = 0;
-  for (let i = 0; i < path.length - 1; i++) {
-    distance += distanceFunction(path[i], path[i + 1]);
-  }
-  return distance;
-}
-
-function computePathLengthToPoint(
-  path: readonly LatLngLiteral[],
-  endPoint: LatLngLiteral,
-  distanceFunction: (p1: LatLngLiteral, p2: LatLngLiteral) => number
-): number {
-  if (!path || path.length < 2) {
-    throw new Error(`Cannot compute length of path with less than 2 points, got ${path.length} nodes`);
-  }
-  let distance = 0;
-  for (let i = 0; i < path.length - 1; i++) {
+  for (let i = 0; i < lpi; i++) {
     distance += distanceFunction(path[i], path[i + 1]);
   }
   return distance;

@@ -92,7 +92,7 @@ export const OsmTest: FC = () => {
               <Marker position={c1} title="c1" />
               <Marker position={c2} title="c2" />
               <Marker position={c3} title="c3" />
-              <CircleMarker center={r2.closestOnSegment} color="red" />
+              <CircleMarker center={r2.closestOnPath} color="red" />
             </Pane>
           </MapContainer>
         </>

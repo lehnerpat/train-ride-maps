@@ -142,9 +142,10 @@ export function closestPointOnPath(p: LatLngLiteral, path: LatLngLiteral[]) {
     const r = closestPointOnSegment(p, p1, p2);
     if (r.distanceFromPMM < closestDistance) {
       closestDistance = r.distanceFromPMM;
-      closestInfo = { ...r, p1, p2, index1: i };
+      closestInfo = { distanceFromPMM: r.distanceFromPMM, closestOnPath: r.closestOnSegment, p1, p2, index1: i };
     }
   }
   console.timeEnd(profileId);
+  if (!closestInfo) throw new Error(`Couldn't find closes point -- path has ${path.length} nodes`);
   return closestInfo;
 }
