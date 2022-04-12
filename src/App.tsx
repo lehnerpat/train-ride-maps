@@ -6,6 +6,7 @@ import { OsmTest } from "./osm-input/OsmTest";
 import { ReturnLink, ReturnLinkContainer } from "./common/components/return-links";
 import { ViewTrackPage as ViewTrackPageV2 } from "./pages/ViewTrackPageV2";
 import { StartPage } from "./pages/StartPageV2";
+import { OsmImport } from "./osm-input/OsmImport";
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
           </Route>
           <Route path="/osm-test">
             <OsmTest />
+          </Route>
+          <Route path="/osm-import">
+            <OsmImport />
           </Route>
           <Route path="/track/:id">{(params) => <ViewTrackPageV2 trackUuid={params.id} />}</Route>
           <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
