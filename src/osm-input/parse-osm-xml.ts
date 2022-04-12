@@ -155,7 +155,7 @@ function buildOverallNodeList(wayMap: Map<string, OsmWay>, nodeMap: Map<string, 
     }
 
     throw new Error(
-      `doubleOccurrenceNodeMap.size==${doubleOccurrenceNodeMap.size} but contains neither ${firstNodeRef} nor ${lastNodeRef}`
+      `doubleOccurrenceNodeMap.size==${doubleOccurrenceNodeMap.size} but contains neither node#${firstNodeRef} nor node#${lastNodeRef}`
     );
   }
 
@@ -205,6 +205,7 @@ function deserializeOsmNode(e: Element): OsmNode {
   return { id, coord: { lat, lng }, tags };
 }
 
+const ignoredWayChildElements = ["BOUNDS"];
 function deserializeOsmWay(e: Element): OsmWay {
   const id = checkAndGetAttribute(e, "id");
   const nodeRefs: string[] = [];
@@ -227,8 +228,12 @@ function deserializeOsmWay(e: Element): OsmWay {
       } else if (tagName === "ND") {
         const ref = checkAndGetAttribute(childElement, "ref");
         nodeRefs.push(ref);
-      } else {
-        throw new Error("Way has children that are not <tag>s or <nd>s: " + e.outerHTML);
+      } else if (!ignoredWayChildElements.includes(tagName)) {
+        throw new Error(
+          `Way has children that are not <tag>s or <nd>s, and not ignored (${ignoredWayChildElements.join(", ")}): ${
+            e.outerHTML
+          }`
+        );
       }
     } else {
       throw new Error("Way has children that are not elements: " + e.textContent);
