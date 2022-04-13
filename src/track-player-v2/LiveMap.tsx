@@ -82,7 +82,8 @@ export const LiveMap: FC<LiveMapProps> = ({
         />
         <AllTrackPointsPane name="all-trackPoints-pane">
           {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} />}
-          {isAllTrackPointMarkersOn && path.map((p, idx) => <Marker position={p} key={idx} />)}
+          {isAllTrackPointMarkersOn &&
+            path.map((p, idx) => <CircleMarker center={p} radius={3} color="purple" fillOpacity={1} key={idx} />)}
           {isEditingModeOn && !!projectedPoint && !!map && (
             <>
               <Polyline positions={[map.getCenter(), projectedPoint]} color="gray" dashArray={[4]} />

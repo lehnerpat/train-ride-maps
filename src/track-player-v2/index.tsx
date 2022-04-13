@@ -340,7 +340,7 @@ const TrackPlayerContainer = styled.div<TrackPlayerContainerProps>`
   ${(props) =>
     !!props.isEditingModeOn &&
     css`
-      width: 1110px;
+      width: 1400px;
     `}
 `;
 
