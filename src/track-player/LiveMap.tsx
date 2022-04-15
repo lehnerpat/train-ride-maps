@@ -10,6 +10,7 @@ import { closestPointOnPath } from "../geo/distance";
 
 interface LiveMapProps {
   path: LatLngLiteral[];
+  timingPointLocations: LatLngLiteral[];
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
@@ -20,6 +21,7 @@ interface LiveMapProps {
 
 export const LiveMap: FC<LiveMapProps> = ({
   path,
+  timingPointLocations,
   initialCenter,
   currentCenter,
   onMapMoved,
@@ -91,6 +93,11 @@ export const LiveMap: FC<LiveMapProps> = ({
             </>
           )}
         </AllTrackPointsPane>
+        <TimingPointsPane name="timing-points-pane">
+          {timingPointLocations.map((tp) => (
+            <CircleMarker center={tp} color="green" radius={6} />
+          ))}
+        </TimingPointsPane>
         <CurrentPositionPane name="current-position-pane">
           <Marker position={currentCenter} title="Current" />
         </CurrentPositionPane>
@@ -188,9 +195,10 @@ const BaseTileLayer = styled(TileLayer)`
 
 const AllTrackPointsPane = styled(Pane)`
   z-index: 600;
-  & img {
-    filter: hue-rotate(90deg);
-  }
+`;
+
+const TimingPointsPane = styled(Pane)`
+  z-index: 700;
 `;
 
 const CurrentPositionPane = styled(Pane)`

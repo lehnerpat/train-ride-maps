@@ -175,10 +175,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
             </VideoPlayerContainer>
             <LiveMapContainer showMapAsOverlay={showMapAsOverlay} mapOverlayPosition={viewOptions.mapOverlayPosition}>
               <LiveMap
+                path={path}
+                timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
                 initialCenter={initialCoord}
                 currentCenter={currentCenter}
                 onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
-                path={path}
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
                 viewOptions={viewOptions.mapViewOptions}
@@ -373,4 +374,27 @@ function computeDistanceFromStartMap(path: LatLngLiteral[]): DistanceWithCoord[]
     prevPoint = point;
   }
   return distanceFromStartMap;
+}
+
+function computeTimingPointLocations(
+  distanceFromStartMap: DistanceWithCoord[],
+  timingPoints: TimingPoint[]
+): LatLngLiteral[] {
+  let dfsIdx = 1,
+    tpIdx = 0;
+  const result: LatLngLiteral[] = [];
+  while (dfsIdx < distanceFromStartMap.length && tpIdx < timingPoints.length) {
+    if (timingPoints[tpIdx].d < distanceFromStartMap[dfsIdx][0]) {
+      const tpCoord = interpolateCoordinates(
+        distanceFromStartMap[dfsIdx - 1],
+        distanceFromStartMap[dfsIdx],
+        timingPoints[tpIdx].d
+      );
+      result.push(tpCoord);
+      tpIdx++;
+    } else {
+      dfsIdx++;
+    }
+  }
+  return result;
 }
