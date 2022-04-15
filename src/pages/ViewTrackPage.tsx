@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { Panel } from "../common-components/Panel";
 import { ReturnLink, ReturnLinkContainer } from "../common/components/return-links";
-import { IncludedDataMapV2 } from "../included-data";
-import { Track } from "../track-models/new";
-import { TrackLocalStorageService } from "../track-models/NewTrackLocalStorageService";
-import { TrackPlayer } from "../track-player-v2";
-import { StartPage } from "./StartPageV2";
+import { IncludedDataMap } from "../included-data";
+import { Track } from "../track-models";
+import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
+import { TrackPlayer } from "../track-player";
+import { StartPage } from "./StartPage";
 
 export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
   const track = loadTrackFromStorage(trackUuid);
@@ -31,5 +31,5 @@ export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
 function loadTrackFromStorage(trackUuid: string): Track | null {
   const trackFromStorage = TrackLocalStorageService.load(trackUuid);
   if (trackFromStorage !== null) return trackFromStorage;
-  return IncludedDataMapV2.get(trackUuid) || null;
+  return IncludedDataMap.get(trackUuid) || null;
 }

@@ -1,4 +1,4 @@
-import { Track, Tracks } from "./new";
+import { Track, Tracks } from ".";
 
 class TrackLocalStorageServiceImpl {
   load(trackId: string): Track | null {

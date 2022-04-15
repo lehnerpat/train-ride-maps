@@ -1,4 +1,4 @@
-import { LoadSaveFile } from "../../common/components/LoadSaveFileV2";
+import { LoadSaveFile } from "../../common/components/LoadSaveFile";
 import { IncludedTrackSelector } from "./IncludedTrackSelector";
 import { NewFileStarter } from "./NewFileStarter";
 

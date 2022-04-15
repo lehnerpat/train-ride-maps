@@ -1,5 +1,5 @@
 export const PageRouting = {
-  viewTrackPageV2(trackId: string): string {
+  viewTrackPage(trackId: string): string {
     return `/track/${trackId}`;
   },
 };

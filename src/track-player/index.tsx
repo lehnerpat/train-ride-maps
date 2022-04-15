@@ -1,15 +1,15 @@
 import { FC, memo, useEffect, useMemo, useState } from "react";
 import { LatLngLiteral } from "leaflet";
-import { TimingPoint, Track, Tracks } from "../track-models/new";
+import { TimingPoint, Track, Tracks } from "../track-models";
 import styled, { css } from "styled-components";
 import { TimingPointsEditor } from "./TimingPointsEditor";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
-import { LoadSaveFile } from "../common/components/LoadSaveFileV2";
+import { LoadSaveFile } from "../common/components/LoadSaveFile";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common-components/state-utils";
-import { TrackLocalStorageService } from "../track-models/NewTrackLocalStorageService";
+import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
 import { useFileUpload } from "../common/components/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";

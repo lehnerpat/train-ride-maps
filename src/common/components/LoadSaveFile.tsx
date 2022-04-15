@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { Panel } from "../../common-components/Panel";
 import { useLocation } from "wouter";
 import { PageRouting } from "../../page-routing";
-import { TrackLocalStorageService } from "../../track-models/NewTrackLocalStorageService";
-import { Tracks } from "../../track-models/new";
+import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
+import { Tracks } from "../../track-models";
 import { useFileUpload } from "./useFileUpload";
 
 interface LoadSaveFileProps {
@@ -18,9 +18,9 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
     const j = await file.text();
     const r = Tracks.readFromJson(j);
     TrackLocalStorageService.save(r);
-    setLocation(PageRouting.viewTrackPageV2(r.uuid));
+    setLocation(PageRouting.viewTrackPage(r.uuid));
   };
-  const { showUploadDialog, HiddenFileInput } = useFileUpload("track-upload-v2", onTrackFileUploaded);
+  const { showUploadDialog, HiddenFileInput } = useFileUpload("track-upload", onTrackFileUploaded);
 
   const onDownloadButtonClicked = () => {
     if (!onDownloadRequested) return;

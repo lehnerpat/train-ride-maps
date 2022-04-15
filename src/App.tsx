@@ -4,8 +4,8 @@ import { Route, Switch } from "wouter";
 import { gitCommitSha } from "./build-info";
 import { OsmTest } from "./osm-input/OsmTest";
 import { ReturnLink, ReturnLinkContainer } from "./common/components/return-links";
-import { ViewTrackPage as ViewTrackPageV2 } from "./pages/ViewTrackPageV2";
-import { StartPage } from "./pages/StartPageV2";
+import { ViewTrackPage } from "./pages/ViewTrackPage";
+import { StartPage } from "./pages/StartPage";
 import { OsmImport } from "./osm-input/OsmImport";
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           <Route path="/osm-import">
             <OsmImport />
           </Route>
-          <Route path="/track/:id">{(params) => <ViewTrackPageV2 trackUuid={params.id} />}</Route>
+          <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
           <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
         </Switch>
         <ReturnLinkContainer>

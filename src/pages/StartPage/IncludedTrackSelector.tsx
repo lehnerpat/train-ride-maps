@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../../common-components/Panel";
-import { IncludedDataV2 as IncludedData } from "../../included-data";
+import { IncludedData } from "../../included-data";
 import { Link } from "wouter";
 import { PageRouting } from "../../page-routing";
-import { TrackLocalStorageService } from "../../track-models/NewTrackLocalStorageService";
+import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
 
 export const IncludedTrackSelector: FC = () => {
   const [localTracks, setLocalTracks] = useState(listLocalTracks());
@@ -15,7 +15,7 @@ export const IncludedTrackSelector: FC = () => {
       <ul>
         {IncludedData.map((r) => (
           <li key={r.uuid}>
-            <TrackLink href={PageRouting.viewTrackPageV2(r.uuid)}>{r.title}</TrackLink>
+            <TrackLink href={PageRouting.viewTrackPage(r.uuid)}>{r.title}</TrackLink>
           </li>
         ))}
       </ul>
@@ -25,7 +25,7 @@ export const IncludedTrackSelector: FC = () => {
           <ul>
             {localTracks.map((r) => (
               <li key={r.uuid}>
-                <TrackLink href={PageRouting.viewTrackPageV2(r.uuid)}>{r.title}</TrackLink>{" "}
+                <TrackLink href={PageRouting.viewTrackPage(r.uuid)}>{r.title}</TrackLink>{" "}
                 <DeleteItemLink
                   href="#"
                   onClick={() => {
