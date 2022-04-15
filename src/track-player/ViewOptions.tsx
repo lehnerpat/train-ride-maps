@@ -56,12 +56,13 @@ interface ViewOptionsDialogProps {
 export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState, onCloseDialog }) => {
   const mapOverlayPositionState = pickState(viewOptionsState, "mapOverlayPosition");
   const mapViewOptionsState = pickState(viewOptionsState, "mapViewOptions");
+  const mapViewEditingOptionsState = pickState(mapViewOptionsState, "editingModeOptions");
   const trackPointsEditorOptionsState = pickState(viewOptionsState, "trackPointsEditorOptions");
   const straightRailsOverlayViewOptionsState = pickState(viewOptionsState, "straightRailsOverlay");
 
   return (
     <ViewOptionsDialogContainer>
-      <h3 style={{ marginTop: 0 }}>Map Options</h3>
+      <SectionHeading style={{ marginTop: 0 }}>Map Options</SectionHeading>
       <CheckboxListContainer>
         <Checkbox
           id="mapOverlayPosition"
@@ -88,7 +89,16 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
           Show crosshair overlay for map center (only in editing mode)
         </Checkbox>
       </CheckboxListContainer>
-      <h3>Track points editor options</h3>
+      <SectionHeading>Map Options - Editing Mode</SectionHeading>
+      <CheckboxListContainer>
+        <Checkbox
+          id="isTimingPointMarkersOn"
+          checkedState={pickState(mapViewEditingOptionsState, "isTimingPointMarkersOn")}
+        >
+          Show timing points on track path
+        </Checkbox>
+      </CheckboxListContainer>
+      <SectionHeading>Track points editor options</SectionHeading>
       <CheckboxListContainer>
         <Checkbox
           id="isAutoscrollTrackPointsListOn"
@@ -96,7 +106,9 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
         >
           Auto-scroll track points list to current track points
         </Checkbox>
-        <h4>Straight Rail Overlay</h4>
+      </CheckboxListContainer>
+      <SectionHeading>Straight Rail Overlay</SectionHeading>
+      <CheckboxListContainer>
         <Checkbox id="straightRailsOverlay-isOn" checkedState={pickState(straightRailsOverlayViewOptionsState, "isOn")}>
           Show straight rail overlay
         </Checkbox>
@@ -129,4 +141,8 @@ const ViewOptionsDialogContainer = styled.div`
 const CheckboxListContainer = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const SectionHeading = styled.h4`
+  margin-bottom: 5px;
 `;
