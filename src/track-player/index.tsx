@@ -8,9 +8,9 @@ import { LiveMap } from "./LiveMap";
 import { LoadSaveFile } from "../common/components/LoadSaveFile";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
-import { useMemoState, usePickedState, UseState, SetState } from "../common-components/state-utils";
+import { useMemoState, usePickedState, UseState, SetState } from "../common/utils/state-utils";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
-import { useFileUpload } from "../common/components/useFileUpload";
+import { useFileUpload } from "../common/hooks/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";
 

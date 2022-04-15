@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { UseState } from "../../common-components/state-utils";
+import { UseState } from "../utils/state-utils";
 
 interface CheckboxProps {
   id: string;

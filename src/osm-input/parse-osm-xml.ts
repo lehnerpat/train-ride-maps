@@ -1,5 +1,5 @@
 import { LatLngLiteral } from "leaflet";
-import { isUndefined } from "../common-components/type-helpers";
+import { isUndefined } from "../common/utils/type-helpers";
 
 type TagSet = Record<string, string>;
 

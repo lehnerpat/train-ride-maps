@@ -1,4 +1,4 @@
-import { isFunction } from "../../common-components/type-helpers";
+import { isFunction } from "../utils/type-helpers";
 
 export class LocalStorageService<T extends object> {
   constructor(

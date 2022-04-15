@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { LocalStorageService } from "../../common/components/LocalStorageService";
-import { SetState, UseState } from "../../common-components/state-utils";
-import { isFunction } from "../../common-components/type-helpers";
+import { SetState, UseState } from "../../common/utils/state-utils";
+import { isFunction } from "../../common/utils/type-helpers";
 
 export interface PercentagePoint {
   x: number;

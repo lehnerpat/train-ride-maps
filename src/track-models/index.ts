@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import { isLeft } from "fp-ts/Either";
 import { PathReporter } from "io-ts/PathReporter";
-import { newUuidv4 } from "../common-components/uuid";
+import { newUuidv4 } from "../common/utils/uuid";
 
 const LatLngLiteral = t.readonly(
   t.strict({

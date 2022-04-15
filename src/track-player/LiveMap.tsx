@@ -5,7 +5,7 @@ import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
 import { MapViewOptions } from "./ViewOptions";
-import { SetState } from "../common-components/state-utils";
+import { SetState } from "../common/utils/state-utils";
 import { closestPointOnPath } from "../geo/distance";
 
 interface LiveMapProps {

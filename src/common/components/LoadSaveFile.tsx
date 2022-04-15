@@ -5,7 +5,7 @@ import { useLocation } from "wouter";
 import { PageRouting } from "../../page-routing";
 import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
 import { Tracks } from "../../track-models";
-import { useFileUpload } from "./useFileUpload";
+import { useFileUpload } from "../hooks/useFileUpload";
 
 interface LoadSaveFileProps {
   onDownloadRequested?: () => string;
