@@ -1,36 +1,36 @@
 import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Panel } from "../common/components/Panel";
-import { SetState, UseState } from "../common/utils/state-utils";
-import { TimingPoint } from "../track-models";
+import { SetState, usePickedState, UseState } from "../common/utils/state-utils";
+import { TimingPoint, Track } from "../track-models";
 
 import { EditingControlsAreaOptions } from "./ViewOptions";
 
 interface EditingControlsAreaProps {
+  trackState: UseState<Track>;
   options: EditingControlsAreaOptions;
-  timingPointsState: UseState<TimingPoint[]>;
   playedSeconds: number;
   currentDistance: number | undefined;
   precedingTimingPointIndex: number;
   pathLengthMM: number;
 }
 export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
+  trackState,
   options,
-  timingPointsState,
   playedSeconds,
   currentDistance,
   precedingTimingPointIndex,
   pathLengthMM,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const timingPointsState = usePickedState(trackState, "timingPoints");
   const [timingPoints] = timingPointsState;
 
   const isEditing = editingIndex !== null;
 
   return (
     <TimingPointsEditorContainer>
-      <SectionHeading>Video Data:</SectionHeading>
-      <div style={{ margin: "0 10px" }}>Path length: {formatDistanceMeters(pathLengthMM)}</div>
+      <VideoDataSection trackState={trackState} pathLengthMM={pathLengthMM} />
       <SectionHeading>{!isEditing ? "Add new timing point:" : `Editing timing point ${editingIndex}:`}</SectionHeading>
       <EditingArea
         timingPointsState={timingPointsState}
@@ -53,8 +53,35 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
   );
 };
 
+const VideoDataSection: FC<{
+  trackState: UseState<Track>;
+  pathLengthMM: number;
+}> = ({ trackState, pathLengthMM }) => (
+  <VideoDataSectionContainer>
+    <SectionHeading>Video Data:</SectionHeading>
+    <VideoDataItemsGrid>
+      <>
+        <div>Title:</div>
+        <div>{trackState[0].title}</div>
+      </>
+      <>
+        <div>Path length:</div>
+        <div>{formatDistanceMeters(pathLengthMM)}</div>
+      </>
+    </VideoDataItemsGrid>
+  </VideoDataSectionContainer>
+);
+const VideoDataSectionContainer = styled.div``;
+const VideoDataItemsGrid = styled.div`
+  display: grid;
+  margin: 0 10px;
+  column-gap: 10px;
+  row-gap: 4px;
+  grid-template-columns: max-content auto;
+`;
+
 const SectionHeading = styled.h3`
-  margin-left: 15px;
+  margin-left: 10px;
 `;
 
 const TimingPointsEditorContainer = styled(Panel)`

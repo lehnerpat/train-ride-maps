@@ -41,8 +41,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const videoPlayerAndMapRef = useRef<HTMLDivElement>(null);
 
   const [viewOptions] = viewOptionsState;
-  const timingPointsState = usePickedState(trackState, "timingPoints");
-  const [timingPoints] = timingPointsState;
+  const timingPoints = track.timingPoints;
   const path = track.path;
 
   const onOsmFileUploaded = async (file: File) => {
@@ -185,8 +184,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         {isEditingModeOn && (
           <TrackPointsCol>
             <EditingControlsArea
+              trackState={trackState}
               options={viewOptions.trackPointsEditorOptions}
-              timingPointsState={timingPointsState}
               playedSeconds={playedSeconds}
               currentDistance={currentDistanceMM}
               precedingTimingPointIndex={precedingTrackPointIndex}
