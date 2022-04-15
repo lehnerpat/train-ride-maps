@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
+import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models";
 import styled, { css } from "styled-components";
@@ -113,6 +113,23 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
   const showMapAsOverlay = !isEditingModeOn;
 
+  const keyHandler = useCallback(
+    (ev: KeyboardEvent) => {
+      if (ev.key === "f") {
+        enterFullscreen(videoPlayerAndMapRef, isEditingModeOn);
+      }
+    },
+    [isEditingModeOn]
+  );
+
+  useEffect(() => {
+    document.body.addEventListener("keypress", keyHandler);
+
+    return () => {
+      document.body.removeEventListener("keypress", keyHandler);
+    };
+  });
+
   return (
     <div>
       <TopButtonPanel>
@@ -141,20 +158,18 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
             </TopButton>
           </>
         )}
-        <TopButtonSpacer />
-        <TopButton
-          onClick={async () => {
-            const el = videoPlayerAndMapRef.current;
-            if (!el) return;
-            if (el.requestFullscreen) {
-              await el.requestFullscreen({ navigationUI: "hide" });
-            } else if (isFunction((el as any).webkitRequestFullscreen)) {
-              await (el as any).webkitRequestFullscreen();
-            }
-          }}
-        >
-          Fullscreen
-        </TopButton>
+        {!isEditingModeOn && (
+          <>
+            <TopButtonSpacer />
+            <TopButton
+              onClick={() => {
+                enterFullscreen(videoPlayerAndMapRef, isEditingModeOn);
+              }}
+            >
+              Enter Fullscreen
+            </TopButton>
+          </>
+        )}
         <TopButtonSpacer />
         <TopButton
           onClick={() => {
@@ -414,4 +429,22 @@ function computeTimingPointLocations(
     }
   }
   return result;
+}
+
+async function enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivElement>, isEditingModeOn: boolean) {
+  const el = videoPlayerAndMapRef.current;
+  if (!el || isEditingModeOn) return;
+  if (!!document.fullscreenElement || !!(document as any).webkitFullscreenElement) {
+    console.debug("already in fullscreen. doing nothing.");
+    return;
+  }
+  try {
+    if (el.requestFullscreen) {
+      await el.requestFullscreen({ navigationUI: "hide" });
+    } else if (isFunction((el as any).webkitRequestFullscreen)) {
+      await (el as any).webkitRequestFullscreen();
+    }
+  } catch (e) {
+    console.error("Could not enter fullscreen:", e);
+  }
 }
