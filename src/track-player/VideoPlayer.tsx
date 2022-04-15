@@ -15,7 +15,7 @@ export const VideoPlayer: FC<VideoPlayerProps> = ({ videoUrl, onProgress }) => (
       height="100%"
       url={videoUrl}
       onProgress={onProgress}
-      config={{ playerVars: { start: 1 } }}
+      config={{ playerVars: { start: 1, fs: 0 } }}
     />
   </>
 );
