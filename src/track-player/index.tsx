@@ -217,6 +217,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               />
             </LiveMapContainer>
             <StraightRailsOverlay optionsState={usePickedState(viewOptionsState, "straightRailsOverlay")} />
+            <TrackTitle>{track.title}</TrackTitle>
           </VideoAndMapContainer>
         </PlayerMapCol>
       </TrackPlayerContainer>
@@ -225,6 +226,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     </div>
   );
 };
+
+const TrackTitle = styled.div`
+  font-size: 120%;
+  margin: 10px;
+`;
 
 const PlayerMapCol = styled.div`
   flex-grow: 1;
