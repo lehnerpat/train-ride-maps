@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useMemo, useState } from "react";
+import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models";
 import styled, { css } from "styled-components";
@@ -13,6 +13,7 @@ import { TrackLocalStorageService } from "../track-models/TrackLocalStorageServi
 import { useFileUpload } from "../common/hooks/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";
+import { isFunction } from "../common/utils/type-helpers";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -36,6 +37,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const viewOptionsState = useMemoState(DefaultViewOptions);
   const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
+
+  const videoPlayerAndMapRef = useRef<HTMLDivElement>(null);
 
   const [viewOptions] = viewOptionsState;
   const timingPointsState = usePickedState(trackState, "timingPoints");
@@ -140,6 +143,20 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         )}
         <TopButtonSpacer />
         <TopButton
+          onClick={async () => {
+            const el = videoPlayerAndMapRef.current;
+            if (!el) return;
+            if (el.requestFullscreen) {
+              await el.requestFullscreen({ navigationUI: "hide" });
+            } else if (isFunction((el as any).webkitRequestFullscreen)) {
+              await (el as any).webkitRequestFullscreen();
+            }
+          }}
+        >
+          Fullscreen
+        </TopButton>
+        <TopButtonSpacer />
+        <TopButton
           onClick={() => {
             setViewOptionsDialogOpen(!isViewOptionsDialogOpen);
           }}
@@ -164,7 +181,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           </TrackPointsCol>
         )}
         <PlayerMapCol>
-          <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay}>
+          <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay} ref={videoPlayerAndMapRef}>
             <VideoPlayerContainer showMapAsOverlay={showMapAsOverlay}>
               <VideoPlayer
                 videoUrl={track.videoUrl}
