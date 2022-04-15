@@ -1,12 +1,20 @@
-import { LatLngLiteral, Map as LeafletMap, Polyline as LeafletPolyline, Control as LeafletControl } from "leaflet";
-import React, { FC, useEffect, useRef, useState } from "react";
+import {
+  LatLngLiteral,
+  Map as LeafletMap,
+  Polyline as LeafletPolyline,
+  Control as LeafletControl,
+  LatLng,
+} from "leaflet";
+import React, { createContext, FC, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
-import { MapViewOptions } from "./ViewOptions";
+import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
 import { SetState } from "../common/utils/state-utils";
 import { closestPointOnPath } from "../geo/distance";
+
+const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
 interface LiveMapProps {
   path: LatLngLiteral[];
@@ -26,7 +34,7 @@ export const LiveMap: FC<LiveMapProps> = ({
   currentCenter,
   onMapMoved,
   isEditingModeOn,
-  viewOptions: { isAutopanOn, isAllTrackPointMarkersOn, isCrosshairOverlayOn, isTrackPolylineOn },
+  viewOptions,
 }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [attributionHtml, setAttributionHtml] = useState("");
@@ -34,6 +42,8 @@ export const LiveMap: FC<LiveMapProps> = ({
 
   const containerRef = useRef(null);
   const polylineRef = useRef(null);
+
+  const { isAutopanOn, isCrosshairOverlayOn } = viewOptions;
 
   useResizeObserver(containerRef, () => {
     if (map === null) return;
@@ -47,73 +57,48 @@ export const LiveMap: FC<LiveMapProps> = ({
 
   return (
     <LiveMapContainer ref={containerRef}>
-      <MapContainer
-        center={initialCenter}
-        zoom={17}
-        style={{ height: "100%", width: "100%" }}
-        whenCreated={(map) => {
-          setMap(map);
-          setAttributionHtml(collectAttributions(map));
-        }}
-        attributionControl={false}
-      >
-        {isEditingModeOn && (
-          <MapEventHandler
-            onMapMoved={onMapMoved}
-            polylineRef={polylineRef}
-            setProjectedPoint={setProjectedPoint}
-            path={path}
-          />
-        )}
-        <BaseTileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          detectRetina
-          maxZoom={20}
-          minNativeZoom={2}
-          maxNativeZoom={18}
-        />
-        <TileLayer
-          url="http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
-          attribution='<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a> and OpenStreetMap'
-          minZoom={2}
-          maxZoom={20}
-          maxNativeZoom={18}
-          tileSize={256}
-          detectRetina
-        />
-        <AllTrackPointsPane name="all-trackPoints-pane">
-          {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} />}
-          {isAllTrackPointMarkersOn &&
-            path.map((p, idx) => <CircleMarker center={p} radius={3} color="purple" fillOpacity={1} key={idx} />)}
-          {isEditingModeOn && !!projectedPoint && !!map && (
-            <>
-              <Polyline positions={[map.getCenter(), projectedPoint]} color="gray" dashArray={[4]} />
-              <CircleMarker center={projectedPoint} radius={3} fillOpacity={1} color="#3388ff" />
-            </>
+      <LiveMapContext.Provider value={{ isEditingModeOn, viewOptions }}>
+        <MapContainer
+          center={initialCenter}
+          zoom={17}
+          style={{ height: "100%", width: "100%" }}
+          whenCreated={(map) => {
+            setMap(map);
+            setAttributionHtml(collectAttributions(map));
+          }}
+          attributionControl={false}
+        >
+          {isEditingModeOn && (
+            <MapEventHandler
+              onMapMoved={onMapMoved}
+              polylineRef={polylineRef}
+              setProjectedPoint={setProjectedPoint}
+              path={path}
+            />
           )}
-        </AllTrackPointsPane>
-        <TimingPointsPane name="timing-points-pane">
-          {timingPointLocations.map((tp) => (
-            <CircleMarker center={tp} color="green" radius={6} />
-          ))}
-        </TimingPointsPane>
-        <CurrentPositionPane name="current-position-pane">
-          <Marker position={currentCenter} title="Current" />
-        </CurrentPositionPane>
-        {isEditingModeOn && isCrosshairOverlayOn && <CrosshairOverlay />}
-        <CustomLeafletControl position="bottomright" style={{ border: "none", margin: 0 }}>
-          <CustomAttributionContainer>
-            <CustomAttributionTextContainer>
-              <div
-                className="leaflet-control-attribution leaflet-control"
-                dangerouslySetInnerHTML={{ __html: attributionHtml }}
-              />
-            </CustomAttributionTextContainer>
-            <CustomAttributionGlyphContainer>©</CustomAttributionGlyphContainer>
-          </CustomAttributionContainer>
-        </CustomLeafletControl>
-      </MapContainer>
+
+          <OsmTileLayer />
+          <OrmTileLayer />
+
+          <TrackPathPane path={path} polylineRef={polylineRef} />
+          <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
+          <TimingPointsPane timingPointLocations={timingPointLocations} />
+          <CurrentPositionPane currentCenter={currentCenter} />
+          <CrosshairOverlay />
+
+          <CustomLeafletControl position="bottomright" style={{ border: "none", margin: 0 }}>
+            <CustomAttributionContainer>
+              <CustomAttributionTextContainer>
+                <div
+                  className="leaflet-control-attribution leaflet-control"
+                  dangerouslySetInnerHTML={{ __html: attributionHtml }}
+                />
+              </CustomAttributionTextContainer>
+              <CustomAttributionGlyphContainer>©</CustomAttributionGlyphContainer>
+            </CustomAttributionContainer>
+          </CustomLeafletControl>
+        </MapContainer>
+      </LiveMapContext.Provider>
     </LiveMapContainer>
   );
 };
@@ -192,45 +177,133 @@ const BaseTileLayer = styled(TileLayer)`
     filter: grayscale(0.7);
   }
 `;
+const OsmTileLayer = () => (
+  <BaseTileLayer
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    detectRetina
+    minZoom={2}
+    maxZoom={20}
+    minNativeZoom={2}
+    maxNativeZoom={18}
+  />
+);
+const OrmTileLayer = () => (
+  <TileLayer
+    url="http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
+    attribution='<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a> and OpenStreetMap'
+    detectRetina
+    minZoom={2}
+    maxZoom={20}
+    minNativeZoom={2}
+    maxNativeZoom={18}
+    tileSize={256}
+  />
+);
 
-const AllTrackPointsPane = styled(Pane)`
+const TrackPathPane: FC<{ path: LatLngLiteral[]; polylineRef: React.MutableRefObject<null> }> = ({
+  path,
+  polylineRef,
+}) => (
+  <TrackPathPaneContainer name="track-path-pane">
+    <LiveMapContext.Consumer>
+      {({ viewOptions: { isTrackPolylineOn, isAllTrackPointMarkersOn } }) => (
+        <>
+          {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} />}
+          {isAllTrackPointMarkersOn &&
+            path.map((p, idx) => <CircleMarker center={p} radius={3} color="purple" fillOpacity={1} key={idx} />)}
+        </>
+      )}
+    </LiveMapContext.Consumer>
+  </TrackPathPaneContainer>
+);
+
+const TrackPathPaneContainer = styled(Pane)`
   z-index: 600;
 `;
 
-const TimingPointsPane = styled(Pane)`
-  z-index: 700;
+const ProjectedPointPane: FC<{ projectedPoint: LatLngLiteral | undefined; mapCenter: LatLng | undefined }> = ({
+  projectedPoint,
+  mapCenter,
+}) => (
+  <ProjectedPointPaneContainer name="projected-point-pane">
+    <LiveMapContext.Consumer>
+      {({ isEditingModeOn }) =>
+        isEditingModeOn &&
+        !!projectedPoint &&
+        !!mapCenter && (
+          <>
+            <Polyline positions={[mapCenter, projectedPoint]} color="gray" dashArray={[4]} />
+            <CircleMarker center={projectedPoint} radius={3} fillOpacity={1} color="#3388ff" />
+          </>
+        )
+      }
+    </LiveMapContext.Consumer>
+  </ProjectedPointPaneContainer>
+);
+
+const ProjectedPointPaneContainer = styled(Pane)`
+  z-index: 600;
 `;
 
-const CurrentPositionPane = styled(Pane)`
+const TimingPointsPane: FC<{ timingPointLocations: LatLngLiteral[] }> = ({ timingPointLocations }) => (
+  <TimingPointsPaneContainer name="timing-points-pane">
+    <LiveMapContext.Consumer>
+      {({ isEditingModeOn, viewOptions }) =>
+        isEditingModeOn &&
+        viewOptions.editingModeOptions.isTimingPointMarkersOn &&
+        timingPointLocations.map((tp) => <CircleMarker center={tp} color="green" radius={6} />)
+      }
+    </LiveMapContext.Consumer>
+  </TimingPointsPaneContainer>
+);
+
+const TimingPointsPaneContainer = styled(Pane)`
   z-index: 800;
+`;
+
+const CurrentPositionPane: FC<{ currentCenter: LatLngLiteral }> = ({ currentCenter }) => (
+  <CurrentPositionPaneContainer name="current-position-pane">
+    <Marker position={currentCenter} title="Current" />
+  </CurrentPositionPaneContainer>
+);
+const CurrentPositionPaneContainer = styled(Pane)`
+  z-index: 900;
 `;
 
 const crosshairColor = "#0077ff";
 const CrosshairOverlay: FC = () => (
-  <>
-    <CrosshairOverlayItem
-      style={{
-        left: "calc(50% - 20px)",
-        right: "calc(50% - 20px)",
-        top: "50%",
-        bottom: "calc(50% - 1px)",
-        borderTop: `1px solid ${crosshairColor}`,
-        transformOrigin: "center",
-        transform: "rotate(45deg)",
-      }}
-    />
-    <CrosshairOverlayItem
-      style={{
-        left: "50%",
-        right: "calc(50% - 1px)",
-        top: "calc(50% - 20px)",
-        bottom: "calc(50% - 20px)",
-        borderLeft: `1px solid ${crosshairColor}`,
-        transformOrigin: "center",
-        transform: "rotate(45deg)",
-      }}
-    />
-  </>
+  <LiveMapContext.Consumer>
+    {({ isEditingModeOn, viewOptions: { isCrosshairOverlayOn } }) =>
+      isEditingModeOn &&
+      isCrosshairOverlayOn && (
+        <>
+          <CrosshairOverlayItem
+            style={{
+              left: "calc(50% - 20px)",
+              right: "calc(50% - 20px)",
+              top: "50%",
+              bottom: "calc(50% - 1px)",
+              borderTop: `1px solid ${crosshairColor}`,
+              transformOrigin: "center",
+              transform: "rotate(45deg)",
+            }}
+          />
+          <CrosshairOverlayItem
+            style={{
+              left: "50%",
+              right: "calc(50% - 1px)",
+              top: "calc(50% - 20px)",
+              bottom: "calc(50% - 20px)",
+              borderLeft: `1px solid ${crosshairColor}`,
+              transformOrigin: "center",
+              transform: "rotate(45deg)",
+            }}
+          />
+        </>
+      )
+    }
+  </LiveMapContext.Consumer>
 );
 const CrosshairOverlayItem = styled.div`
   position: absolute;

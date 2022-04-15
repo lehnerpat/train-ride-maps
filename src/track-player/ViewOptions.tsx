@@ -8,6 +8,9 @@ export interface MapViewOptions {
   isTrackPolylineOn: boolean;
   isAllTrackPointMarkersOn: boolean;
   isCrosshairOverlayOn: boolean;
+  editingModeOptions: {
+    isTimingPointMarkersOn: boolean;
+  };
 }
 
 export interface TrackPointsEditorOptions {
@@ -33,6 +36,9 @@ export const DefaultViewOptions: ViewOptions = {
     isTrackPolylineOn: true,
     isAllTrackPointMarkersOn: false,
     isCrosshairOverlayOn: true,
+    editingModeOptions: {
+      isTimingPointMarkersOn: true,
+    },
   },
   trackPointsEditorOptions: {
     isAutoscrollTrackPointsListOn: true,
