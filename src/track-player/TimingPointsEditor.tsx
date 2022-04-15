@@ -60,6 +60,9 @@ const SectionHeading = styled.h3`
 const TimingPointsEditorContainer = styled(Panel)`
   padding: 0;
   margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 150px);
 `;
 interface EditingAreaProps extends InputFieldProps {
   timingPointsState: UseState<TimingPoint[]>;
@@ -222,7 +225,7 @@ const TimingPointList: FC<TimingPointListProps> = ({
   );
 };
 const TimingPointListContainer = styled.div`
-  max-height: 600px;
+  /* max-height: 600px; */
   overflow-y: auto;
   position: relative;
 `;

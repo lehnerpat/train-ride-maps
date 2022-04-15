@@ -375,6 +375,7 @@ const TrackPlayerContainer = styled.div<TrackPlayerContainerProps>`
   display: flex;
   margin: 0 auto;
   justify-content: center;
+  max-width: 100%;
   ${(props) =>
     !!props.isEditingModeOn &&
     css`
