@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
-import { Panel } from "../../common-components/Panel";
+import { Panel } from "../../common/components/Panel";
 import { IncludedData } from "../../included-data";
 import { Link } from "wouter";
 import { PageRouting } from "../../page-routing";

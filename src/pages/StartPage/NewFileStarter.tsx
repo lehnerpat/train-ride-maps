@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
-import { Panel } from "../../common-components/Panel";
+import { Panel } from "../../common/components/Panel";
 import { useLocation } from "wouter";
 import { PageRouting } from "../../page-routing";
 import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";

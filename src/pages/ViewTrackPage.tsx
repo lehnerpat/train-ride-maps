@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Panel } from "../common-components/Panel";
+import { Panel } from "../common/components/Panel";
 import { ReturnLink, ReturnLinkContainer } from "../common/components/return-links";
 import { IncludedDataMap } from "../included-data";
 import { Track } from "../track-models";

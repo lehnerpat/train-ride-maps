@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { LocalStorageService } from "../../common-components/LocalStorageService";
+import { LocalStorageService } from "../../common/components/LocalStorageService";
 import { SetState, UseState } from "../../common-components/state-utils";
 import { isFunction } from "../../common-components/type-helpers";
 

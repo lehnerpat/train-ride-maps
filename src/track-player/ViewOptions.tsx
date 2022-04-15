@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { Checkbox } from "../common-components/Checkbox";
+import { Checkbox } from "../common/components/Checkbox";
 import { UseState, pickState } from "../common-components/state-utils";
 
 export interface MapViewOptions {

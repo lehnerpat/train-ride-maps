@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Panel } from "../common-components/Panel";
+import { Panel } from "../common/components/Panel";
 import { SetState, UseState } from "../common-components/state-utils";
 import { TimingPoint } from "../track-models";
 
