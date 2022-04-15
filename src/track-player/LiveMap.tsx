@@ -52,7 +52,11 @@ export const LiveMap: FC<LiveMapProps> = ({
 
   useEffect(() => {
     if (map === null || !isAutopanOn) return;
-    map.setView(currentCenter, undefined, { animate: true });
+    try {
+      map.setView(currentCenter, undefined, { animate: true });
+    } catch (e) {
+      console.error("Error while auto-panning the map:", e);
+    }
   }, [map, currentCenter, isAutopanOn]);
 
   return (
@@ -253,7 +257,7 @@ const TimingPointsPane: FC<{ timingPointLocations: LatLngLiteral[] }> = ({ timin
       {({ isEditingModeOn, viewOptions }) =>
         isEditingModeOn &&
         viewOptions.editingModeOptions.isTimingPointMarkersOn &&
-        timingPointLocations.map((tp) => <CircleMarker center={tp} color="green" radius={6} />)
+        timingPointLocations.map((tp, idx) => <CircleMarker center={tp} color="green" radius={6} key={idx} />)
       }
     </LiveMapContext.Consumer>
   </TimingPointsPaneContainer>

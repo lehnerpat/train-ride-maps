@@ -113,13 +113,16 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
   const showMapAsOverlay = !isEditingModeOn;
 
+  const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn]);
   const keyHandler = useCallback(
     (ev: KeyboardEvent) => {
       if (ev.key === "f") {
         enterFullscreen(videoPlayerAndMapRef, isEditingModeOn);
+      } else if (ev.key === "E") {
+        toggleEditingMode();
       }
     },
-    [isEditingModeOn]
+    [isEditingModeOn, toggleEditingMode]
   );
 
   useEffect(() => {
@@ -133,11 +136,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   return (
     <div>
       <TopButtonPanel>
-        <TopButton
-          onClick={() => {
-            setEditingModeOn(!isEditingModeOn);
-          }}
-        >
+        <TopButton onClick={toggleEditingMode}>
           {isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
         </TopButton>
         {isEditingModeOn && (
