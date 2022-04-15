@@ -43,7 +43,7 @@ export const LiveMap: FC<LiveMapProps> = ({
   const containerRef = useRef(null);
   const polylineRef = useRef(null);
 
-  const { isAutopanOn, isCrosshairOverlayOn } = viewOptions;
+  const { isAutopanOn } = viewOptions;
 
   useResizeObserver(containerRef, () => {
     if (map === null) return;
@@ -207,10 +207,11 @@ const TrackPathPane: FC<{ path: LatLngLiteral[]; polylineRef: React.MutableRefOb
 }) => (
   <TrackPathPaneContainer name="track-path-pane">
     <LiveMapContext.Consumer>
-      {({ viewOptions: { isTrackPolylineOn, isAllTrackPointMarkersOn } }) => (
+      {({ isEditingModeOn, viewOptions: { isTrackPolylineOn, editingModeOptions } }) => (
         <>
           {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} />}
-          {isAllTrackPointMarkersOn &&
+          {isEditingModeOn &&
+            editingModeOptions.isPathPointMarkersOn &&
             path.map((p, idx) => <CircleMarker center={p} radius={3} color="purple" fillOpacity={1} key={idx} />)}
         </>
       )}
@@ -274,9 +275,9 @@ const CurrentPositionPaneContainer = styled(Pane)`
 const crosshairColor = "#0077ff";
 const CrosshairOverlay: FC = () => (
   <LiveMapContext.Consumer>
-    {({ isEditingModeOn, viewOptions: { isCrosshairOverlayOn } }) =>
+    {({ isEditingModeOn, viewOptions: { editingModeOptions } }) =>
       isEditingModeOn &&
-      isCrosshairOverlayOn && (
+      editingModeOptions.isCrosshairOverlayOn && (
         <>
           <CrosshairOverlayItem
             style={{

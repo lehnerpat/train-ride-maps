@@ -6,10 +6,10 @@ import { UseState, pickState } from "../common/utils/state-utils";
 export interface MapViewOptions {
   isAutopanOn: boolean;
   isTrackPolylineOn: boolean;
-  isAllTrackPointMarkersOn: boolean;
-  isCrosshairOverlayOn: boolean;
   editingModeOptions: {
+    isCrosshairOverlayOn: boolean;
     isTimingPointMarkersOn: boolean;
+    isPathPointMarkersOn: boolean;
   };
 }
 
@@ -34,10 +34,10 @@ export const DefaultViewOptions: ViewOptions = {
   mapViewOptions: {
     isAutopanOn: true,
     isTrackPolylineOn: true,
-    isAllTrackPointMarkersOn: false,
-    isCrosshairOverlayOn: true,
     editingModeOptions: {
+      isCrosshairOverlayOn: true,
       isTimingPointMarkersOn: true,
+      isPathPointMarkersOn: false,
     },
   },
   trackPointsEditorOptions: {
@@ -76,26 +76,29 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
         <Checkbox id="isAutoPanOn" checkedState={pickState(mapViewOptionsState, "isAutopanOn")}>
           Auto-pan map to current position
         </Checkbox>
-        <Checkbox
-          id="isAllTrackPointMarkersOn"
-          checkedState={pickState(mapViewOptionsState, "isAllTrackPointMarkersOn")}
-        >
-          Show markers for all track points
-        </Checkbox>
         <Checkbox id="isTrackPolylineOn" checkedState={pickState(mapViewOptionsState, "isTrackPolylineOn")}>
-          Show polyline for track
-        </Checkbox>
-        <Checkbox id="isCrosshairOverlayOn" checkedState={pickState(mapViewOptionsState, "isCrosshairOverlayOn")}>
-          Show crosshair overlay for map center (only in editing mode)
+          Show track path
         </Checkbox>
       </CheckboxListContainer>
       <SectionHeading>Map Options - Editing Mode</SectionHeading>
       <CheckboxListContainer>
         <Checkbox
+          id="isCrosshairOverlayOn"
+          checkedState={pickState(mapViewEditingOptionsState, "isCrosshairOverlayOn")}
+        >
+          Show crosshair overlay for map center
+        </Checkbox>
+        <Checkbox
           id="isTimingPointMarkersOn"
           checkedState={pickState(mapViewEditingOptionsState, "isTimingPointMarkersOn")}
         >
           Show timing points on track path
+        </Checkbox>
+        <Checkbox
+          id="isPathPointMarkersOn"
+          checkedState={pickState(mapViewEditingOptionsState, "isPathPointMarkersOn")}
+        >
+          Show markers for all track path points
         </Checkbox>
       </CheckboxListContainer>
       <SectionHeading>Track points editor options</SectionHeading>
