@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models";
 import styled, { css } from "styled-components";
-import { TimingPointsEditor } from "./TimingPointsEditor";
+import { EditingControlsArea } from "./EditingControlsArea";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { LoadSaveFile } from "../common/components/LoadSaveFile";
@@ -184,7 +184,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
       <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
-            <TimingPointsEditor
+            <EditingControlsArea
               options={viewOptions.trackPointsEditorOptions}
               timingPointsState={timingPointsState}
               playedSeconds={playedSeconds}

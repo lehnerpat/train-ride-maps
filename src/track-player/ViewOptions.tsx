@@ -13,8 +13,8 @@ export interface MapViewOptions {
   };
 }
 
-export interface TrackPointsEditorOptions {
-  isAutoscrollTrackPointsListOn: boolean;
+export interface EditingControlsAreaOptions {
+  isAutoscrollTimingPointsListOn: boolean;
 }
 
 export interface StraightRailsOverlayViewOptions {
@@ -25,7 +25,7 @@ export interface StraightRailsOverlayViewOptions {
 export interface ViewOptions {
   mapOverlayPosition: "top-left" | "top-right";
   mapViewOptions: MapViewOptions;
-  trackPointsEditorOptions: TrackPointsEditorOptions;
+  trackPointsEditorOptions: EditingControlsAreaOptions;
   straightRailsOverlay: StraightRailsOverlayViewOptions;
 }
 
@@ -41,7 +41,7 @@ export const DefaultViewOptions: ViewOptions = {
     },
   },
   trackPointsEditorOptions: {
-    isAutoscrollTrackPointsListOn: true,
+    isAutoscrollTimingPointsListOn: true,
   },
   straightRailsOverlay: {
     isOn: false,
@@ -105,7 +105,7 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
       <CheckboxListContainer>
         <Checkbox
           id="isAutoscrollTrackPointsListOn"
-          checkedState={pickState(trackPointsEditorOptionsState, "isAutoscrollTrackPointsListOn")}
+          checkedState={pickState(trackPointsEditorOptionsState, "isAutoscrollTimingPointsListOn")}
         >
           Auto-scroll track points list to current track points
         </Checkbox>

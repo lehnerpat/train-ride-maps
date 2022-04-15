@@ -4,17 +4,17 @@ import { Panel } from "../common/components/Panel";
 import { SetState, UseState } from "../common/utils/state-utils";
 import { TimingPoint } from "../track-models";
 
-import { TrackPointsEditorOptions } from "./ViewOptions";
+import { EditingControlsAreaOptions } from "./ViewOptions";
 
-interface TimingPointsEditorProps {
-  options: TrackPointsEditorOptions;
+interface EditingControlsAreaProps {
+  options: EditingControlsAreaOptions;
   timingPointsState: UseState<TimingPoint[]>;
   playedSeconds: number;
   currentDistance: number | undefined;
   precedingTimingPointIndex: number;
   pathLengthMM: number;
 }
-export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
+export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
   options,
   timingPointsState,
   playedSeconds,
@@ -43,7 +43,7 @@ export const TimingPointsEditor: FC<TimingPointsEditorProps> = ({
         timingPoints={timingPoints}
         precedingTimingPointIndex={precedingTimingPointIndex}
         isStartEditingPossible={!isEditing}
-        isAutoScrollOn={options.isAutoscrollTrackPointsListOn}
+        isAutoScrollOn={options.isAutoscrollTimingPointsListOn}
         editingIndex={editingIndex}
         onStartEditing={(index) => {
           setEditingIndex(index);
