@@ -214,10 +214,12 @@ const TrackPathPane: FC<{ path: LatLngLiteral[]; polylineRef: React.MutableRefOb
     <LiveMapContext.Consumer>
       {({ isEditingModeOn, viewOptions: { isTrackPolylineOn, editingModeOptions } }) => (
         <>
-          {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} />}
+          {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} interactive={false} />}
           {isEditingModeOn &&
             editingModeOptions.isPathPointMarkersOn &&
-            path.map((p, idx) => <CircleMarker center={p} radius={3} color="purple" fillOpacity={1} key={idx} />)}
+            path.map((p, idx) => (
+              <CircleMarker key={idx} center={p} radius={3} color="purple" fillOpacity={1} interactive={false} />
+            ))}
         </>
       )}
     </LiveMapContext.Consumer>
@@ -239,8 +241,8 @@ const ProjectedPointPane: FC<{ projectedPoint: LatLngLiteral | undefined; mapCen
         !!projectedPoint &&
         !!mapCenter && (
           <>
-            <Polyline positions={[mapCenter, projectedPoint]} color="gray" dashArray={[4]} />
-            <CircleMarker center={projectedPoint} radius={3} fillOpacity={1} color="#3388ff" />
+            <Polyline positions={[mapCenter, projectedPoint]} color="gray" dashArray={[4]} interactive={false} />
+            <CircleMarker center={projectedPoint} radius={3} fillOpacity={1} color="#3388ff" interactive={false} />
           </>
         )
       }
@@ -258,7 +260,9 @@ const TimingPointsPane: FC<{ timingPointLocations: LatLngLiteral[] }> = ({ timin
       {({ isEditingModeOn, viewOptions }) =>
         isEditingModeOn &&
         viewOptions.editingModeOptions.isTimingPointMarkersOn &&
-        timingPointLocations.map((tp, idx) => <CircleMarker center={tp} color="green" radius={6} key={idx} />)
+        timingPointLocations.map((tp, idx) => (
+          <CircleMarker key={idx} center={tp} color="green" radius={6} interactive={false} />
+        ))
       }
     </LiveMapContext.Consumer>
   </TimingPointsPaneContainer>
@@ -270,7 +274,7 @@ const TimingPointsPaneContainer = styled(Pane)`
 
 const CurrentPositionPane: FC<{ currentCenter: LatLngLiteral }> = ({ currentCenter }) => (
   <CurrentPositionPaneContainer name="current-position-pane">
-    <Marker position={currentCenter} title="Current" />
+    <Marker position={currentCenter} title="Current" interactive={false} />
   </CurrentPositionPaneContainer>
 );
 const CurrentPositionPaneContainer = styled(Pane)`
