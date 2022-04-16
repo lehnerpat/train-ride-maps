@@ -1,3 +1,4 @@
+import "./leaflet-setup";
 import {
   LatLngLiteral,
   Map as LeafletMap,
