@@ -1,13 +1,21 @@
 import "./leaflet-setup";
-import { LatLngLiteral, Map as LeafletMap, Control as LeafletControl, LatLng } from "leaflet";
-import React, { createContext, FC, useCallback, useEffect, useRef, useState } from "react";
-import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
+import {
+  LatLngLiteral,
+  Map as LeafletMap,
+  Polyline as LeafletPolyline,
+  Control as LeafletControl,
+  LatLng,
+  DivIcon,
+} from "leaflet";
+import React, { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMap, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
 import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
 import { SetState } from "../common/utils/state-utils";
 import { closestPointOnPath } from "../geo/distance";
+import DraggableLines from "leaflet-draggable-lines";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
@@ -20,6 +28,17 @@ interface LiveMapProps {
   playedSeconds: number;
   isEditingModeOn: boolean;
   viewOptions: MapViewOptions;
+}
+
+function createDragMarker(layer: LeafletPolyline, i: number, length: number) {
+  const color = i === 0 ? "lime" : i === length - 1 ? "red" : "purple";
+  return {
+    icon: new DivIcon({
+      html: `<svg><path stroke-width="0" fill="${color}" fill-opacity="1"  d="M0,6a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 "></path></svg>`,
+      className: "",
+      iconSize: [12, 12],
+    }),
+  };
 }
 
 export const LiveMap: FC<LiveMapProps> = ({
@@ -36,7 +55,7 @@ export const LiveMap: FC<LiveMapProps> = ({
   const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
 
   const containerRef = useRef(null);
-  const polylineRef = useRef(null);
+  const polylineRef = useRef<LeafletPolyline>(null);
 
   const { isAutopanOn } = viewOptions;
 
@@ -139,7 +158,7 @@ const LiveMapContainer = styled.div`
 
 const MapEventHandler: FC<{
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
-  polylineRef: React.MutableRefObject<null>;
+  polylineRef: React.MutableRefObject<LeafletPolyline | null>;
   setProjectedPoint: SetState<LatLngLiteral | undefined>;
   path: LatLngLiteral[];
 }> = ({ onMapMoved, polylineRef, setProjectedPoint, path }) => {
@@ -184,25 +203,51 @@ const OrmTileLayer = () => (
   />
 );
 
-const TrackPathPane: FC<{ path: LatLngLiteral[]; polylineRef: React.MutableRefObject<null> }> = ({
+const TrackPathPane: FC<{ path: LatLngLiteral[]; polylineRef: React.MutableRefObject<LeafletPolyline | null> }> = ({
   path,
   polylineRef,
-}) => (
-  <TrackPathPaneContainer name="track-path-pane">
-    <LiveMapContext.Consumer>
-      {({ isEditingModeOn, viewOptions: { isTrackPolylineOn, editingModeOptions } }) => (
-        <>
-          {isTrackPolylineOn && <Polyline color="purple" positions={path} ref={polylineRef} interactive={false} />}
-          {isEditingModeOn &&
-            editingModeOptions.isPathPointMarkersOn &&
-            path.map((p, idx) => (
-              <CircleMarker key={idx} center={p} radius={3} color="purple" fillOpacity={1} interactive={false} />
-            ))}
-        </>
-      )}
-    </LiveMapContext.Consumer>
-  </TrackPathPaneContainer>
-);
+}) => {
+  const ctx = useContext(LiveMapContext);
+  const map = useMap();
+  const draggableLinesRef = useRef(
+    new DraggableLines(map, {
+      enableForLayer: (layer) => !!layer.options.enableDraggableLines,
+      dragMarkerOptions: createDragMarker,
+    })
+  );
+  useEffect(() => {
+    console.log("running trackpath effect, ctx.isEditingModeOn:", ctx.isEditingModeOn);
+    if (ctx.isEditingModeOn) {
+      draggableLinesRef.current.enable();
+    } else {
+      draggableLinesRef.current.disable();
+    }
+  }, [ctx.isEditingModeOn]);
+  return (
+    <TrackPathPaneContainer name="track-path-pane">
+      <LiveMapContext.Consumer>
+        {({ isEditingModeOn, viewOptions: { isTrackPolylineOn, editingModeOptions } }) => (
+          <>
+            {isTrackPolylineOn && (
+              <Polyline
+                color="purple"
+                positions={path}
+                ref={polylineRef}
+                interactive={ctx.isEditingModeOn}
+                enableDraggableLines={ctx.isEditingModeOn}
+              />
+            )}
+            {isEditingModeOn &&
+              editingModeOptions.isPathPointMarkersOn &&
+              path.map((p, idx) => (
+                <CircleMarker key={idx} center={p} radius={3} color="purple" fillOpacity={1} interactive={false} />
+              ))}
+          </>
+        )}
+      </LiveMapContext.Consumer>
+    </TrackPathPaneContainer>
+  );
+};
 
 const TrackPathPaneContainer = styled(Pane)`
   z-index: 600;
