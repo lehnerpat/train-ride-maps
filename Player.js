@@ -82,7 +82,10 @@ var Player = /*#__PURE__*/function (_Component) {
     _defineProperty(_assertThisInitialized(_this), "handlePlayerMount", function (player) {
       _this.player = player;
 
-      _this.player.load(_this.props.url);
+      if (!_this.loaded?.[_this.props.url]) {
+        _this.player.load(_this.props.url);
+        _this.loaded = { [_this.props.url]: true };
+      }
 
       _this.progress();
     });
@@ -288,7 +291,10 @@ var Player = /*#__PURE__*/function (_Component) {
         this.isLoading = true;
         this.startOnPlay = true;
         this.onDurationCalled = false;
-        this.player.load(url, this.isReady);
+        if (!this.loaded?.[url]) {
+          this.player.load(url, this.isReady)
+          this.loaded = { [url]: true }
+        }
       }
 
       if (!prevProps.playing && playing && !this.isPlaying) {
