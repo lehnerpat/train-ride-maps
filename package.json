@@ -36,7 +36,8 @@
     "start": "yarn update-build-info && react-scripts start",
     "build": "yarn update-build-info && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "patch -i react-player-fix/Player.js.patch node_modules/react-player/lib/Player.js -N || true"
   },
   "eslintConfig": {
     "extends": [

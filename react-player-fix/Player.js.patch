@@ -1,0 +1,26 @@
+--- node_modules/react-player/lib/Player.js	2022-05-07 18:04:18.000000000 +0200
++++ node_modules/react-player/lib/Player.js	2022-05-07 18:04:01.000000000 +0200
+@@ -82,7 +82,10 @@
+     _defineProperty(_assertThisInitialized(_this), "handlePlayerMount", function (player) {
+       _this.player = player;
+
+-      _this.player.load(_this.props.url);
++      if (!_this.loaded?.[_this.props.url]) {
++        _this.player.load(_this.props.url);
++        _this.loaded = { [_this.props.url]: true };
++      }
+
+       _this.progress();
+     });
+@@ -288,7 +291,10 @@
+         this.isLoading = true;
+         this.startOnPlay = true;
+         this.onDurationCalled = false;
+-        this.player.load(url, this.isReady);
++        if (!this.loaded?.[url]) {
++          this.player.load(url, this.isReady)
++          this.loaded = { [url]: true }
++        }
+       }
+
+       if (!prevProps.playing && playing && !this.isPlaying) {
