@@ -6,7 +6,7 @@ import {
   Control as LeafletControl,
   LatLng,
 } from "leaflet";
-import React, { createContext, FC, useEffect, useRef, useState } from "react";
+import React, { createContext, FC, useCallback, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
@@ -67,10 +67,11 @@ export const LiveMap: FC<LiveMapProps> = ({
           center={initialCenter}
           zoom={17}
           style={{ height: "100%", width: "100%" }}
-          whenCreated={(map) => {
+          ref={useCallback((map: LeafletMap | null) => {
+            if (map === null) return;
             setMap(map);
             setAttributionHtml(collectAttributions(map));
-          }}
+          }, [])}
           attributionControl={false}
         >
           {isEditingModeOn && (

@@ -5,6 +5,7 @@ import { UseState } from "../utils/state-utils";
 interface CheckboxProps {
   id: string;
   checkedState: UseState<boolean>;
+  children?: React.ReactNode;
 }
 export const Checkbox: FC<CheckboxProps> = ({ id, checkedState: [isChecked, setChecked], children }) => (
   <label htmlFor={id}>
