@@ -1,11 +1,5 @@
 import "./leaflet-setup";
-import {
-  LatLngLiteral,
-  Map as LeafletMap,
-  Polyline as LeafletPolyline,
-  Control as LeafletControl,
-  LatLng,
-} from "leaflet";
+import { LatLngLiteral, Map as LeafletMap, Control as LeafletControl, LatLng } from "leaflet";
 import React, { createContext, FC, useCallback, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
@@ -153,24 +147,7 @@ const MapEventHandler: FC<{
     const map = ev.target as LeafletMap;
     const pos = map.getCenter();
     if (!!polylineRef.current) {
-      const pl = polylineRef.current as LeafletPolyline;
-      const mapCenterPoint = map.latLngToLayerPoint(pos);
       const cp = closestPointOnPath(pos, path);
-      // Note: closestLayerPoint() returns null sometimes (e.g. if no part of the path is visible), even though typings don't reflect this
-      const closestOnLine = pl.closestLayerPoint(mapCenterPoint);
-      const projectedPoint = closestOnLine === null ? undefined : map.layerPointToLatLng(closestOnLine);
-      console.table({
-        lat: {
-          custom: cp.closestOnPath.lat,
-          leaflet: projectedPoint?.lat,
-          delta: !!projectedPoint && cp.closestOnPath.lat - projectedPoint.lat,
-        },
-        lng: {
-          custom: cp.closestOnPath.lng,
-          leaflet: projectedPoint?.lng,
-          delta: !!projectedPoint && cp.closestOnPath.lng - projectedPoint.lng,
-        },
-      });
       setProjectedPoint(cp.closestOnPath);
       onMapMoved({ p: cp.closestOnPath, precedingPathIndex: cp.index1 });
     }
