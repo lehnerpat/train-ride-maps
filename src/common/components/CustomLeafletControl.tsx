@@ -9,6 +9,7 @@ interface Props {
   position: L.ControlPosition;
   children?: React.ReactNode;
   style?: React.CSSProperties;
+  additionalClassName?: string;
 }
 
 const POSITION_CLASSES = {
@@ -28,7 +29,10 @@ const Control = (props: Props): JSX.Element => {
   }, [positionClass]);
 
   const controlContainer = (
-    <div className="leaflet-control" style={props.style}>
+    <div
+      className={`leaflet-control${!!props.additionalClassName ? " " + props.additionalClassName : ""}`}
+      style={props.style}
+    >
       {props.children}
     </div>
   );

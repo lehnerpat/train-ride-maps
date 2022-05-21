@@ -7,7 +7,7 @@ import {
   LatLng,
   DivIcon,
 } from "leaflet";
-import React, { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, FC, memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMap, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
@@ -16,6 +16,7 @@ import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
 import { SetState } from "../common/utils/state-utils";
 import { closestPointOnPath } from "../geo/distance";
 import DraggableLines from "leaflet-draggable-lines";
+import { boolean } from "fp-ts";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
@@ -55,7 +56,6 @@ export const LiveMap: FC<LiveMapProps> = ({
   const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
 
   const containerRef = useRef(null);
-  const polylineRef = useRef<LeafletPolyline>(null);
 
   const { isAutopanOn } = viewOptions;
 
@@ -88,18 +88,13 @@ export const LiveMap: FC<LiveMapProps> = ({
           attributionControl={false}
         >
           {isEditingModeOn && (
-            <MapEventHandler
-              onMapMoved={onMapMoved}
-              polylineRef={polylineRef}
-              setProjectedPoint={setProjectedPoint}
-              path={path}
-            />
+            <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
           )}
 
           <OsmTileLayer />
           <OrmTileLayer />
 
-          <TrackPathPane path={path} polylineRef={polylineRef} />
+          {isEditingModeOn ? <TrackPathPaneEditingMode path={path} /> : <TrackPathPaneViewingMode path={path} />}
           <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
           <TimingPointsPane timingPointLocations={timingPointLocations} />
           <CurrentPositionPane currentCenter={currentCenter} />
@@ -158,18 +153,15 @@ const LiveMapContainer = styled.div`
 
 const MapEventHandler: FC<{
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
-  polylineRef: React.MutableRefObject<LeafletPolyline | null>;
   setProjectedPoint: SetState<LatLngLiteral | undefined>;
   path: LatLngLiteral[];
-}> = ({ onMapMoved, polylineRef, setProjectedPoint, path }) => {
+}> = ({ onMapMoved, setProjectedPoint, path }) => {
   useMapEvent("moveend", (ev) => {
     const map = ev.target as LeafletMap;
     const pos = map.getCenter();
-    if (!!polylineRef.current) {
-      const cp = closestPointOnPath(pos, path);
-      setProjectedPoint(cp.closestOnPath);
-      onMapMoved({ p: cp.closestOnPath, precedingPathIndex: cp.index1 });
-    }
+    const cp = closestPointOnPath(pos, path);
+    setProjectedPoint(cp.closestOnPath);
+    onMapMoved({ p: cp.closestOnPath, precedingPathIndex: cp.index1 });
   });
   return null;
 };
@@ -203,51 +195,64 @@ const OrmTileLayer = () => (
   />
 );
 
-const TrackPathPane: FC<{ path: LatLngLiteral[]; polylineRef: React.MutableRefObject<LeafletPolyline | null> }> = ({
-  path,
-  polylineRef,
-}) => {
-  const ctx = useContext(LiveMapContext);
+const TrackPathPaneViewingMode: FC<{ path: LatLngLiteral[] }> = ({ path }) => (
+  <TrackPathPaneContainer name="track-path-pane-viewing-mode">
+    <LiveMapContext.Consumer>
+      {({ viewOptions: { isTrackPolylineOn } }) =>
+        isTrackPolylineOn && <Polyline color="purple" positions={path} interactive={false} />
+      }
+    </LiveMapContext.Consumer>
+  </TrackPathPaneContainer>
+);
+
+const TrackPathPaneEditingMode: FC<{ path: LatLngLiteral[] }> = memo(({ path }) => {
+  const [isPathEditing, setIsPathEditing] = useState(false);
+
   const map = useMap();
   const draggableLinesRef = useRef(
     new DraggableLines(map, {
-      enableForLayer: (layer) => !!layer.options.enableDraggableLines,
+      enableForLayer: false,
       dragMarkerOptions: createDragMarker,
     })
   );
+  const polylineRef = useRef<LeafletPolyline>(null);
+
   useEffect(() => {
-    console.log("running trackpath effect, ctx.isEditingModeOn:", ctx.isEditingModeOn);
-    if (ctx.isEditingModeOn) {
-      draggableLinesRef.current.enable();
-    } else {
-      draggableLinesRef.current.disable();
-    }
-  }, [ctx.isEditingModeOn]);
+    const draggableLines = draggableLinesRef.current;
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const polyline = polylineRef.current; // TODO this doesn't work :( polylineRef.current is null on unmount
+      if (polyline) draggableLines.disableForLayer(polyline);
+      draggableLines.disable();
+    };
+  }, []);
   return (
     <TrackPathPaneContainer name="track-path-pane">
-      <LiveMapContext.Consumer>
-        {({ isEditingModeOn, viewOptions: { isTrackPolylineOn, editingModeOptions } }) => (
-          <>
-            {isTrackPolylineOn && (
-              <Polyline
-                color="purple"
-                positions={path}
-                ref={polylineRef}
-                interactive={ctx.isEditingModeOn}
-                enableDraggableLines={ctx.isEditingModeOn}
-              />
-            )}
-            {isEditingModeOn &&
-              editingModeOptions.isPathPointMarkersOn &&
-              path.map((p, idx) => (
-                <CircleMarker key={idx} center={p} radius={3} color="purple" fillOpacity={1} interactive={false} />
-              ))}
-          </>
-        )}
-      </LiveMapContext.Consumer>
+      <>
+        <CustomLeafletControl position="topleft" additionalClassName="leaflet-bar">
+          <a
+            href="#"
+            onClick={(ev) => {
+              ev.preventDefault();
+              if (!polylineRef.current) return;
+              if (!isPathEditing) {
+                draggableLinesRef.current.enableForLayer(polylineRef.current);
+                setIsPathEditing(true);
+              } else {
+                draggableLinesRef.current.disableForLayer(polylineRef.current);
+                draggableLinesRef.current.disable();
+                setIsPathEditing(false);
+              }
+            }}
+          >
+            E
+          </a>
+        </CustomLeafletControl>
+        <Polyline ref={polylineRef} color="purple" positions={path} interactive />
+      </>
     </TrackPathPaneContainer>
   );
-};
+});
 
 const TrackPathPaneContainer = styled(Pane)`
   z-index: 600;
