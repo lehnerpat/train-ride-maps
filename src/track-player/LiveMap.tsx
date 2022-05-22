@@ -7,8 +7,8 @@ import {
   LatLng,
   DivIcon,
 } from "leaflet";
-import React, { createContext, FC, memo, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMap, useMapEvent } from "react-leaflet";
+import React, { createContext, FC, useCallback, useEffect, useRef, useState } from "react";
+import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
@@ -16,7 +16,7 @@ import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
 import { SetState } from "../common/utils/state-utils";
 import { closestPointOnPath } from "../geo/distance";
 import DraggableLines from "leaflet-draggable-lines";
-import { boolean } from "fp-ts";
+import { LeafletContext } from "@react-leaflet/core";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
@@ -205,54 +205,90 @@ const TrackPathPaneViewingMode: FC<{ path: LatLngLiteral[] }> = ({ path }) => (
   </TrackPathPaneContainer>
 );
 
-const TrackPathPaneEditingMode: FC<{ path: LatLngLiteral[] }> = memo(({ path }) => {
-  const [isPathEditing, setIsPathEditing] = useState(false);
+interface TrackPathPaneEditingModeProps {
+  path: LatLngLiteral[];
+}
 
-  const map = useMap();
-  const draggableLinesRef = useRef(
-    new DraggableLines(map, {
+interface TrackPathPaneEditingModeState {
+  isPathEditing: boolean;
+}
+
+class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeProps, TrackPathPaneEditingModeState> {
+  static contextType = LeafletContext;
+  private static instanceCounter = 0;
+  context!: NonNullable<React.ContextType<typeof LeafletContext>>;
+
+  constructor(props: TrackPathPaneEditingModeProps) {
+    super(props);
+    this.debug("constructor");
+    this.onEditModeBtnClicked = this.onEditModeBtnClicked.bind(this);
+  }
+
+  private instanceCount = ++TrackPathPaneEditingMode.instanceCounter;
+
+  state: Readonly<TrackPathPaneEditingModeState> = {
+    isPathEditing: false,
+  };
+
+  private draggableLines: DraggableLines | null = null;
+  private polyline: LeafletPolyline | null = null;
+
+  private debug(...args: any[]) {
+    console.debug(`[class TrackPathPaneEditingMode][${this.instanceCount}]`, ...args);
+  }
+
+  componentDidMount() {
+    this.debug("componentDidMount()");
+    const map = this.context.map;
+    this.draggableLines = new DraggableLines(map, {
       enableForLayer: false,
       dragMarkerOptions: createDragMarker,
-    })
-  );
-  const polylineRef = useRef<LeafletPolyline>(null);
+    });
+    this.polyline = new LeafletPolyline(this.props.path, { color: "purple", interactive: true }).addTo(map);
+  }
 
-  useEffect(() => {
-    const draggableLines = draggableLinesRef.current;
-    return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      const polyline = polylineRef.current; // TODO this doesn't work :( polylineRef.current is null on unmount
-      if (polyline) draggableLines.disableForLayer(polyline);
-      draggableLines.disable();
-    };
-  }, []);
-  return (
-    <TrackPathPaneContainer name="track-path-pane">
-      <>
-        <CustomLeafletControl position="topleft" additionalClassName="leaflet-bar">
-          <a
-            href="#"
-            onClick={(ev) => {
-              ev.preventDefault();
-              if (!polylineRef.current) return;
-              if (!isPathEditing) {
-                draggableLinesRef.current.enableForLayer(polylineRef.current);
-                setIsPathEditing(true);
-              } else {
-                draggableLinesRef.current.disableForLayer(polylineRef.current);
-                draggableLinesRef.current.disable();
-                setIsPathEditing(false);
-              }
-            }}
-          >
-            E
-          </a>
-        </CustomLeafletControl>
-        <Polyline ref={polylineRef} color="purple" positions={path} interactive />
-      </>
-    </TrackPathPaneContainer>
-  );
-});
+  componentWillUnmount() {
+    this.debug("componentWillUnmount()");
+    const map = this.context.map;
+    if (!!this.polyline) {
+      this.draggableLines?.disableForLayer(this.polyline);
+      this.polyline?.removeFrom(map);
+    }
+    this.draggableLines?.disable();
+    this.draggableLines = null;
+    this.polyline = null;
+  }
+
+  render() {
+    return (
+      <TrackPathPaneContainer name="track-path-pane">
+        <>
+          <CustomLeafletControl position="topleft" additionalClassName="leaflet-bar">
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <a href="#" onClick={this.onEditModeBtnClicked}>
+              E
+            </a>
+          </CustomLeafletControl>
+        </>
+      </TrackPathPaneContainer>
+    );
+  }
+
+  private onEditModeBtnClicked(ev: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+    ev.preventDefault();
+    if (!this.draggableLines || !this.polyline) return;
+    if (!this.state.isPathEditing) {
+      this.draggableLines.enableForLayer(this.polyline);
+      this.debug("enabling");
+      this.setState((s) => ({ ...s, isPathEditing: true }));
+    } else {
+      this.draggableLines.disableForLayer(this.polyline);
+      this.draggableLines.disable();
+      this.debug("disabling");
+      this.setState((s) => ({ ...s, isPathEditing: false }));
+    }
+  }
+}
 
 const TrackPathPaneContainer = styled(Pane)`
   z-index: 600;
