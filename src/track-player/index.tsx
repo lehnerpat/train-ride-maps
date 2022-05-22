@@ -205,6 +205,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
             </VideoPlayerContainer>
             <LiveMapContainer showMapAsOverlay={showMapAsOverlay} mapOverlayPosition={viewOptions.mapOverlayPosition}>
               <LiveMap
+                trackState={trackState}
                 path={path}
                 timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
                 initialCenter={initialCoord}

@@ -13,14 +13,16 @@ import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
 import useResizeObserver from "@react-hook/resize-observer";
 import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
-import { SetState } from "../common/utils/state-utils";
+import { SetState, UseState } from "../common/utils/state-utils";
 import { closestPointOnPath } from "../geo/distance";
 import DraggableLines from "leaflet-draggable-lines";
 import { LeafletContext } from "@react-leaflet/core";
+import { Track } from "../track-models";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
 interface LiveMapProps {
+  trackState: UseState<Track>;
   path: LatLngLiteral[];
   timingPointLocations: LatLngLiteral[];
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
@@ -35,7 +37,7 @@ function createDragMarker(layer: LeafletPolyline, i: number, length: number) {
   const color = i === 0 ? "lime" : i === length - 1 ? "red" : "purple";
   return {
     icon: new DivIcon({
-      html: `<svg><path stroke-width="0" fill="${color}" fill-opacity="1"  d="M0,6a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 "></path></svg>`,
+      html: `<svg width="12" height="12"><path stroke-width="0" fill="${color}" fill-opacity="1"  d="M0,6a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 "></path></svg>`,
       className: "",
       iconSize: [12, 12],
     }),
@@ -43,6 +45,7 @@ function createDragMarker(layer: LeafletPolyline, i: number, length: number) {
 }
 
 export const LiveMap: FC<LiveMapProps> = ({
+  trackState,
   path,
   timingPointLocations,
   initialCenter,
@@ -94,7 +97,11 @@ export const LiveMap: FC<LiveMapProps> = ({
           <OsmTileLayer />
           <OrmTileLayer />
 
-          {isEditingModeOn ? <TrackPathPaneEditingMode path={path} /> : <TrackPathPaneViewingMode path={path} />}
+          {isEditingModeOn ? (
+            <TrackPathPaneEditingMode trackState={trackState} path={path} />
+          ) : (
+            <TrackPathPaneViewingMode path={path} />
+          )}
           <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
           <TimingPointsPane timingPointLocations={timingPointLocations} />
           <CurrentPositionPane currentCenter={currentCenter} />
@@ -207,6 +214,7 @@ const TrackPathPaneViewingMode: FC<{ path: LatLngLiteral[] }> = ({ path }) => (
 
 interface TrackPathPaneEditingModeProps {
   path: LatLngLiteral[];
+  trackState: UseState<Track>;
 }
 
 interface TrackPathPaneEditingModeState {
@@ -237,12 +245,24 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
     console.debug(`[class TrackPathPaneEditingMode][${this.instanceCount}]`, ...args);
   }
 
+  private saveTrackState() {
+    this.props.trackState[1]((t) => ({ ...t, path: this.polyline!.getLatLngs() as LatLng[] }));
+  }
+
   componentDidMount() {
     this.debug("componentDidMount()");
     const map = this.context.map;
     this.draggableLines = new DraggableLines(map, {
       enableForLayer: false,
       dragMarkerOptions: createDragMarker,
+    });
+    this.draggableLines.on("dragend", (ev) => {
+      this.debug("dragend", ev);
+      this.saveTrackState();
+    });
+    this.draggableLines.on("insert", (ev) => {
+      this.debug("insert", ev);
+      this.saveTrackState();
     });
     this.polyline = new LeafletPolyline(this.props.path, { color: "purple", interactive: true }).addTo(map);
   }
@@ -265,7 +285,7 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
         <>
           <CustomLeafletControl position="topleft" additionalClassName="leaflet-bar">
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a href="#" onClick={this.onEditModeBtnClicked}>
+            <a href="#" onClick={this.onEditModeBtnClicked} title="Edit track geometry">
               E
             </a>
           </CustomLeafletControl>
