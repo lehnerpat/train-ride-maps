@@ -1,5 +1,5 @@
 import { FC } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { Route, Switch } from "wouter";
 import { gitCommitSha } from "./build-info";
 import { OsmTest } from "./osm-input/OsmTest";

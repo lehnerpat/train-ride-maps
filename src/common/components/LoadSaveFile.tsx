@@ -1,11 +1,15 @@
 import { FC } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { Panel } from "./Panel";
 import { useLocation } from "wouter";
 import { PageRouting } from "../../page-routing";
 import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
 import { Tracks } from "../../track-models";
 import { useFileUpload } from "../hooks/useFileUpload";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 
 interface LoadSaveFileProps {
   onDownloadRequested?: () => string;
@@ -40,23 +44,24 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
   };
 
   return (
-    <Panel>
-      <ButtonBar>
-        <Button onClick={showUploadDialog}>Upload file...</Button>
-        {!!onDownloadRequested && <Button onClick={onDownloadButtonClicked}>Download current file...</Button>}
-      </ButtonBar>
-      <HiddenFileInput />
-    </Panel>
+    <Box sx={{ padding: "0 1em" }}>
+      <Card raised sx={{ padding: "0.5em" }}>
+        <Grid container spacing={2}>
+          <Grid item xs>
+            <Button onClick={showUploadDialog} variant="contained" size="large" fullWidth>
+              Upload file...
+            </Button>
+          </Grid>
+          <Grid item xs>
+            {!!onDownloadRequested && (
+              <Button onClick={onDownloadButtonClicked} variant="contained" size="large" fullWidth>
+                Download current file...
+              </Button>
+            )}
+          </Grid>
+        </Grid>
+        <HiddenFileInput />
+      </Card>
+    </Box>
   );
 };
-
-const ButtonBar = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-`;
-
-const Button = styled.button`
-  flex-grow: 1;
-  padding: 1em 3em;
-`;
