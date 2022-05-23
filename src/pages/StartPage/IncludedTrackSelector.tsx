@@ -15,12 +15,9 @@ export const IncludedTrackSelector: FC = () => {
   return (
     <>
       <TopLevelCard>
-        <List>
+        <List disablePadding>
           <ListItemButton onClick={() => setExampleTracksOpen(!isExampleTracksOpen)}>
-            <ListItemText
-              primary="Example tracks"
-              primaryTypographyProps={{ fontSize: "130%", fontWeight: "medium" }}
-            />
+            <ListItemText primary="Example tracks" primaryTypographyProps={{ variant: "h5", pt: 1 }} />
             {isExampleTracksOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={isExampleTracksOpen}>
@@ -36,10 +33,7 @@ export const IncludedTrackSelector: FC = () => {
           <Divider />
 
           <ListItemButton onClick={() => setLocalTracksOpen(!isLocalTracksOpen)}>
-            <ListItemText
-              primary="Tracks saved in browser"
-              primaryTypographyProps={{ fontSize: "130%", fontWeight: "medium" }}
-            />
+            <ListItemText primary="Tracks saved in browser" primaryTypographyProps={{ variant: "h5", pt: 1 }} />
             {isLocalTracksOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={isLocalTracksOpen}>
@@ -48,6 +42,7 @@ export const IncludedTrackSelector: FC = () => {
                 localTracks.map((r) => (
                   <ListItem
                     key={r.uuid}
+                    sx={{ pl: 4 }}
                     disablePadding
                     secondaryAction={
                       <IconButton
@@ -61,13 +56,15 @@ export const IncludedTrackSelector: FC = () => {
                       </IconButton>
                     }
                   >
-                    <ListItemButton component={Link} href={PageRouting.viewTrackPage(r.uuid)} sx={{ pl: 4 }}>
+                    <ListItemButton component={Link} href={PageRouting.viewTrackPage(r.uuid)}>
                       <ListItemText primary={r.title} />
                     </ListItemButton>
                   </ListItem>
                 ))
               ) : (
-                <ListItemText primary="No local tracks" />
+                <ListItem sx={{ pl: 4 }} disabled>
+                  <ListItemText primary="No local tracks. Create one below." />
+                </ListItem>
               )}
             </List>
           </Collapse>

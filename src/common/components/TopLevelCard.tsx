@@ -5,7 +5,7 @@ interface TopLevelCardProps {
   children: ReactNode;
 }
 export const TopLevelCard: FC<TopLevelCardProps> = ({ children }) => (
-  <Card raised sx={{ margin: "1em 2em" }}>
+  <Card raised sx={{ mx: 4, my: 2 }}>
     {children}
   </Card>
 );

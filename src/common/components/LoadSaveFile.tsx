@@ -41,7 +41,7 @@ export const LoadSaveFile: FC<LoadSaveFileProps> = ({ onDownloadRequested }) => 
 
   return (
     <TopLevelCard>
-      <Grid container spacing={2} sx={{ padding: "0.5em" }}>
+      <Grid container spacing={2} sx={{ p: 1 }}>
         <Grid item xs>
           <Button onClick={showUploadDialog} variant="contained" size="large" fullWidth>
             Upload file...

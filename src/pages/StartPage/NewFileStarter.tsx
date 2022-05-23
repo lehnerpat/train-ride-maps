@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
-import styled from "styled-components";
-import { Panel } from "../../common/components/Panel";
 import { useLocation } from "wouter";
 import { PageRouting } from "../../page-routing";
 import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
 import { Tracks } from "../../track-models";
+import { TopLevelCard } from "../../common/components/TopLevelCard";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 
 interface NewFileStarterProps {}
 export const NewFileStarter: FC<NewFileStarterProps> = () => {
@@ -15,52 +15,45 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
   const inputsInvalid = !trackTitle || !videoUrl || !videoUrl.startsWith("https://");
 
   return (
-    <Panel>
-      <div>Start new:</div>
-      <InputGrid>
-        <>
-          <label htmlFor="new-track-title">Title:</label>
-          <input
-            type="text"
-            id="new-track-title"
-            value={trackTitle}
-            onChange={(ev) => {
-              setTrackTitle(ev.target.value);
+    <TopLevelCard>
+      <Stack spacing={2} sx={{ p: 2 }}>
+        <Typography variant="h5">Create new track</Typography>
+        <TextField
+          required
+          id="new-track-title"
+          label="Title"
+          InputLabelProps={{ shrink: true }}
+          value={trackTitle}
+          onChange={(ev) => {
+            setTrackTitle(ev.target.value);
+          }}
+        />
+        <TextField
+          required
+          id="new-track-video-url"
+          label="Video URL"
+          InputLabelProps={{ shrink: true }}
+          placeholder="https://www.youtube.com/watch?v=..."
+          value={videoUrl}
+          onChange={(ev) => {
+            setVideoUrl(ev.target.value);
+          }}
+        />
+        <Box justifyContent="flex-end" display="flex">
+          <Button
+            variant="contained"
+            disabled={inputsInvalid}
+            onClick={() => {
+              if (inputsInvalid) return;
+              const newTrack = Tracks.createEmpty(trackTitle, videoUrl);
+              TrackLocalStorageService.save(newTrack);
+              setLocation(PageRouting.viewTrackPage(newTrack.uuid));
             }}
-            required
-          />
-        </>
-        <>
-          <label htmlFor="new-video-url">Video URL:</label>
-          <input
-            type="text"
-            id="new-video-url"
-            value={videoUrl}
-            placeholder="https://www.youtube.com/watch?v=..."
-            onChange={(ev) => {
-              setVideoUrl(ev.target.value);
-            }}
-            required
-          />
-        </>
-      </InputGrid>
-      <button
-        onClick={() => {
-          if (inputsInvalid) return;
-          const newTrack = Tracks.createEmpty(trackTitle, videoUrl);
-          TrackLocalStorageService.save(newTrack);
-          setLocation(PageRouting.viewTrackPage(newTrack.uuid));
-        }}
-        disabled={inputsInvalid}
-      >
-        Create
-      </button>
-    </Panel>
+          >
+            Create
+          </Button>
+        </Box>
+      </Stack>
+    </TopLevelCard>
   );
 };
-
-const InputGrid = styled.div`
-  display: grid;
-  column-gap: 10px;
-  grid-template-columns: auto auto;
-`;
