@@ -5,7 +5,6 @@ import styled, { css } from "styled-components";
 import { EditingControlsArea } from "./EditingControlsArea";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
-import { LoadSaveFile } from "../common/components/LoadSaveFile";
 import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common/utils/state-utils";
@@ -16,11 +15,13 @@ import { distanceInMM } from "../geo/distance";
 import { isFunction } from "../common/utils/type-helpers";
 import { AppBar, Button, Dialog, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import {
+  Download as DownloadIcon,
   Edit as EditIcon,
   Fullscreen as FullscreenIcon,
   SmartDisplay as SmartDisplayIcon,
   Tune as TuneIcon,
 } from "@mui/icons-material";
+import { useFileDownload } from "../common/hooks/useFileDownload";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -139,6 +140,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     };
   });
 
+  const onDownloadFileClicked = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
+
   return (
     <div>
       <AppBar position="static" sx={{ mb: 2 }}>
@@ -147,6 +150,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           <Typography variant="h6" component="div" flexGrow={1}>
             {track.title}
           </Typography>
+          <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
+            <DownloadIcon />
+          </IconButton>
           <IconButton
             color="inherit"
             onClick={toggleEditingMode}
@@ -240,7 +246,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           </VideoAndMapContainer>
         </PlayerMapCol>
       </TrackPlayerContainer>
-      <LoadSaveFile onDownloadRequested={() => Tracks.serializeToJson(track)} />
       <HiddenFileInput />
     </div>
   );
