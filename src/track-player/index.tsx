@@ -14,6 +14,13 @@ import { useFileUpload } from "../common/hooks/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";
 import { isFunction } from "../common/utils/type-helpers";
+import { AppBar, Button, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import {
+  Edit as EditIcon,
+  Fullscreen as FullscreenIcon,
+  SmartDisplay as SmartDisplayIcon,
+  Tune as TuneIcon,
+} from "@mui/icons-material";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -134,63 +141,74 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
   return (
     <div>
-      <TopButtonPanel>
-        <TopButton onClick={toggleEditingMode}>
-          {isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
-        </TopButton>
-        {isEditingModeOn && (
-          <>
-            <TopButton onClick={() => showUploadDialog()}>{"Import OSM XML"}</TopButton>
-            <TopButton onClick={() => showUploadDialog()} disabled={path.length > 0}>
-              {path.length > 0 ? "Path already present" : "Import OSM XML"}
-            </TopButton>
-            <TopButton
-              onClick={() => {
-                const path = [...track.path].reverse();
-                setTrack((track) => ({ ...track, path }));
-                setCurrentCenter(path[0]);
-              }}
-              disabled={path.length === 0}
-            >
-              Reverse path
-            </TopButton>
-          </>
-        )}
-        {!isEditingModeOn && (
-          <>
-            <TopButtonSpacer />
-            <TopButton
-              onClick={() => {
-                enterFullscreen(videoPlayerAndMapRef, isEditingModeOn);
-              }}
-            >
-              Enter Fullscreen
-            </TopButton>
-          </>
-        )}
-        <TopButtonSpacer />
-        <TopButton
-          onClick={() => {
-            setViewOptionsDialogOpen(!isViewOptionsDialogOpen);
-          }}
-        >
-          Map options
-        </TopButton>
-      </TopButtonPanel>
+      <AppBar position="static" sx={{ mb: 2 }}>
+        <Toolbar>
+          {/* TODO: make text wrap properly or cut off with ellipsis if too long */}
+          <Typography variant="h6" component="div" flexGrow={1}>
+            {track.title}
+          </Typography>
+          <IconButton
+            color="inherit"
+            onClick={toggleEditingMode}
+            title={isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
+          >
+            {isEditingModeOn ? <SmartDisplayIcon /> : <EditIcon />}
+          </IconButton>
+          <IconButton
+            color="inherit"
+            title="Enter fullscreen"
+            disabled={isEditingModeOn}
+            onClick={() => {
+              enterFullscreen(videoPlayerAndMapRef, isEditingModeOn);
+            }}
+          >
+            <FullscreenIcon />
+          </IconButton>
+          <IconButton
+            color="inherit"
+            title="Show view options"
+            onClick={() => {
+              setViewOptionsDialogOpen(!isViewOptionsDialogOpen);
+            }}
+          >
+            <TuneIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
       {isViewOptionsDialogOpen && (
         <ViewOptionsDialog viewOptionsState={viewOptionsState} onCloseDialog={() => setViewOptionsDialogOpen(false)} />
       )}
       <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
-            <EditingControlsArea
-              trackState={trackState}
-              options={viewOptions.trackPointsEditorOptions}
-              playedSeconds={playedSeconds}
-              currentDistance={currentDistanceMM}
-              precedingTimingPointIndex={precedingTrackPointIndex}
-              pathLengthMM={pathLengthMM}
-            />
+            <Stack spacing={1}>
+              <Stack direction="row" spacing={1}>
+                <Button variant="outlined" color="inherit" size="small" onClick={() => showUploadDialog()}>
+                  Import OSM XML
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    const path = [...track.path].reverse();
+                    setTrack((track) => ({ ...track, path }));
+                    setCurrentCenter(path[0]);
+                  }}
+                >
+                  Reverse Path
+                </Button>
+              </Stack>
+              <EditingControlsArea
+                trackState={trackState}
+                options={viewOptions.trackPointsEditorOptions}
+                playedSeconds={playedSeconds}
+                currentDistance={currentDistanceMM}
+                precedingTimingPointIndex={precedingTrackPointIndex}
+                pathLengthMM={pathLengthMM}
+              />
+            </Stack>
           </TrackPointsCol>
         )}
         <PlayerMapCol>
@@ -301,38 +319,6 @@ function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
     });
   return [track, wrappedSetTrack];
 }
-
-const TopButtonPanel = styled.div`
-  margin: 3px 0 5px;
-  background: #222222;
-  border: 1px solid #555;
-  border-radius: 2px;
-  padding: 0;
-  color: #eee;
-  display: flex;
-`;
-
-const TopButtonSpacer = styled.div`
-  flex-grow: 1;
-`;
-
-const TopButton = styled.button`
-  background: #242424;
-  border: 1px solid #666;
-  color: #eee;
-  padding: 3px 7px;
-  margin: -1px;
-  margin-right: 0;
-
-  &:hover {
-    background: #333;
-    border-color: gray;
-  }
-  &:active {
-    background: #181818;
-    color: #ccc;
-  }
-`;
 
 function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: TimingPoint[]): number {
   const timingPointsCount = timingPoints.length;
