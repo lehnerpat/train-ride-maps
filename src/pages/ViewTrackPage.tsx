@@ -1,11 +1,11 @@
 import { FC } from "react";
-import { Panel } from "../common/components/Panel";
 import { ReturnLink, ReturnLinkContainer } from "../common/components/return-links";
 import { IncludedDataMap } from "../included-data";
 import { Track } from "../track-models";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
 import { TrackPlayer } from "../track-player";
 import { StartPage } from "./StartPage";
+import { Alert, Container } from "@mui/material";
 
 export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
   const track = loadTrackFromStorage(trackUuid);
@@ -13,7 +13,9 @@ export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
   if (track === null)
     return (
       <>
-        <Panel style={{ color: "#FF8888" }}>Track with ID {trackUuid} not found.</Panel>
+        <Container maxWidth="md" sx={{ pt: 2 }}>
+          <Alert severity="error">Track with ID {trackUuid} not found.</Alert>
+        </Container>
         <StartPage />
       </>
     );
