@@ -130,15 +130,15 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
 };
 
 const ViewOptionsDialogContainer = styled.div`
-  position: absolute;
+  /* position: absolute;
   top: 30px;
-  right: 0;
+  right: 0; */
   background: #333;
   border: 2px solid gray;
   border-radius: 3px;
   padding: 0.5em 1em;
-  max-width: min(100%, 300px);
-  z-index: 2000;
+  /* max-width: min(100%, 300px);
+  z-index: 2000; */
 `;
 
 const CheckboxListContainer = styled.div`

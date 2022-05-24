@@ -14,7 +14,7 @@ import { useFileUpload } from "../common/hooks/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";
 import { isFunction } from "../common/utils/type-helpers";
-import { AppBar, Button, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Dialog, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import {
   Edit as EditIcon,
   Fullscreen as FullscreenIcon,
@@ -176,9 +176,10 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         </Toolbar>
       </AppBar>
 
-      {isViewOptionsDialogOpen && (
+      <Dialog open={isViewOptionsDialogOpen} onClose={() => setViewOptionsDialogOpen(false)}>
         <ViewOptionsDialog viewOptionsState={viewOptionsState} onCloseDialog={() => setViewOptionsDialogOpen(false)} />
-      )}
+      </Dialog>
+
       <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
