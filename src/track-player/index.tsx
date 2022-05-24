@@ -13,7 +13,18 @@ import { useFileUpload } from "../common/hooks/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";
 import { isFunction } from "../common/utils/type-helpers";
-import { AppBar, Button, Dialog, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Dialog,
+  IconButton,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import {
   Download as DownloadIcon,
   Edit as EditIcon,
@@ -150,15 +161,28 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           <Typography variant="h6" component="div" flexGrow={1}>
             {track.title}
           </Typography>
+          <ToggleButtonGroup
+            value={isEditingModeOn ? "editing" : "viewing"}
+            exclusive
+            onChange={(_, newValue) => setEditingModeOn(newValue === "editing")}
+            size="small"
+            sx={{ mr: 3 }}
+          >
+            <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
+              <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
+                Viewing
+              </Box>
+              <SmartDisplayIcon />
+            </ToggleButton>
+            <ToggleButton value={"editing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
+              <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
+                Editing
+              </Box>
+              <EditIcon />
+            </ToggleButton>
+          </ToggleButtonGroup>
           <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
             <DownloadIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            onClick={toggleEditingMode}
-            title={isEditingModeOn ? "Switch to viewing mode" : "Switch to editing mode"}
-          >
-            {isEditingModeOn ? <SmartDisplayIcon /> : <EditIcon />}
           </IconButton>
           <IconButton
             color="inherit"
@@ -242,7 +266,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               />
             </LiveMapContainer>
             <StraightRailsOverlay optionsState={usePickedState(viewOptionsState, "straightRailsOverlay")} />
-            <TrackTitle>{track.title}</TrackTitle>
           </VideoAndMapContainer>
         </PlayerMapCol>
       </TrackPlayerContainer>
@@ -250,11 +273,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     </div>
   );
 };
-
-const TrackTitle = styled.div`
-  font-size: 120%;
-  margin: 10px;
-`;
 
 const PlayerMapCol = styled.div`
   flex-grow: 1;
