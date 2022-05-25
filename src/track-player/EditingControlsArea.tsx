@@ -1,8 +1,22 @@
 import { FC, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { Panel } from "../common/components/Panel";
 import { SetState, usePickedState, UseState } from "../common/utils/state-utils";
 import { TimingPoint, Track } from "../track-models";
+import {
+  Card,
+  IconButton,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableCellProps,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import { Edit as EditIcon, MoreHoriz as MoreIcon } from "@mui/icons-material";
 
 import { EditingControlsAreaOptions } from "./ViewOptions";
 
@@ -29,16 +43,19 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
   const isEditing = editingIndex !== null;
 
   return (
-    <TimingPointsEditorContainer>
-      <VideoDataSection trackState={trackState} pathLengthMM={pathLengthMM} />
-      <SectionHeading>{!isEditing ? "Add new timing point:" : `Editing timing point ${editingIndex}:`}</SectionHeading>
-      <EditingArea
-        timingPointsState={timingPointsState}
-        timeSeconds={playedSeconds}
-        distance={currentDistance}
-        editingIndexState={[editingIndex, setEditingIndex]}
-      />
-      <SectionHeading>Timing points:</SectionHeading>
+    <Stack spacing={2}>
+      <Card raised>
+        <VideoDataSection trackState={trackState} pathLengthMM={pathLengthMM} />
+        <SectionHeading>
+          {!isEditing ? "Add new timing point:" : `Editing timing point ${editingIndex}:`}
+        </SectionHeading>
+        <EditingArea
+          timingPointsState={timingPointsState}
+          timeSeconds={playedSeconds}
+          distance={currentDistance}
+          editingIndexState={[editingIndex, setEditingIndex]}
+        />
+        {/* <SectionHeading>Timing points:</SectionHeading>
       <TimingPointList
         timingPoints={timingPoints}
         precedingTimingPointIndex={precedingTimingPointIndex}
@@ -48,10 +65,61 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
         onStartEditing={(index) => {
           setEditingIndex(index);
         }}
-      />
-    </TimingPointsEditorContainer>
+      /> */}
+      </Card>
+
+      <Card raised>
+        <Typography variant="h6" p={2}>
+          Timing Points:
+        </Typography>
+        <TableContainer sx={{ maxHeight: "400px" }}>
+          <Table stickyHeader size="small">
+            <TableHead>
+              <TableRow>
+                <TpTableCell align="center" sx={{ minWidth: 1 }}>
+                  #
+                </TpTableCell>
+                <TpTableCell align="center">t</TpTableCell>
+                <TpTableCell align="center">d</TpTableCell>
+                <TableCell padding="none" />
+                <TableCell padding="none" />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {timingPoints.map((timingPoint, idx) => (
+                <TableRow key={idx}>
+                  <TpTableCell align="right">{idx}</TpTableCell>
+                  <TpTableCell align="right">
+                    <Typography fontFamily="monospace" fontSize="100%">
+                      {formatTimeSec(timingPoint.t)}
+                    </Typography>
+                  </TpTableCell>
+                  <TpTableCell align="right">
+                    <Typography fontFamily="monospace" fontSize="100%">
+                      {formatDistanceMeters(timingPoint.d)}
+                    </Typography>
+                  </TpTableCell>
+                  <TableCell padding="none">
+                    <IconButton size="small" onClick={() => setEditingIndex(idx)}>
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell padding="none">
+                    <IconButton size="small">
+                      <MoreIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
+    </Stack>
   );
 };
+
+const TpTableCell: FC<TableCellProps> = ({ sx, ...restProps }) => <TableCell sx={{ px: 1, ...sx }} {...restProps} />;
 
 const VideoDataSection: FC<{
   trackState: UseState<Track>;
