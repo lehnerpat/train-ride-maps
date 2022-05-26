@@ -7,6 +7,7 @@ import { Card, Stack } from "@mui/material";
 import { EditingControlsAreaOptions } from "./ViewOptions";
 import { TimingPointsList } from "./TimingPointsTable";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
+import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 
 interface EditingControlsAreaProps {
   trackState: UseState<Track>;
@@ -397,12 +398,4 @@ function deleteTimingPointById(tpId: string, setTimingPoints: SetState<ReadonlyA
   setTimingPoints((oldTimingPoints) => {
     return oldTimingPoints.filter((tp) => tp.uuid !== tpId);
   });
-}
-
-function formatTimeSec(tSec: number): string {
-  return tSec.toFixed(1) + "s";
-}
-
-function formatDistanceMeters(dMM: number): string {
-  return (dMM / 1000).toFixed(3) + "m";
 }

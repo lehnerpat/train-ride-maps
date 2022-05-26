@@ -12,12 +12,14 @@ import { TrackLocalStorageService } from "../track-models/TrackLocalStorageServi
 import { useFileUpload } from "../common/hooks/useFileUpload";
 import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";
-import { isFunction } from "../common/utils/type-helpers";
+import { isFunction, isUndefined } from "../common/utils/type-helpers";
 import {
   AppBar,
   Box,
   Button,
+  Card,
   Dialog,
+  Fab,
   IconButton,
   Stack,
   ToggleButton,
@@ -26,6 +28,7 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  Add as AddIcon,
   Download as DownloadIcon,
   Edit as EditIcon,
   Fullscreen as FullscreenIcon,
@@ -34,6 +37,7 @@ import {
 } from "@mui/icons-material";
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import { augmentUuid } from "../common/utils/uuid";
+import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -265,6 +269,21 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 isEditingModeOn={isEditingModeOn}
                 viewOptions={viewOptions.mapViewOptions}
               />
+              <Box position="absolute" top={0} right={0} zIndex={5000} mt={2} mr={2}>
+                <Stack direction="row" alignItems="center" spacing={-3.5}>
+                  <Card raised sx={{ pl: 2, pr: 5 }}>
+                    <Typography fontFamily="monospace" my={1}>
+                      t = {formatTimeSec(playedSeconds)}
+                    </Typography>
+                    <Typography fontFamily="monospace" my={1}>
+                      d = {isUndefined(currentDistanceMM) ? "--" : formatDistanceMeters(currentDistanceMM)}
+                    </Typography>
+                  </Card>
+                  <Fab color="secondary">
+                    <AddIcon />
+                  </Fab>
+                </Stack>
+              </Box>
             </LiveMapContainer>
             <StraightRailsOverlay optionsState={usePickedState(viewOptionsState, "straightRailsOverlay")} />
           </VideoAndMapContainer>
@@ -331,6 +350,7 @@ const LiveMapContainer = styled.div<LiveMapContainerProps>`
         `
       : css`
           aspect-ratio: 16/9;
+          position: relative;
         `}
 `;
 
