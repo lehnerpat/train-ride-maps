@@ -17,7 +17,7 @@ import { HasUuid } from "../common/utils/uuid";
 
 interface TimingPointsTableProps {
   timingPoints: ReadonlyArray<TimingPoint & HasUuid>;
-  onEditTimingPoint: (index: number) => void;
+  onEditTimingPoint: (uuid: string) => void;
 }
 
 export const TimingPointsTable: FC<TimingPointsTableProps> = ({ timingPoints, onEditTimingPoint }) => (
@@ -29,9 +29,6 @@ export const TimingPointsTable: FC<TimingPointsTableProps> = ({ timingPoints, on
       <Table stickyHeader size="small">
         <TableHead>
           <TableRow>
-            <TpTableCell align="center" sx={{ minWidth: 1 }}>
-              #
-            </TpTableCell>
             <TpTableCell align="center">t</TpTableCell>
             <TpTableCell align="center">d</TpTableCell>
             <TableCell padding="none" />
@@ -39,11 +36,10 @@ export const TimingPointsTable: FC<TimingPointsTableProps> = ({ timingPoints, on
           </TableRow>
         </TableHead>
         <TableBody>
-          {timingPoints.map((timingPoint, idx) => (
+          {timingPoints.map((timingPoint) => (
             <TimingPointTableRow
-              key={`${timingPoint.t}_${timingPoint.d}`}
+              key={timingPoint.uuid}
               timingPoint={timingPoint}
-              idx={idx}
               onEditTimingPoint={onEditTimingPoint}
             />
           ))}
@@ -54,26 +50,25 @@ export const TimingPointsTable: FC<TimingPointsTableProps> = ({ timingPoints, on
 );
 
 const TimingPointTableRow: FC<{
-  timingPoint: TimingPoint;
-  idx: number;
-  onEditTimingPoint: (index: number) => void;
-}> = ({ timingPoint, idx, onEditTimingPoint }) => {
-  const onEditButtonClick = useCallback(() => onEditTimingPoint(idx), [idx, onEditTimingPoint]);
+  timingPoint: TimingPoint & HasUuid;
+  onEditTimingPoint: (uuid: string) => void;
+}> = memo(({ timingPoint, onEditTimingPoint }) => {
+  const tpId = timingPoint.uuid;
+  const onEditButtonClick = useCallback(() => onEditTimingPoint(tpId), [tpId, onEditTimingPoint]);
 
   return (
     <TableRow>
-      <TpTableCell align="right">{idx}</TpTableCell>
       <TimeCell t={timingPoint.t} />
       <DistanceCell d={timingPoint.d} />
       <EditButtonCell onClick={onEditButtonClick} />
-      <TableCell padding="none">
+      <TableCell padding="none" title={tpId}>
         <IconButton size="small">
           <MoreIcon />
         </IconButton>
       </TableCell>
     </TableRow>
   );
-};
+});
 
 const TimeCell: FC<{ t: number }> = memo(({ t }) => (
   <TpTableCell align="right">

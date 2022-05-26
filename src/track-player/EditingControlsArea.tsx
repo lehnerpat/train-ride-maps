@@ -1,23 +1,9 @@
-import { Component, FC, memo, useEffect, useRef, useState } from "react";
+import { FC, memo, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { Panel } from "../common/components/Panel";
 import { SetState, usePickedState, UseState } from "../common/utils/state-utils";
 import { TimingPoint, Track } from "../track-models";
-import {
-  Card,
-  IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableCellProps,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
-import { Edit as EditIcon, MoreHoriz as MoreIcon } from "@mui/icons-material";
-
+import { Card, Stack } from "@mui/material";
 import { EditingControlsAreaOptions } from "./ViewOptions";
 import { TimingPointsTable } from "./TimingPointsTable";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
@@ -39,10 +25,20 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
   pathLengthMM,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingTpId, setEditingTpId] = useState<string | null>(null);
   const timingPointsState = usePickedState(trackState, "timingPoints");
   const [timingPoints] = timingPointsState;
 
   const isEditing = editingIndex !== null;
+
+  useEffect(() => {
+    if (editingTpId === null) {
+      setEditingIndex(null);
+      return;
+    }
+    const idx = timingPoints.findIndex((timingPoint) => timingPoint.uuid === editingTpId);
+    setEditingIndex(idx >= 0 ? idx : null);
+  }, [editingTpId, timingPoints]);
 
   return (
     <Stack spacing={2}>
@@ -70,14 +66,12 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
       /> */}
       </Card>
 
-      <TimingPointsTableMemo timingPoints={timingPoints} onEditTimingPoint={setEditingIndex} />
+      <TimingPointsTableMemo timingPoints={timingPoints} onEditTimingPoint={setEditingTpId} />
     </Stack>
   );
 };
 
 const TimingPointsTableMemo = memo(TimingPointsTable);
-
-const TpTableCell: FC<TableCellProps> = ({ sx, ...restProps }) => <TableCell sx={{ px: 1, ...sx }} {...restProps} />;
 
 const VideoDataSection: FC<{
   trackState: UseState<Track>;
