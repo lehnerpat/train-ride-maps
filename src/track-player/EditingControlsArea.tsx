@@ -27,7 +27,7 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingTpId, setEditingTpId] = useState<string | null>(null);
   const timingPointsState = usePickedState(trackState, "timingPoints");
-  const [timingPoints] = timingPointsState;
+  const [timingPoints, setTimingPoints] = timingPointsState;
 
   const isEditing = editingIndex !== null;
 
@@ -51,7 +51,8 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
           timingPointsState={timingPointsState}
           timeSeconds={playedSeconds}
           distance={currentDistance}
-          editingIndexState={[editingIndex, setEditingIndex]}
+          editingIndex={editingIndex}
+          onClearEditing={() => setEditingTpId(null)}
         />
         {/* <SectionHeading>Timing points:</SectionHeading>
       <TimingPointList
@@ -66,7 +67,11 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
       /> */}
       </Card>
 
-      <TimingPointsListMemo timingPoints={timingPoints} onEditTimingPoint={setEditingTpId} />
+      <TimingPointsListMemo
+        timingPoints={timingPoints}
+        onEditTimingPoint={setEditingTpId}
+        onDeleteTimingPoint={(tpId) => deleteTimingPointById(tpId, setTimingPoints)}
+      />
     </Stack>
   );
 };
@@ -113,13 +118,15 @@ const TimingPointsEditorContainer = styled(Panel)`
 `;
 interface EditingAreaProps extends InputFieldProps {
   timingPointsState: UseState<ReadonlyArray<TimingPoint & HasUuid>>;
-  editingIndexState: UseState<number | null>;
+  editingIndex: number | null;
+  onClearEditing: () => void;
 }
 const EditingArea: FC<EditingAreaProps> = ({
   timeSeconds,
   distance,
   timingPointsState: [timingPoints, setTimingPoints],
-  editingIndexState: [editingIndex, setEditingIndex],
+  editingIndex,
+  onClearEditing,
 }) => {
   const editingTimingPoint = editingIndex !== null ? timingPoints[editingIndex] : null;
   return (
@@ -144,20 +151,14 @@ const EditingArea: FC<EditingAreaProps> = ({
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button
             onClick={() => {
-              setEditingIndex(null);
+              onClearEditing();
               deleteTimingPoint(editingIndex, setTimingPoints);
             }}
           >
             Delete
           </button>
           <button disabled>Save</button>
-          <button
-            onClick={() => {
-              setEditingIndex(null);
-            }}
-          >
-            Cancel
-          </button>
+          <button onClick={onClearEditing}>Cancel</button>
         </div>
       )}
     </EditingAreaContainer>
@@ -389,6 +390,12 @@ function deleteTimingPoint(index: number, setTimingPoints: SetState<ReadonlyArra
     const timingPoints = [...oldTimingPoints];
     timingPoints.splice(index, 1);
     return timingPoints;
+  });
+}
+
+function deleteTimingPointById(tpId: string, setTimingPoints: SetState<ReadonlyArray<TimingPoint & HasUuid>>) {
+  setTimingPoints((oldTimingPoints) => {
+    return oldTimingPoints.filter((tp) => tp.uuid !== tpId);
   });
 }
 
