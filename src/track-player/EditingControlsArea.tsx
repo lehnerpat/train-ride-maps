@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { Component, FC, memo, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { Panel } from "../common/components/Panel";
 import { SetState, usePickedState, UseState } from "../common/utils/state-utils";
@@ -19,6 +19,7 @@ import {
 import { Edit as EditIcon, MoreHoriz as MoreIcon } from "@mui/icons-material";
 
 import { EditingControlsAreaOptions } from "./ViewOptions";
+import { TimingPointsTable } from "./TimingPointsTable";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
 
 interface EditingControlsAreaProps {
@@ -69,56 +70,12 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
       /> */}
       </Card>
 
-      <Card raised>
-        <Typography variant="h6" p={2}>
-          Timing Points:
-        </Typography>
-        <TableContainer sx={{ maxHeight: "400px" }}>
-          <Table stickyHeader size="small">
-            <TableHead>
-              <TableRow>
-                <TpTableCell align="center" sx={{ minWidth: 1 }}>
-                  #
-                </TpTableCell>
-                <TpTableCell align="center">t</TpTableCell>
-                <TpTableCell align="center">d</TpTableCell>
-                <TableCell padding="none" />
-                <TableCell padding="none" />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {timingPoints.map((timingPoint, idx) => (
-                <TableRow key={idx}>
-                  <TpTableCell align="right">{idx}</TpTableCell>
-                  <TpTableCell align="right">
-                    <Typography fontFamily="monospace" fontSize="100%">
-                      {formatTimeSec(timingPoint.t)}
-                    </Typography>
-                  </TpTableCell>
-                  <TpTableCell align="right">
-                    <Typography fontFamily="monospace" fontSize="100%">
-                      {formatDistanceMeters(timingPoint.d)}
-                    </Typography>
-                  </TpTableCell>
-                  <TableCell padding="none">
-                    <IconButton size="small" onClick={() => setEditingIndex(idx)}>
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell padding="none">
-                    <IconButton size="small">
-                      <MoreIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+      <TimingPointsTableMemo timingPoints={timingPoints} onEditTimingPoint={setEditingIndex} />
     </Stack>
   );
 };
+
+const TimingPointsTableMemo = memo(TimingPointsTable);
 
 const TpTableCell: FC<TableCellProps> = ({ sx, ...restProps }) => <TableCell sx={{ px: 1, ...sx }} {...restProps} />;
 
@@ -255,7 +212,7 @@ const EditingInputField = styled.input`
 `;
 
 interface TimingPointListProps {
-  timingPoints: TimingPoint[];
+  timingPoints: ReadonlyArray<TimingPoint>;
   precedingTimingPointIndex: number;
   isStartEditingPossible: boolean;
   onStartEditing: (idx: number) => void;
