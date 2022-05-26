@@ -18,13 +18,14 @@ import { closestPointOnPath } from "../geo/distance";
 import DraggableLines from "leaflet-draggable-lines";
 import { LeafletContext } from "@react-leaflet/core";
 import { Track } from "../track-models";
+import { augmentUuid } from "../common/utils/uuid";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
 interface LiveMapProps {
   trackState: UseState<Track>;
-  path: LatLngLiteral[];
-  timingPointLocations: LatLngLiteral[];
+  path: ReadonlyArray<LatLngLiteral>;
+  timingPointLocations: ReadonlyArray<LatLngLiteral>;
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
@@ -161,7 +162,7 @@ const LiveMapContainer = styled.div`
 const MapEventHandler: FC<{
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   setProjectedPoint: SetState<LatLngLiteral | undefined>;
-  path: LatLngLiteral[];
+  path: ReadonlyArray<LatLngLiteral>;
 }> = ({ onMapMoved, setProjectedPoint, path }) => {
   useMapEvent("moveend", (ev) => {
     const map = ev.target as LeafletMap;
@@ -202,18 +203,18 @@ const OrmTileLayer = () => (
   />
 );
 
-const TrackPathPaneViewingMode: FC<{ path: LatLngLiteral[] }> = ({ path }) => (
+const TrackPathPaneViewingMode: FC<{ path: ReadonlyArray<LatLngLiteral> }> = ({ path }) => (
   <TrackPathPaneContainer name="track-path-pane-viewing-mode">
     <LiveMapContext.Consumer>
       {({ viewOptions: { isTrackPolylineOn } }) =>
-        isTrackPolylineOn && <Polyline color="purple" positions={path} interactive={false} />
+        isTrackPolylineOn && <Polyline color="purple" positions={path as any /* TODO */} interactive={false} />
       }
     </LiveMapContext.Consumer>
   </TrackPathPaneContainer>
 );
 
 interface TrackPathPaneEditingModeProps {
-  path: LatLngLiteral[];
+  path: ReadonlyArray<LatLngLiteral>;
   trackState: UseState<Track>;
 }
 
@@ -246,7 +247,10 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
   }
 
   private saveTrackState() {
-    this.props.trackState[1]((t) => ({ ...t, path: this.polyline!.getLatLngs() as LatLng[] }));
+    this.props.trackState[1]((t) => ({
+      ...t,
+      path: (this.polyline!.getLatLngs() as LatLng[]).map((l: LatLng) => augmentUuid(l)),
+    }));
   }
 
   componentDidMount() {
@@ -264,7 +268,10 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
       this.debug("insert", ev);
       this.saveTrackState();
     });
-    this.polyline = new LeafletPolyline(this.props.path, { color: "purple", interactive: true }).addTo(map);
+    this.polyline = new LeafletPolyline(this.props.path as any /* TODO */, {
+      color: "purple",
+      interactive: true,
+    }).addTo(map);
   }
 
   componentWillUnmount() {
@@ -338,7 +345,7 @@ const ProjectedPointPaneContainer = styled(Pane)`
   z-index: 600;
 `;
 
-const TimingPointsPane: FC<{ timingPointLocations: LatLngLiteral[] }> = ({ timingPointLocations }) => (
+const TimingPointsPane: FC<{ timingPointLocations: ReadonlyArray<LatLngLiteral> }> = ({ timingPointLocations }) => (
   <TimingPointsPaneContainer name="timing-points-pane">
     <LiveMapContext.Consumer>
       {({ isEditingModeOn, viewOptions }) =>

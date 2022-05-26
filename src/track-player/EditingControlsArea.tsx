@@ -19,6 +19,7 @@ import {
 import { Edit as EditIcon, MoreHoriz as MoreIcon } from "@mui/icons-material";
 
 import { EditingControlsAreaOptions } from "./ViewOptions";
+import { augmentUuid, HasUuid } from "../common/utils/uuid";
 
 interface EditingControlsAreaProps {
   trackState: UseState<Track>;
@@ -160,7 +161,7 @@ const TimingPointsEditorContainer = styled(Panel)`
   max-height: calc(100vh - 150px);
 `;
 interface EditingAreaProps extends InputFieldProps {
-  timingPointsState: UseState<TimingPoint[]>;
+  timingPointsState: UseState<ReadonlyArray<TimingPoint & HasUuid>>;
   editingIndexState: UseState<number | null>;
 }
 const EditingArea: FC<EditingAreaProps> = ({
@@ -418,20 +419,21 @@ const TimingPointListEntryContainerLabel = styled.div`
   text-align: right;
 `;
 
-function addTimingPoint(newTimingPoint: TimingPoint, setTimingPoints: SetState<TimingPoint[]>) {
+function addTimingPoint(newTimingPoint: TimingPoint, setTimingPoints: SetState<ReadonlyArray<TimingPoint & HasUuid>>) {
   setTimingPoints((oldTimingPoints) => {
     const timingPoints = [...oldTimingPoints];
-    const newIdx = timingPoints.findIndex((wp) => wp.t > newTimingPoint.t);
+    const newTimingPointWithId = augmentUuid(newTimingPoint);
+    const newIdx = timingPoints.findIndex((wp) => wp.t > newTimingPointWithId.t);
     if (newIdx === -1) {
-      timingPoints.push(newTimingPoint);
+      timingPoints.push(newTimingPointWithId);
     } else {
-      timingPoints.splice(newIdx, 0, newTimingPoint);
+      timingPoints.splice(newIdx, 0, newTimingPointWithId);
     }
     return timingPoints;
   });
 }
 
-function deleteTimingPoint(index: number, setTimingPoints: SetState<TimingPoint[]>) {
+function deleteTimingPoint(index: number, setTimingPoints: SetState<ReadonlyArray<TimingPoint & HasUuid>>) {
   setTimingPoints((oldTimingPoints) => {
     const timingPoints = [...oldTimingPoints];
     timingPoints.splice(index, 1);

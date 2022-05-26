@@ -33,6 +33,7 @@ import {
   Tune as TuneIcon,
 } from "@mui/icons-material";
 import { useFileDownload } from "../common/hooks/useFileDownload";
+import { augmentUuid } from "../common/utils/uuid";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -68,7 +69,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     const nodes = parseOsmXml(osmXml);
     console.log("parsed ", nodes.length, "nodes");
     const path = nodes.map((n) => n.coord);
-    setTrack((track) => ({ ...track, path: path }));
+    setTrack((track) => ({ ...track, path: path.map(augmentUuid) }));
     setCurrentCenter(path[0]);
   };
   const { HiddenFileInput, showUploadDialog } = useFileUpload("osm-import", onOsmFileUploaded);
@@ -344,7 +345,7 @@ function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
   return [track, wrappedSetTrack];
 }
 
-function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: TimingPoint[]): number {
+function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: ReadonlyArray<TimingPoint>): number {
   const timingPointsCount = timingPoints.length;
   if (!timingPoints || !Array.isArray(timingPoints) || timingPointsCount === 0) return -1;
   if (offsetSec < timingPoints[0].t) return -1;
@@ -398,7 +399,7 @@ const TrackPointsCol = styled.div`
   margin-right: 10px;
 `;
 
-function computePathLength(path: readonly LatLngLiteral[], lastPointIndex?: number): number {
+function computePathLength(path: ReadonlyArray<LatLngLiteral>, lastPointIndex?: number): number {
   if (!path || path.length < 2) {
     throw new Error(`Cannot compute length of path with less than 2 points, got ${path.length} nodes`);
   }
@@ -411,7 +412,7 @@ function computePathLength(path: readonly LatLngLiteral[], lastPointIndex?: numb
 }
 
 type DistanceWithCoord = [number, LatLngLiteral];
-function computeDistanceFromStartMap(path: LatLngLiteral[]): DistanceWithCoord[] {
+function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): DistanceWithCoord[] {
   let totalDistance = 0;
   let prevPoint = path[0];
   let distanceFromStartMap: DistanceWithCoord[] = [[0, prevPoint]];
@@ -426,11 +427,11 @@ function computeDistanceFromStartMap(path: LatLngLiteral[]): DistanceWithCoord[]
 
 function computeTimingPointLocations(
   distanceFromStartMap: DistanceWithCoord[],
-  timingPoints: TimingPoint[]
-): LatLngLiteral[] {
+  timingPoints: ReadonlyArray<TimingPoint>
+): ReadonlyArray<LatLngLiteral> {
   let dfsIdx = 1,
     tpIdx = 0;
-  const result: LatLngLiteral[] = [];
+  const result: Array<LatLngLiteral> = [];
   while (dfsIdx < distanceFromStartMap.length && tpIdx < timingPoints.length) {
     if (timingPoints[tpIdx].d < distanceFromStartMap[dfsIdx][0]) {
       const tpCoord = interpolateCoordinates(

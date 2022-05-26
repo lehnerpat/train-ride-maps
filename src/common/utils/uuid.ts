@@ -4,3 +4,11 @@ export function newUuidv4(): string {
     (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
   );
 }
+
+export interface HasUuid {
+  readonly uuid: string;
+}
+
+export function augmentUuid<T>(t: T): T & HasUuid {
+  return { ...t, uuid: newUuidv4() };
+}

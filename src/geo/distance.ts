@@ -129,7 +129,7 @@ export function closestPointOnSegment(
   return { distanceFromPMM, closestOnSegment: { lat: φr / radPerDeg, lng: λr / radPerDeg } };
 }
 
-export function closestPointOnPath(p: LatLngLiteral, path: LatLngLiteral[]) {
+export function closestPointOnPath(p: LatLngLiteral, path: ReadonlyArray<LatLngLiteral>) {
   let closestDistance = Infinity;
   let closestInfo;
   for (let i = 0; i < path.length - 1; i++) {
