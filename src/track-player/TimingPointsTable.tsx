@@ -1,100 +1,56 @@
-import { FC, memo, useCallback } from "react";
-import {
-  Card,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableCellProps,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { FC, PureComponent } from "react";
+import { Box, Card, IconButton, ListItem, Stack, Typography } from "@mui/material";
 import { Edit as EditIcon, MoreHoriz as MoreIcon } from "@mui/icons-material";
 import { TimingPoint } from "../track-models";
 import { HasUuid } from "../common/utils/uuid";
+import { FixedSizeList, ListChildComponentProps } from "react-window";
 
-interface TimingPointsTableProps {
+interface TimingPointsListProps {
   timingPoints: ReadonlyArray<TimingPoint & HasUuid>;
   onEditTimingPoint: (uuid: string) => void;
 }
-
-export const TimingPointsTable: FC<TimingPointsTableProps> = ({ timingPoints, onEditTimingPoint }) => (
-  <Card raised>
-    <Typography variant="h6" p={2}>
-      Timing Points:
-    </Typography>
-    <TableContainer sx={{ maxHeight: "400px" }}>
-      <Table stickyHeader size="small">
-        <TableHead>
-          <TableRow>
-            <TpTableCell align="center">t</TpTableCell>
-            <TpTableCell align="center">d</TpTableCell>
-            <TableCell padding="none" />
-            <TableCell padding="none" />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {timingPoints.map((timingPoint) => (
-            <TimingPointTableRow
-              key={timingPoint.uuid}
-              timingPoint={timingPoint}
-              onEditTimingPoint={onEditTimingPoint}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </Card>
-);
-
-const TimingPointTableRow: FC<{
-  timingPoint: TimingPoint & HasUuid;
-  onEditTimingPoint: (uuid: string) => void;
-}> = memo(({ timingPoint, onEditTimingPoint }) => {
-  const tpId = timingPoint.uuid;
-  const onEditButtonClick = useCallback(() => onEditTimingPoint(tpId), [tpId, onEditTimingPoint]);
-
+export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
   return (
-    <TableRow>
-      <TimeCell t={timingPoint.t} />
-      <DistanceCell d={timingPoint.d} />
-      <EditButtonCell onClick={onEditButtonClick} />
-      <TableCell padding="none" title={tpId}>
+    <Card raised>
+      <Typography variant="h6" p={2}>
+        Timing Points:
+      </Typography>
+      <FixedSizeList
+        height={400}
+        width="100%"
+        itemSize={34}
+        itemCount={props.timingPoints.length}
+        overscanCount={5}
+        itemData={props}
+      >
+        {ItemRenderer}
+      </FixedSizeList>
+    </Card>
+  );
+};
+
+class ItemRenderer extends PureComponent<ListChildComponentProps<TimingPointsListProps>> {
+  render() {
+    const { timingPoints, onEditTimingPoint } = this.props.data;
+    const timingPoint = timingPoints[this.props.index];
+
+    return (
+      <ListItem style={this.props.style} key={timingPoint.uuid} component="div" disablePadding dense sx={{ px: 1 }}>
+        <Stack direction="row" flexGrow={1} sx={{ px: 1, fontFamily: "monospace" }} spacing={0.5}>
+          <Box>t={formatTimeSec(timingPoint.t)}</Box>
+          <Box sx={{ opacity: 0.6 }}>|</Box>
+          <Box>d={formatDistanceMeters(timingPoint.d)}</Box>
+        </Stack>
+        <IconButton size="small" onClick={() => onEditTimingPoint(timingPoint.uuid)}>
+          <EditIcon />
+        </IconButton>
         <IconButton size="small">
           <MoreIcon />
         </IconButton>
-      </TableCell>
-    </TableRow>
-  );
-});
-
-const TimeCell: FC<{ t: number }> = memo(({ t }) => (
-  <TpTableCell align="right">
-    <Typography fontFamily="monospace" fontSize="100%">
-      {formatTimeSec(t)}
-    </Typography>
-  </TpTableCell>
-));
-
-const DistanceCell: FC<{ d: number }> = memo(({ d }) => (
-  <TpTableCell align="right">
-    <Typography fontFamily="monospace" fontSize="100%">
-      {formatDistanceMeters(d)}
-    </Typography>
-  </TpTableCell>
-));
-
-const EditButtonCell: FC<{ onClick: () => void }> = memo(({ onClick }) => (
-  <TableCell padding="none">
-    <IconButton size="small" onClick={onClick}>
-      <EditIcon />
-    </IconButton>
-  </TableCell>
-));
-
-const TpTableCell: FC<TableCellProps> = ({ sx, ...restProps }) => <TableCell sx={{ px: 1, ...sx }} {...restProps} />;
+      </ListItem>
+    );
+  }
+}
 
 function formatTimeSec(tSec: number): string {
   return tSec.toFixed(1) + "s";

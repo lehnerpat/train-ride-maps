@@ -5,7 +5,7 @@ import { SetState, usePickedState, UseState } from "../common/utils/state-utils"
 import { TimingPoint, Track } from "../track-models";
 import { Card, Stack } from "@mui/material";
 import { EditingControlsAreaOptions } from "./ViewOptions";
-import { TimingPointsTable } from "./TimingPointsTable";
+import { TimingPointsList } from "./TimingPointsTable";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
 
 interface EditingControlsAreaProps {
@@ -66,12 +66,12 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
       /> */}
       </Card>
 
-      <TimingPointsTableMemo timingPoints={timingPoints} onEditTimingPoint={setEditingTpId} />
+      <TimingPointsListMemo timingPoints={timingPoints} onEditTimingPoint={setEditingTpId} />
     </Stack>
   );
 };
 
-const TimingPointsTableMemo = memo(TimingPointsTable);
+const TimingPointsListMemo = memo(TimingPointsList);
 
 const VideoDataSection: FC<{
   trackState: UseState<Track>;
