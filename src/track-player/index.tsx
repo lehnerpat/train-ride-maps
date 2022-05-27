@@ -5,7 +5,7 @@ import styled, { css } from "styled-components";
 import { EditingControlsArea } from "./EditingControlsArea";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
-import { DefaultViewOptions, ViewOptionsDialog } from "./ViewOptions";
+import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common/utils/state-utils";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
@@ -36,7 +36,7 @@ import {
   Tune as TuneIcon,
 } from "@mui/icons-material";
 import { useFileDownload } from "../common/hooks/useFileDownload";
-import { augmentUuid } from "../common/utils/uuid";
+import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
@@ -50,33 +50,24 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     [initialTrack]
   );
   const trackState = useAutosavingTrackState(initialTrack);
-  const [track, setTrack] = trackState;
+  const [track] = trackState;
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
-  const [isEditingModeOn, setEditingModeOn] = useState(false);
+  const isEditingModeOnState = useState(false);
+  const [isEditingModeOn, setEditingModeOn] = isEditingModeOnState;
   const viewOptionsState = useMemoState(DefaultViewOptions);
-  const [isViewOptionsDialogOpen, setViewOptionsDialogOpen] = useState(false);
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
 
   const videoPlayerAndMapRef = useRef<HTMLDivElement>(null);
 
   const [viewOptions] = viewOptionsState;
   const timingPoints = track.timingPoints;
-  const path = track.path;
-
-  const onOsmFileUploaded = async (file: File) => {
-    const osmXml = await file.text();
-    const nodes = parseOsmXml(osmXml);
-    console.log("parsed ", nodes.length, "nodes");
-    const path = nodes.map((n) => n.coord);
-    setTrack((track) => ({ ...track, path: path.map(augmentUuid) }));
-    setCurrentCenter(path[0]);
-  };
-  const { HiddenFileInput, showUploadDialog } = useFileUpload("osm-import", onOsmFileUploaded);
+  const [path, setPath] = usePickedState(trackState, "path");
+  const [, setTimingPoints] = usePickedState(trackState, "timingPoints");
 
   useEffect(() => {
     const dfsMap = computeDistanceFromStartMap(path);
@@ -134,105 +125,50 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     setCurrentCenter(interpolatedCoord);
   }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
 
-  const showMapAsOverlay = !isEditingModeOn;
+  const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn, setEditingModeOn]);
+  const enterFullscreen = useCallback(
+    () => _enterFullscreen(videoPlayerAndMapRef, isEditingModeOn),
+    [videoPlayerAndMapRef, isEditingModeOn]
+  );
 
-  const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn]);
   const keyHandler = useCallback(
     (ev: KeyboardEvent) => {
       if (ev.key === "f") {
-        enterFullscreen(videoPlayerAndMapRef, isEditingModeOn);
+        enterFullscreen();
       } else if (ev.key === "E") {
         toggleEditingMode();
       }
     },
-    [isEditingModeOn, toggleEditingMode]
+    [toggleEditingMode, enterFullscreen]
+  );
+  useKeyPressHandler(keyHandler);
+
+  const reversePath = useCallback(() => setPath((path) => [...path].reverse()), [setPath]);
+  const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
+  const addTimingPoint = useCallback(
+    () => _addTimingPoint(playedSeconds, currentDistanceMM, setTimingPoints),
+    [playedSeconds, currentDistanceMM, setTimingPoints]
   );
 
-  useEffect(() => {
-    document.body.addEventListener("keypress", keyHandler);
-
-    return () => {
-      document.body.removeEventListener("keypress", keyHandler);
-    };
-  });
-
-  const onDownloadFileClicked = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
+  const showMapAsOverlay = !isEditingModeOn;
 
   return (
     <div>
-      <AppBar position="static" sx={{ mb: 2 }}>
-        <Toolbar>
-          {/* TODO: make text wrap properly or cut off with ellipsis if too long */}
-          <Typography variant="h6" component="div" flexGrow={1}>
-            {track.title}
-          </Typography>
-          <ToggleButtonGroup
-            value={isEditingModeOn ? "editing" : "viewing"}
-            exclusive
-            onChange={(_, newValue) => setEditingModeOn(newValue === "editing")}
-            size="small"
-            sx={{ mr: 3 }}
-          >
-            <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-              <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
-                Viewing
-              </Box>
-              <SmartDisplayIcon />
-            </ToggleButton>
-            <ToggleButton value={"editing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-              <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
-                Editing
-              </Box>
-              <EditIcon />
-            </ToggleButton>
-          </ToggleButtonGroup>
-          <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
-            <DownloadIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            title="Enter fullscreen"
-            disabled={isEditingModeOn}
-            onClick={() => {
-              enterFullscreen(videoPlayerAndMapRef, isEditingModeOn);
-            }}
-          >
-            <FullscreenIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            title="Show view options"
-            onClick={() => {
-              setViewOptionsDialogOpen(!isViewOptionsDialogOpen);
-            }}
-          >
-            <TuneIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
-      <Dialog open={isViewOptionsDialogOpen} onClose={() => setViewOptionsDialogOpen(false)}>
-        <ViewOptionsDialog viewOptionsState={viewOptionsState} onCloseDialog={() => setViewOptionsDialogOpen(false)} />
-      </Dialog>
+      <MenuBar
+        isEditingState={isEditingModeOnState}
+        viewOptionsState={viewOptionsState}
+        trackTitle={track.title}
+        onDownloadFileClicked={downloadTrackAsFile}
+        onEnterFullscreenClicked={enterFullscreen}
+      />
 
       <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
         {isEditingModeOn && (
           <TrackPointsCol>
             <Stack spacing={1}>
               <Stack direction="row" spacing={1}>
-                <Button variant="outlined" color="inherit" size="small" onClick={() => showUploadDialog()}>
-                  Import OSM XML
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="inherit"
-                  size="small"
-                  onClick={() => {
-                    const path = [...track.path].reverse();
-                    setTrack((track) => ({ ...track, path }));
-                    setCurrentCenter(path[0]);
-                  }}
-                >
+                <ImportOsmXmlButton onPathUploaded={setPath} />
+                <Button variant="outlined" color="inherit" size="small" onClick={reversePath}>
                   Reverse Path
                 </Button>
               </Stack>
@@ -270,10 +206,10 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 viewOptions={viewOptions.mapViewOptions}
               />
               {isEditingModeOn && (
-                <AddTimingPointButton
+                <AddTimingPointWidget
                   playedSeconds={playedSeconds}
                   currentDistanceMM={currentDistanceMM}
-                  onAddButtonClicked={() => {}}
+                  onAddButtonClicked={addTimingPoint}
                 />
               )}
             </LiveMapContainer>
@@ -281,12 +217,114 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           </VideoAndMapContainer>
         </PlayerMapCol>
       </TrackPlayerContainer>
-      <HiddenFileInput />
     </div>
   );
 };
 
-const AddTimingPointButton: FC<{
+const ImportOsmXmlButton: FC<{ onPathUploaded: (path: ReadonlyArray<LatLngLiteral & HasUuid>) => void }> = ({
+  onPathUploaded,
+}) => {
+  const onOsmFileUploaded = async (file: File) => {
+    const osmXml = await file.text();
+    // TODO error handling
+    const nodes = parseOsmXml(osmXml);
+    console.log("parsed ", nodes.length, "nodes");
+    const path = nodes.map((n) => n.coord);
+    onPathUploaded(path.map(augmentUuid));
+  };
+  const { HiddenFileInput, showUploadDialog } = useFileUpload("osm-import", onOsmFileUploaded);
+
+  return (
+    <>
+      <Button variant="outlined" color="inherit" size="small" onClick={showUploadDialog}>
+        Import OSM XML
+      </Button>
+      <HiddenFileInput />
+    </>
+  );
+};
+
+function useKeyPressHandler(keyHandler: (ev: KeyboardEvent) => void) {
+  useEffect(() => {
+    document.body.addEventListener("keypress", keyHandler);
+
+    return () => {
+      document.body.removeEventListener("keypress", keyHandler);
+    };
+  });
+}
+
+const MenuBar: FC<{
+  trackTitle: string;
+  isEditingState: UseState<boolean>;
+  viewOptionsState: UseState<ViewOptions>;
+  onDownloadFileClicked: () => void;
+  onEnterFullscreenClicked: () => void;
+}> = ({
+  trackTitle,
+  isEditingState: [isEditingModeOn, setIsEditingModeOn],
+  viewOptionsState,
+  onDownloadFileClicked,
+  onEnterFullscreenClicked,
+}) => (
+  <AppBar position="static" sx={{ mb: 2 }}>
+    <Toolbar>
+      {/* TODO: make text wrap properly or cut off with ellipsis if too long */}
+      <Typography variant="h6" component="div" flexGrow={1}>
+        {trackTitle}
+      </Typography>
+      <ToggleButtonGroup
+        value={isEditingModeOn ? "editing" : "viewing"}
+        exclusive
+        onChange={(_, newValue) => setIsEditingModeOn(newValue === "editing")}
+        size="small"
+        sx={{ mr: 3 }}
+      >
+        <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
+          <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
+            Viewing
+          </Box>
+          <SmartDisplayIcon />
+        </ToggleButton>
+        <ToggleButton value={"editing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
+          <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
+            Editing
+          </Box>
+          <EditIcon />
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
+        <DownloadIcon />
+      </IconButton>
+      <IconButton
+        color="inherit"
+        title="Enter fullscreen"
+        disabled={isEditingModeOn}
+        onClick={onEnterFullscreenClicked}
+      >
+        <FullscreenIcon />
+      </IconButton>
+      <ViewOptionsButton viewOptionsState={viewOptionsState} />
+    </Toolbar>
+  </AppBar>
+);
+
+const ViewOptionsButton: FC<{
+  viewOptionsState: UseState<ViewOptions>;
+}> = ({ viewOptionsState }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <IconButton color="inherit" title="Show view options" onClick={() => setIsOpen(!isOpen)}>
+        <TuneIcon />
+      </IconButton>
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+        <ViewOptionsDialog viewOptionsState={viewOptionsState} onCloseDialog={() => setIsOpen(false)} />
+      </Dialog>
+    </>
+  );
+};
+const AddTimingPointWidget: FC<{
   playedSeconds: number;
   currentDistanceMM: number | undefined;
   onAddButtonClicked: () => void;
@@ -484,7 +522,7 @@ function computeTimingPointLocations(
   return result;
 }
 
-async function enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivElement>, isEditingModeOn: boolean) {
+async function _enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivElement>, isEditingModeOn: boolean) {
   const el = videoPlayerAndMapRef.current;
   if (!el || isEditingModeOn) return;
   if (!!document.fullscreenElement || !!(document as any).webkitFullscreenElement) {
@@ -500,4 +538,24 @@ async function enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivElem
   } catch (e) {
     console.error("Could not enter fullscreen:", e);
   }
+}
+
+function _addTimingPoint(
+  playedSeconds: number,
+  currentDistanceMM: number | undefined,
+  setTimingPoints: SetState<ReadonlyArray<TimingPoint & HasUuid>>
+) {
+  if (isUndefined(currentDistanceMM)) return;
+
+  setTimingPoints((oldTimingPoints) => {
+    const timingPoints = [...oldTimingPoints];
+    const newTimingPoint = augmentUuid({ t: playedSeconds, d: currentDistanceMM });
+    const newIdx = timingPoints.findIndex((wp) => wp.t > newTimingPoint.t);
+    if (newIdx === -1) {
+      timingPoints.push(newTimingPoint);
+    } else {
+      timingPoints.splice(newIdx, 0, newTimingPoint);
+    }
+    return timingPoints;
+  });
 }
