@@ -269,21 +269,13 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 isEditingModeOn={isEditingModeOn}
                 viewOptions={viewOptions.mapViewOptions}
               />
-              <Box position="absolute" top={0} right={0} zIndex={5000} mt={2} mr={2}>
-                <Stack direction="row" alignItems="center" spacing={-3.5}>
-                  <Card raised sx={{ pl: 2, pr: 5 }}>
-                    <Typography fontFamily="monospace" my={1}>
-                      t = {formatTimeSec(playedSeconds)}
-                    </Typography>
-                    <Typography fontFamily="monospace" my={1}>
-                      d = {isUndefined(currentDistanceMM) ? "--" : formatDistanceMeters(currentDistanceMM)}
-                    </Typography>
-                  </Card>
-                  <Fab color="secondary">
-                    <AddIcon />
-                  </Fab>
-                </Stack>
-              </Box>
+              {isEditingModeOn && (
+                <AddTimingPointButton
+                  playedSeconds={playedSeconds}
+                  currentDistanceMM={currentDistanceMM}
+                  onAddButtonClicked={() => {}}
+                />
+              )}
             </LiveMapContainer>
             <StraightRailsOverlay optionsState={usePickedState(viewOptionsState, "straightRailsOverlay")} />
           </VideoAndMapContainer>
@@ -293,6 +285,30 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     </div>
   );
 };
+
+const AddTimingPointButton: FC<{
+  playedSeconds: number;
+  currentDistanceMM: number | undefined;
+  onAddButtonClicked: () => void;
+}> = ({ playedSeconds, currentDistanceMM, onAddButtonClicked }) => (
+  <Box position="absolute" top={0} right={0} zIndex={5000} mt={2} mr={2}>
+    <Card raised sx={{ pl: 2, pr: 1 }}>
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <Box>
+          <Typography fontFamily="monospace" my={1}>
+            t = {formatTimeSec(playedSeconds)}
+          </Typography>
+          <Typography fontFamily="monospace" my={1}>
+            d = {isUndefined(currentDistanceMM) ? "--" : formatDistanceMeters(currentDistanceMM)}
+          </Typography>
+        </Box>
+        <Fab color="secondary" onClick={onAddButtonClicked}>
+          <AddIcon />
+        </Fab>
+      </Stack>
+    </Card>
+  </Box>
+);
 
 const PlayerMapCol = styled.div`
   flex-grow: 1;
