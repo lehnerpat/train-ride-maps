@@ -323,6 +323,8 @@ const VideoAndMapContainer = styled(Box)<WithShowAsMapOverlay>(
     css`
       position: relative;
       margin: 0 auto;
+      display: flex;
+      align-items: center;
       ${showMapAsOverlay
         ? css`
             max-height: calc(100vh - 64px - 32px);
