@@ -11,6 +11,7 @@ import React, { createContext, FC, useCallback, useEffect, useRef, useState } fr
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "styled-components";
+import { Theme, CSSObject } from "@mui/material/styles";
 import useResizeObserver from "@react-hook/resize-observer";
 import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
 import { SetState, UseState } from "../common/utils/state-utils";
@@ -19,6 +20,8 @@ import DraggableLines from "leaflet-draggable-lines";
 import { LeafletContext } from "@react-leaflet/core";
 import { Track } from "../track-models";
 import { augmentUuid } from "../common/utils/uuid";
+import { Button, ButtonGroup, ButtonProps } from "@mui/material";
+import { Add as AddIcon, Remove as RemoveIcon, Timeline as TimelineIcon } from "@mui/icons-material";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
@@ -77,6 +80,9 @@ export const LiveMap: FC<LiveMapProps> = ({
     }
   }, [map, currentCenter, isAutopanOn]);
 
+  const zoomIn = useCallback(() => map?.zoomIn(), [map]);
+  const zoomOut = useCallback(() => map?.zoomOut(), [map]);
+
   return (
     <LiveMapContainer ref={containerRef}>
       <LiveMapContext.Provider value={{ isEditingModeOn, viewOptions }}>
@@ -90,6 +96,7 @@ export const LiveMap: FC<LiveMapProps> = ({
             setAttributionHtml(collectAttributions(map));
           }, [])}
           attributionControl={false}
+          zoomControl={false}
         >
           {isEditingModeOn && (
             <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
@@ -119,11 +126,38 @@ export const LiveMap: FC<LiveMapProps> = ({
               <CustomAttributionGlyphContainer>©</CustomAttributionGlyphContainer>
             </CustomAttributionContainer>
           </CustomLeafletControl>
+
+          <CustomLeafletControl position="topleft">
+            <ButtonGroup
+              orientation="vertical"
+              variant="contained"
+              size="small"
+              sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
+            >
+              <Button onClick={zoomIn}>
+                <AddIcon />
+              </Button>
+              <Button onClick={zoomOut}>
+                <RemoveIcon />
+              </Button>
+            </ButtonGroup>
+          </CustomLeafletControl>
         </MapContainer>
       </LiveMapContext.Provider>
     </LiveMapContainer>
   );
 };
+
+const mapControlButtonMixin = (theme: Theme): CSSObject => ({
+  minWidth: 0,
+  padding: theme.spacing(0.5),
+  color: theme.palette.getContrastText(theme.palette.grey[800]),
+  backgroundColor: theme.palette.grey[800],
+  borderColor: "currentColor",
+  "&:hover": {
+    backgroundColor: theme.palette.grey[700],
+  },
+});
 
 const CustomAttributionGlyphContainer = styled.div``;
 
@@ -224,16 +258,7 @@ interface TrackPathPaneEditingModeState {
 
 class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeProps, TrackPathPaneEditingModeState> {
   static contextType = LeafletContext;
-  private static instanceCounter = 0;
   context!: NonNullable<React.ContextType<typeof LeafletContext>>;
-
-  constructor(props: TrackPathPaneEditingModeProps) {
-    super(props);
-    this.debug("constructor");
-    this.onEditModeBtnClicked = this.onEditModeBtnClicked.bind(this);
-  }
-
-  private instanceCount = ++TrackPathPaneEditingMode.instanceCounter;
 
   state: Readonly<TrackPathPaneEditingModeState> = {
     isPathEditing: false,
@@ -241,10 +266,6 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
 
   private draggableLines: DraggableLines | null = null;
   private polyline: LeafletPolyline | null = null;
-
-  private debug(...args: any[]) {
-    console.debug(`[class TrackPathPaneEditingMode][${this.instanceCount}]`, ...args);
-  }
 
   private saveTrackState() {
     this.props.trackState[1]((t) => ({
@@ -254,18 +275,12 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
   }
 
   componentDidMount() {
-    this.debug("componentDidMount()");
     const map = this.context.map;
     this.draggableLines = new DraggableLines(map, {
       enableForLayer: false,
       dragMarkerOptions: createDragMarker,
     });
-    this.draggableLines.on("dragend", (ev) => {
-      this.debug("dragend", ev);
-      this.saveTrackState();
-    });
-    this.draggableLines.on("insert", (ev) => {
-      this.debug("insert", ev);
+    this.draggableLines.on("dragend insert remove", (ev) => {
       this.saveTrackState();
     });
     this.polyline = new LeafletPolyline(this.props.path as any /* TODO */, {
@@ -275,7 +290,6 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
   }
 
   componentWillUnmount() {
-    this.debug("componentWillUnmount()");
     const map = this.context.map;
     if (!!this.polyline) {
       this.draggableLines?.disableForLayer(this.polyline);
@@ -290,32 +304,54 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
     return (
       <TrackPathPaneContainer name="track-path-pane">
         <>
-          <CustomLeafletControl position="topleft" additionalClassName="leaflet-bar">
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a href="#" onClick={this.onEditModeBtnClicked} title="Edit track geometry">
-              E
-            </a>
+          <CustomLeafletControl position="topleft">
+            <MapPushButton
+              pushed={this.state.isPathEditing}
+              onClick={this.onEditModeBtnClicked}
+              title="Edit track geometry"
+            >
+              <TimelineIcon />
+            </MapPushButton>
           </CustomLeafletControl>
         </>
       </TrackPathPaneContainer>
     );
   }
 
-  private onEditModeBtnClicked(ev: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+  private onEditModeBtnClicked = (ev: React.MouseEvent) => {
     ev.preventDefault();
     if (!this.draggableLines || !this.polyline) return;
     if (!this.state.isPathEditing) {
       this.draggableLines.enableForLayer(this.polyline);
-      this.debug("enabling");
-      this.setState((s) => ({ ...s, isPathEditing: true }));
+      this.setState(() => ({ isPathEditing: true }));
     } else {
       this.draggableLines.disableForLayer(this.polyline);
       this.draggableLines.disable();
-      this.debug("disabling");
-      this.setState((s) => ({ ...s, isPathEditing: false }));
+      this.setState(() => ({ isPathEditing: false }));
     }
-  }
+  };
 }
+
+const pushedButtonMixin = (theme: Theme): CSSObject => ({
+  backgroundColor: theme.palette.primary.dark,
+  boxShadow: theme.shadows[8],
+  "&:hover": {
+    backgroundColor: theme.palette.primary.main,
+  },
+});
+
+const MapPushButton: FC<Omit<ButtonProps, "variant" | "size"> & { pushed: boolean }> = ({
+  pushed,
+  sx,
+  ...restProps
+}) => (
+  <Button
+    variant="contained"
+    size="small"
+    sx={[mapControlButtonMixin, pushed && pushedButtonMixin, ...(Array.isArray(sx) ? sx : [sx])]}
+    {...restProps}
+  />
+);
 
 const TrackPathPaneContainer = styled(Pane)`
   z-index: 600;
