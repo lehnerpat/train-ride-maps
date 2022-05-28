@@ -1,7 +1,6 @@
-import { FC } from "react";
-import styled from "styled-components";
-import { Checkbox } from "../common/components/Checkbox";
+import { FC, ReactNode } from "react";
 import { UseState, pickState } from "../common/utils/state-utils";
+import { Box, Button, Card, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 
 export interface MapViewOptions {
   isAutopanOn: boolean;
@@ -49,6 +48,25 @@ export const DefaultViewOptions: ViewOptions = {
   },
 };
 
+interface ToggleSwitchProps {
+  id: string;
+  checkedState: UseState<boolean>;
+  children?: React.ReactNode;
+}
+export const ToggleSwitch: FC<ToggleSwitchProps> = ({ id, checkedState: [isChecked, setChecked], children }) => (
+  <FormControlLabel
+    control={
+      <Switch
+        checked={isChecked}
+        onChange={(ev) => {
+          setChecked(ev.target.checked);
+        }}
+      />
+    }
+    label={children}
+  />
+);
+
 interface ViewOptionsDialogProps {
   viewOptionsState: UseState<ViewOptions>;
   onCloseDialog: () => void;
@@ -61,10 +79,10 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
   const straightRailsOverlayViewOptionsState = pickState(viewOptionsState, "straightRailsOverlay");
 
   return (
-    <ViewOptionsDialogContainer>
-      <SectionHeading style={{ marginTop: 0 }}>Map Options</SectionHeading>
-      <CheckboxListContainer>
-        <Checkbox
+    <Card raised sx={{ p: 2 }}>
+      <SectionHeading>Map Options</SectionHeading>
+      <Stack>
+        <ToggleSwitch
           id="mapOverlayPosition"
           checkedState={[
             mapOverlayPositionState[0] === "top-right",
@@ -72,80 +90,73 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
           ]}
         >
           Map overlay on top right (else top left)
-        </Checkbox>
-        <Checkbox id="isAutoPanOn" checkedState={pickState(mapViewOptionsState, "isAutopanOn")}>
+        </ToggleSwitch>
+        <ToggleSwitch id="isAutoPanOn" checkedState={pickState(mapViewOptionsState, "isAutopanOn")}>
           Auto-pan map to current position
-        </Checkbox>
-        <Checkbox id="isTrackPolylineOn" checkedState={pickState(mapViewOptionsState, "isTrackPolylineOn")}>
+        </ToggleSwitch>
+        <ToggleSwitch id="isTrackPolylineOn" checkedState={pickState(mapViewOptionsState, "isTrackPolylineOn")}>
           Show track path
-        </Checkbox>
-      </CheckboxListContainer>
+        </ToggleSwitch>
+      </Stack>
       <SectionHeading>Map Options - Editing Mode</SectionHeading>
-      <CheckboxListContainer>
-        <Checkbox
+      <Stack>
+        <ToggleSwitch
           id="isCrosshairOverlayOn"
           checkedState={pickState(mapViewEditingOptionsState, "isCrosshairOverlayOn")}
         >
           Show crosshair overlay for map center
-        </Checkbox>
-        <Checkbox
+        </ToggleSwitch>
+        <ToggleSwitch
           id="isTimingPointMarkersOn"
           checkedState={pickState(mapViewEditingOptionsState, "isTimingPointMarkersOn")}
         >
           Show timing points on track path
-        </Checkbox>
-        <Checkbox
+        </ToggleSwitch>
+        <ToggleSwitch
           id="isPathPointMarkersOn"
           checkedState={pickState(mapViewEditingOptionsState, "isPathPointMarkersOn")}
         >
           Show markers for all track path points
-        </Checkbox>
-      </CheckboxListContainer>
+        </ToggleSwitch>
+      </Stack>
       <SectionHeading>Track points editor options</SectionHeading>
-      <CheckboxListContainer>
-        <Checkbox
+      <Stack>
+        <ToggleSwitch
           id="isAutoscrollTrackPointsListOn"
           checkedState={pickState(trackPointsEditorOptionsState, "isAutoscrollTimingPointsListOn")}
         >
           Auto-scroll track points list to current track points
-        </Checkbox>
-      </CheckboxListContainer>
+        </ToggleSwitch>
+      </Stack>
       <SectionHeading>Straight Rail Overlay</SectionHeading>
-      <CheckboxListContainer>
-        <Checkbox id="straightRailsOverlay-isOn" checkedState={pickState(straightRailsOverlayViewOptionsState, "isOn")}>
-          Show straight rail overlay
-        </Checkbox>
-        <button
-          disabled={!straightRailsOverlayViewOptionsState[0].isOn}
-          onClick={() => {
-            straightRailsOverlayViewOptionsState[1]((prev) => ({ ...prev, isEditing: true }));
-            onCloseDialog();
-          }}
-        >
-          Edit overlay lines
-        </button>
-      </CheckboxListContainer>
-    </ViewOptionsDialogContainer>
+      <Stack>
+        <Stack direction="row">
+          <Box flexGrow={1}>
+            <ToggleSwitch
+              id="straightRailsOverlay-isOn"
+              checkedState={pickState(straightRailsOverlayViewOptionsState, "isOn")}
+            >
+              Show straight rail overlay
+            </ToggleSwitch>
+          </Box>
+          <Button
+            variant="contained"
+            disabled={!straightRailsOverlayViewOptionsState[0].isOn}
+            onClick={() => {
+              straightRailsOverlayViewOptionsState[1]((prev) => ({ ...prev, isEditing: true }));
+              onCloseDialog();
+            }}
+          >
+            Edit overlay
+          </Button>
+        </Stack>
+      </Stack>
+    </Card>
   );
 };
 
-const ViewOptionsDialogContainer = styled.div`
-  /* position: absolute;
-  top: 30px;
-  right: 0; */
-  background: #333;
-  border: 2px solid gray;
-  border-radius: 3px;
-  padding: 0.5em 1em;
-  /* max-width: min(100%, 300px);
-  z-index: 2000; */
-`;
-
-const CheckboxListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SectionHeading = styled.h4`
-  margin-bottom: 5px;
-`;
+const SectionHeading: FC<{ children: ReactNode }> = ({ children }) => (
+  <Typography variant="h6" sx={{ "&:not(:first-child)": { mt: 1 } }}>
+    {children}
+  </Typography>
+);

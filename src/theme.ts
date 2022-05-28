@@ -7,4 +7,20 @@ export const theme = createTheme({
     secondary: amber,
     mode: "dark",
   },
+  components: {
+    MuiSwitch: {
+      styleOverrides: {
+        thumb: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "primary" && {
+            color: theme.palette.primary.light,
+          }),
+        }),
+        track: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "primary" && {
+            color: theme.palette.primary.light,
+          }),
+        }),
+      },
+    },
+  },
 });

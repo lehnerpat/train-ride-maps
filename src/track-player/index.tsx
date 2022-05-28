@@ -481,7 +481,7 @@ const AddTimingPointWidget: FC<{
   currentDistanceMM: number | undefined;
   onAddButtonClicked: () => void;
 }> = ({ playedSeconds, currentDistanceMM, onAddButtonClicked }) => (
-  <Box position="absolute" bottom={0} right={0} zIndex={5000} m={2}>
+  <Box position="absolute" bottom={0} right={0} zIndex={1000} m={2}>
     <Card raised sx={{ pl: 2, pr: 1 }}>
       <Stack direction="row" alignItems="center" spacing={2}>
         <Box>
