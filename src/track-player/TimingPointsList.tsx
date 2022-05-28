@@ -78,7 +78,7 @@ const DeleteMenu: FC<{ timingPoint: TimingPoint & HasUuid; onDeleteTimingPoint: 
           <IconButton size="small" {...bindTrigger(popupState)}>
             <MoreIcon />
           </IconButton>
-          <Menu anchorOrigin={{ vertical: "top", horizontal: "right" }} {...bindMenu(popupState)}>
+          <Menu {...bindMenu(popupState)}>
             <MenuItem
               onClick={() => onDeleteTimingPoint(timingPoint.uuid)}
               title={`Delete timing point t=${formatTimeSec(timingPoint.t)} / d=${formatDistanceMeters(timingPoint.d)}`}
