@@ -1,7 +1,8 @@
 import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models";
-import styled, { css } from "styled-components";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
@@ -38,6 +39,26 @@ import { useFileDownload } from "../common/hooks/useFileDownload";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
+
+const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
+  width,
+  height,
+  text,
+}) => (
+  <Box bgcolor="rgba(255, 255, 255, 0.13)" width={width} height={height}>
+    <Box
+      width="100%"
+      height="100%"
+      border="1px solid gray"
+      boxSizing="border-box"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      {text}
+    </Box>
+  </Box>
+);
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -156,6 +177,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
   const showMapAsOverlay = !isEditingModeOn;
 
+  const straightRailOptionsState = usePickedState(viewOptionsState, "straightRailsOverlay");
   // TODO: show total path length & video duration in editing mode
   // TODO: allow editing of title editing mode
   // TODO: show track UUID & video URL in editing mode
@@ -170,31 +192,40 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         onEnterFullscreenClicked={enterFullscreen}
       />
 
-      <TrackPlayerContainer isEditingModeOn={isEditingModeOn}>
+      <VMContainer showMapAsOverlay={showMapAsOverlay}>
+        <VContainer showMapAsOverlay={showMapAsOverlay}>
+          <>
+            <VideoPlayer
+              videoUrl={track.videoUrl}
+              onProgress={(ev) => {
+                setPlayedSeconds(ev.playedSeconds);
+              }}
+            />
+            {/* <Placeholder width="100%" height="100%" text="Video player" /> */}
+          </>
+          <StraightRailsOverlay optionsState={straightRailOptionsState} />
+          {showMapAsOverlay && (
+            <ViewingMContainer>
+              <>
+                <LiveMap
+                  trackState={trackState}
+                  path={path}
+                  timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
+                  initialCenter={initialCoord}
+                  currentCenter={currentCenter}
+                  onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
+                  playedSeconds={playedSeconds}
+                  isEditingModeOn={isEditingModeOn}
+                  viewOptions={viewOptions.mapViewOptions}
+                />
+                {/* <Placeholder width="100%" height="100%" text="Map" /> */}
+              </>
+            </ViewingMContainer>
+          )}
+        </VContainer>
         {isEditingModeOn && (
-          <TrackPointsCol>
-            <Stack spacing={1}>
-              <Stack direction="row" spacing={1}>
-                <ImportOsmXmlButton onPathUploaded={setPath} />
-                <Button variant="outlined" color="inherit" size="small" onClick={reversePath}>
-                  Reverse Path
-                </Button>
-              </Stack>
-              <TimingPointsListMemo timingPoints={timingPoints} onDeleteTimingPoint={deleteTimingPointById} />
-            </Stack>
-          </TrackPointsCol>
-        )}
-        <PlayerMapCol>
-          <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay} ref={videoPlayerAndMapRef}>
-            <VideoPlayerContainer showMapAsOverlay={showMapAsOverlay}>
-              <VideoPlayer
-                videoUrl={track.videoUrl}
-                onProgress={(ev) => {
-                  setPlayedSeconds(ev.playedSeconds);
-                }}
-              />
-            </VideoPlayerContainer>
-            <LiveMapContainer showMapAsOverlay={showMapAsOverlay} mapOverlayPosition={viewOptions.mapOverlayPosition}>
+          <EditingMContainer>
+            <>
               <LiveMap
                 trackState={trackState}
                 path={path}
@@ -206,21 +237,89 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 isEditingModeOn={isEditingModeOn}
                 viewOptions={viewOptions.mapViewOptions}
               />
-              {isEditingModeOn && (
-                <AddTimingPointWidget
-                  playedSeconds={playedSeconds}
-                  currentDistanceMM={currentDistanceMM}
-                  onAddButtonClicked={addTimingPoint}
-                />
-              )}
-            </LiveMapContainer>
-            <StraightRailsOverlay optionsState={usePickedState(viewOptionsState, "straightRailsOverlay")} />
-          </VideoAndMapContainer>
-        </PlayerMapCol>
-      </TrackPlayerContainer>
+              {/* <Placeholder width="100%" height="100%" text="Map" /> */}
+            </>
+
+            <AddTimingPointWidget
+              playedSeconds={playedSeconds}
+              currentDistanceMM={currentDistanceMM}
+              onAddButtonClicked={addTimingPoint}
+            />
+          </EditingMContainer>
+        )}
+      </VMContainer>
+
+      {isEditingModeOn && (
+        <Stack direction="row" mt={2} spacing={2} width="90%" mx="auto">
+          <Card raised sx={{ flexGrow: 1, height: "200px" }}>
+            <Stack direction="row" spacing={1}>
+              <ImportOsmXmlButton onPathUploaded={setPath} />
+              <Button variant="outlined" color="inherit" size="small" onClick={reversePath}>
+                Reverse Path
+              </Button>
+            </Stack>
+            <Placeholder width="100%" text="Video Info" />
+          </Card>
+          <Box width={300}>
+            <>
+              <TimingPointsListMemo timingPoints={timingPoints} onDeleteTimingPoint={deleteTimingPointById} />
+              {/* <Placeholder width={300} height={350} text="TP List" /> */}
+            </>
+          </Box>
+        </Stack>
+      )}
     </div>
   );
 };
+
+interface WithShowAsMapOverlay {
+  showMapAsOverlay: boolean;
+}
+const VMContainer = styled(Box)<WithShowAsMapOverlay>(
+  ({ showMapAsOverlay }) =>
+    css`
+      position: relative;
+      margin: 0 auto;
+      ${showMapAsOverlay
+        ? css`
+            max-height: calc(100vh - 64px - 32px);
+            aspect-ratio: 16/9;
+          `
+        : css`
+            width: calc(90%);
+            aspect-ratio: 25/9;
+          `}
+    `
+);
+const VContainer = styled(Box)<WithShowAsMapOverlay>(
+  ({ showMapAsOverlay }) =>
+    css`
+      position: absolute;
+      aspect-ratio: 16/9;
+      ${showMapAsOverlay
+        ? css`
+            width: 100%;
+          `
+        : css`
+            /* width: calc(64% - 8px); */
+            height: 100%;
+          `}
+    `
+);
+const EditingMContainer = styled(Box)`
+  /* width: calc(36% - 8px); */
+  height: 100%;
+  position: absolute;
+  right: 0;
+  aspect-ratio: 1/1;
+`;
+const ViewingMContainer = styled(Box)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 30%;
+`;
 
 const TimingPointsListMemo = memo(TimingPointsList);
 
@@ -351,66 +450,6 @@ const AddTimingPointWidget: FC<{
   </Box>
 );
 
-const PlayerMapCol = styled.div`
-  flex-grow: 1;
-  max-width: 100%;
-`;
-
-interface VideoAndMapContainerProps {
-  showMapAsOverlay: boolean;
-}
-const VideoAndMapContainer = styled.div<VideoAndMapContainerProps>`
-  position: relative;
-  ${(props) =>
-    !!props.showMapAsOverlay &&
-    css`
-      aspect-ratio: 16/9;
-      max-height: 90vh;
-      margin: 0 auto;
-    `}
-`;
-
-interface VideoPlayerContainerProps {
-  showMapAsOverlay: boolean;
-}
-const VideoPlayerContainer = styled.div<VideoPlayerContainerProps>`
-  width: 100%;
-  aspect-ratio: 16/9;
-  position: relative;
-  ${(props) =>
-    !!props.showMapAsOverlay
-      ? css`
-          height: 100%;
-        `
-      : css``}
-`;
-
-interface LiveMapContainerProps {
-  showMapAsOverlay: boolean;
-  mapOverlayPosition: "top-left" | "top-right";
-}
-const LiveMapContainer = styled.div<LiveMapContainerProps>`
-  ${(props) =>
-    !!props.showMapAsOverlay
-      ? css`
-          position: absolute;
-          top: 0;
-          width: 30%;
-          height: 30%;
-          ${props.mapOverlayPosition === "top-right"
-            ? css`
-                right: 0;
-              `
-            : css`
-                left: 0;
-              `}
-        `
-      : css`
-          aspect-ratio: 16/9;
-          position: relative;
-        `}
-`;
-
 function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
   const [track, setTrack] = useState(initialTrack);
   const wrappedSetTrack: SetState<Track> = (newTrack) =>
@@ -455,26 +494,6 @@ function interpolateCoordinates(
   const lng = prevCoord[1].lng + p * (nextCoord[1].lng - prevCoord[1].lng);
   return { lat, lng };
 }
-
-interface TrackPlayerContainerProps {
-  isEditingModeOn: boolean;
-}
-const TrackPlayerContainer = styled.div<TrackPlayerContainerProps>`
-  display: flex;
-  margin: 0 auto;
-  justify-content: center;
-  max-width: 100%;
-  ${(props) =>
-    !!props.isEditingModeOn &&
-    css`
-      width: 1400px;
-    `}
-`;
-
-const TrackPointsCol = styled.div`
-  width: 300px;
-  margin-right: 10px;
-`;
 
 function computePathLength(path: ReadonlyArray<LatLngLiteral>, lastPointIndex?: number): number {
   if (!path || path.length < 2) {
