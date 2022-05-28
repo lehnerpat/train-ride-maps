@@ -192,7 +192,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         onEnterFullscreenClicked={enterFullscreen}
       />
 
-      <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay}>
+      <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay} ref={videoPlayerAndMapRef}>
         <VideoContainer showMapAsOverlay={showMapAsOverlay}>
           <>
             <VideoPlayer
