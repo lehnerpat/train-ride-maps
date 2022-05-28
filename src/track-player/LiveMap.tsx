@@ -213,10 +213,11 @@ const BaseTileLayer = styled(TileLayer)`
     filter: grayscale(0.7);
   }
 `;
+const osmAttribution = `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`;
 const OsmTileLayer = () => (
   <BaseTileLayer
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution={osmAttribution}
     detectRetina
     minZoom={2}
     maxZoom={20}
@@ -224,10 +225,11 @@ const OsmTileLayer = () => (
     maxNativeZoom={18}
   />
 );
+const ormAttribution = `<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a> and OpenStreetMap`;
 const OrmTileLayer = () => (
   <TileLayer
     url="http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
-    attribution='<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a> and OpenStreetMap'
+    attribution={ormAttribution}
     detectRetina
     minZoom={2}
     maxZoom={20}
@@ -448,15 +450,8 @@ const CrosshairOverlayItem = styled.div`
 `;
 
 function collectAttributions(map: LeafletMap) {
-  // TODO collecting attributions seems broken -- maybe leaflet 1.8 problem?
   const prefix = new LeafletControl.Attribution().options.prefix;
-  const layerAttributions: string[] = [];
-  map.eachLayer((l) => {
-    if (l.getAttribution) {
-      const attribution = l.getAttribution();
-      if (attribution) layerAttributions.push(attribution);
-    }
-  });
+  const layerAttributions: string[] = [osmAttribution, ormAttribution];
   const layerAttributionsHtml = layerAttributions.join(", ");
   const overallHtml = [prefix, layerAttributionsHtml].join(" | ");
   return overallHtml;
