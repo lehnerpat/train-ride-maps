@@ -264,6 +264,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 timingPoints={timingPoints}
                 onDeleteTimingPoint={deleteTimingPointById}
                 precedingIndex={precedingTrackPointIndex}
+                isAutoScrollOn={viewOptions.trackPointsEditorOptions.isAutoscrollTimingPointsListOn}
               />
               {/* <Placeholder width={300} height={350} text="TP List" /> */}
             </>

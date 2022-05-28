@@ -1,4 +1,4 @@
-import { FC, PureComponent } from "react";
+import { FC, PureComponent, useLayoutEffect, useRef } from "react";
 import {
   Box,
   Card,
@@ -23,10 +23,26 @@ interface TimingPointsListProps {
   timingPoints: ReadonlyArray<TimingPoint & HasUuid>;
   onDeleteTimingPoint: (uuid: string) => void;
   precedingIndex: number;
+  isAutoScrollOn: boolean;
 }
 
-// TODO: autoscroll when option is on
 export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
+  const { isAutoScrollOn, precedingIndex } = props;
+  const listRef = useRef<FixedSizeList>(null);
+  const prevPrecedingIndex = useRef(precedingIndex);
+
+  useLayoutEffect(() => {
+    const ref = listRef.current;
+    if (!isAutoScrollOn || ref === null) return;
+
+    if (precedingIndex >= prevPrecedingIndex.current) {
+      ref.scrollToItem(precedingIndex + 1, "smart");
+    } else {
+      ref.scrollToItem(precedingIndex, "smart");
+    }
+    prevPrecedingIndex.current = precedingIndex;
+  }, [precedingIndex, isAutoScrollOn]);
+
   return (
     <Card raised>
       <Typography variant="h6" p={2}>
@@ -39,6 +55,7 @@ export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
         itemCount={props.timingPoints.length}
         overscanCount={5}
         itemData={props}
+        ref={listRef}
       >
         {ItemRenderer}
       </FixedSizeList>
