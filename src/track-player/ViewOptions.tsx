@@ -8,7 +8,6 @@ export interface MapViewOptions {
   editingModeOptions: {
     isCrosshairOverlayOn: boolean;
     isTimingPointMarkersOn: boolean;
-    isPathPointMarkersOn: boolean;
   };
 }
 
@@ -22,21 +21,18 @@ export interface StraightRailsOverlayViewOptions {
 }
 
 export interface ViewOptions {
-  mapOverlayPosition: "top-left" | "top-right";
   mapViewOptions: MapViewOptions;
   trackPointsEditorOptions: EditingControlsAreaOptions;
   straightRailsOverlay: StraightRailsOverlayViewOptions;
 }
 
 export const DefaultViewOptions: ViewOptions = {
-  mapOverlayPosition: "top-right",
   mapViewOptions: {
     isAutopanOn: true,
     isTrackPolylineOn: true,
     editingModeOptions: {
       isCrosshairOverlayOn: true,
       isTimingPointMarkersOn: true,
-      isPathPointMarkersOn: false,
     },
   },
   trackPointsEditorOptions: {
@@ -72,7 +68,6 @@ interface ViewOptionsDialogProps {
   onCloseDialog: () => void;
 }
 export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState, onCloseDialog }) => {
-  const mapOverlayPositionState = pickState(viewOptionsState, "mapOverlayPosition");
   const mapViewOptionsState = pickState(viewOptionsState, "mapViewOptions");
   const mapViewEditingOptionsState = pickState(mapViewOptionsState, "editingModeOptions");
   const trackPointsEditorOptionsState = pickState(viewOptionsState, "trackPointsEditorOptions");
@@ -82,15 +77,6 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
     <Card raised sx={{ p: 2 }}>
       <SectionHeading>Map Options</SectionHeading>
       <Stack>
-        <ToggleSwitch
-          id="mapOverlayPosition"
-          checkedState={[
-            mapOverlayPositionState[0] === "top-right",
-            () => mapOverlayPositionState[1]((p) => (p === "top-left" ? "top-right" : "top-left")),
-          ]}
-        >
-          Map overlay on top right (else top left)
-        </ToggleSwitch>
         <ToggleSwitch id="isAutoPanOn" checkedState={pickState(mapViewOptionsState, "isAutopanOn")}>
           Auto-pan map to current position
         </ToggleSwitch>
@@ -111,12 +97,6 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
           checkedState={pickState(mapViewEditingOptionsState, "isTimingPointMarkersOn")}
         >
           Show timing points on track path
-        </ToggleSwitch>
-        <ToggleSwitch
-          id="isPathPointMarkersOn"
-          checkedState={pickState(mapViewEditingOptionsState, "isPathPointMarkersOn")}
-        >
-          Show markers for all track path points
         </ToggleSwitch>
       </Stack>
       <SectionHeading>Track points editor options</SectionHeading>
