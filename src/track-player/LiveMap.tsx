@@ -108,7 +108,7 @@ export const LiveMap: FC<LiveMapProps> = ({
           <CurrentPositionPane currentCenter={currentCenter} />
           <CrosshairOverlay />
 
-          <CustomLeafletControl position="bottomright" style={{ border: "none", margin: 0 }}>
+          <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
             <CustomAttributionContainer>
               <CustomAttributionTextContainer>
                 <div
@@ -412,6 +412,7 @@ const CrosshairOverlayItem = styled.div`
 `;
 
 function collectAttributions(map: LeafletMap) {
+  // TODO collecting attributions seems broken -- maybe leaflet 1.8 problem?
   const prefix = new LeafletControl.Attribution().options.prefix;
   const layerAttributions: string[] = [];
   map.eachLayer((l) => {

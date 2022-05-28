@@ -32,7 +32,7 @@ export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
         Timing Points:
       </Typography>
       <FixedSizeList
-        height={400}
+        height={300}
         width="100%"
         itemSize={34}
         itemCount={props.timingPoints.length}

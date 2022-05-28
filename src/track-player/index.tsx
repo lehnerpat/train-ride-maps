@@ -251,15 +251,15 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
       {isEditingModeOn && (
         <Stack direction="row" mt={2} spacing={2} width="90%" mx="auto">
-          <Card raised sx={{ flexGrow: 1, height: "200px" }}>
-            <Stack direction="row" spacing={1}>
-              <ImportOsmXmlButton onPathUploaded={setPath} />
-              <Button variant="outlined" color="inherit" size="small" onClick={reversePath}>
-                Reverse Path
-              </Button>
-            </Stack>
-            <Placeholder width="100%" text="Video Info" />
-          </Card>
+          <Box sx={{ flexGrow: 1, height: "200px" }}>
+            <VideoInfoArea
+              trackTitle={track.title}
+              videoUrl={track.videoUrl}
+              pathLengthMM={pathLengthMM}
+              onPathUploaded={setPath}
+              onReversePathClicked={reversePath}
+            />
+          </Box>
           <Box width={300}>
             <>
               <TimingPointsListMemo timingPoints={timingPoints} onDeleteTimingPoint={deleteTimingPointById} />
@@ -271,6 +271,49 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     </div>
   );
 };
+
+interface VideoInfoAreaProps {
+  trackTitle: string;
+  videoUrl: string;
+  pathLengthMM: number;
+  onPathUploaded: (path: ReadonlyArray<LatLngLiteral & HasUuid>) => void;
+  onReversePathClicked: () => void;
+}
+const VideoInfoArea: FC<VideoInfoAreaProps> = ({
+  trackTitle,
+  videoUrl,
+  pathLengthMM,
+  onPathUploaded,
+  onReversePathClicked,
+}) => (
+  <Card raised sx={{ p: 2 }}>
+    <Stack direction="row" spacing={1}>
+      <Box flexGrow={1}>
+        <Stack spacing={1}>
+          <Box>
+            <Typography variant="h6">Video Info:</Typography>
+          </Box>
+          <Box>
+            <Typography variant="body1">Title: {trackTitle}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="body1">Video: {videoUrl}</Typography>
+          </Box>
+          <Stack direction="row" spacing={2}>
+            <Typography variant="body1">Duration: --</Typography>
+            <Typography variant="body1">Total path length: {formatDistanceMeters(pathLengthMM)}</Typography>
+          </Stack>
+        </Stack>
+      </Box>
+      <Stack spacing={1} width={170}>
+        <ImportOsmXmlButton onPathUploaded={onPathUploaded} />
+        <Button variant="outlined" color="inherit" size="small" onClick={onReversePathClicked}>
+          Reverse Path
+        </Button>
+      </Stack>
+    </Stack>
+  </Card>
+);
 
 interface WithShowAsMapOverlay {
   showMapAsOverlay: boolean;
@@ -431,7 +474,7 @@ const AddTimingPointWidget: FC<{
   currentDistanceMM: number | undefined;
   onAddButtonClicked: () => void;
 }> = ({ playedSeconds, currentDistanceMM, onAddButtonClicked }) => (
-  <Box position="absolute" top={0} right={0} zIndex={5000} mt={2} mr={2}>
+  <Box position="absolute" bottom={0} right={0} zIndex={5000} m={2}>
     <Card raised sx={{ pl: 2, pr: 1 }}>
       <Stack direction="row" alignItems="center" spacing={2}>
         <Box>
