@@ -5,7 +5,7 @@ import { SetState, usePickedState, UseState } from "../common/utils/state-utils"
 import { TimingPoint, Track } from "../track-models";
 import { Card, Stack } from "@mui/material";
 import { EditingControlsAreaOptions } from "./ViewOptions";
-import { TimingPointsList } from "./TimingPointsTable";
+import { TimingPointsList } from "./TimingPointsList";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 
@@ -70,7 +70,6 @@ export const EditingControlsArea: FC<EditingControlsAreaProps> = ({
 
       <TimingPointsListMemo
         timingPoints={timingPoints}
-        onEditTimingPoint={setEditingTpId}
         onDeleteTimingPoint={(tpId) => deleteTimingPointById(tpId, setTimingPoints)}
       />
     </Stack>
