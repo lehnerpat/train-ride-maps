@@ -40,6 +40,7 @@ import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
 
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
   width,
   height,
@@ -178,9 +179,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const showMapAsOverlay = !isEditingModeOn;
 
   const straightRailOptionsState = usePickedState(viewOptionsState, "straightRailsOverlay");
-  // TODO: show total path length & video duration in editing mode
-  // TODO: allow editing of title editing mode
-  // TODO: show track UUID & video URL in editing mode
 
   return (
     <div>
@@ -262,7 +260,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           </Box>
           <Box width={300}>
             <>
-              <TimingPointsListMemo timingPoints={timingPoints} onDeleteTimingPoint={deleteTimingPointById} />
+              <TimingPointsListMemo
+                timingPoints={timingPoints}
+                onDeleteTimingPoint={deleteTimingPointById}
+                precedingIndex={precedingTrackPointIndex}
+              />
               {/* <Placeholder width={300} height={350} text="TP List" /> */}
             </>
           </Box>
@@ -286,6 +288,8 @@ const VideoInfoArea: FC<VideoInfoAreaProps> = ({
   onPathUploaded,
   onReversePathClicked,
 }) => (
+  // TODO: show UUID & video duration in editing mode
+  // TODO: allow editing of title editing mode
   <Card raised sx={{ p: 2 }}>
     <Stack direction="row" spacing={1}>
       <Box flexGrow={1}>
