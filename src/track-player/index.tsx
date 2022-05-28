@@ -192,8 +192,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         onEnterFullscreenClicked={enterFullscreen}
       />
 
-      <VMContainer showMapAsOverlay={showMapAsOverlay}>
-        <VContainer showMapAsOverlay={showMapAsOverlay}>
+      <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay}>
+        <VideoContainer showMapAsOverlay={showMapAsOverlay}>
           <>
             <VideoPlayer
               videoUrl={track.videoUrl}
@@ -205,7 +205,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
           </>
           <StraightRailsOverlay optionsState={straightRailOptionsState} />
           {showMapAsOverlay && (
-            <ViewingMContainer>
+            <ViewingMapContainer>
               <>
                 <LiveMap
                   trackState={trackState}
@@ -220,11 +220,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                 />
                 {/* <Placeholder width="100%" height="100%" text="Map" /> */}
               </>
-            </ViewingMContainer>
+            </ViewingMapContainer>
           )}
-        </VContainer>
+        </VideoContainer>
         {isEditingModeOn && (
-          <EditingMContainer>
+          <EditingMapContainer>
             <>
               <LiveMap
                 trackState={trackState}
@@ -245,9 +245,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               currentDistanceMM={currentDistanceMM}
               onAddButtonClicked={addTimingPoint}
             />
-          </EditingMContainer>
+          </EditingMapContainer>
         )}
-      </VMContainer>
+      </VideoAndMapContainer>
 
       {isEditingModeOn && (
         <Stack direction="row" mt={2} spacing={2} width="90%" mx="auto">
@@ -275,7 +275,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 interface WithShowAsMapOverlay {
   showMapAsOverlay: boolean;
 }
-const VMContainer = styled(Box)<WithShowAsMapOverlay>(
+const VideoAndMapContainer = styled(Box)<WithShowAsMapOverlay>(
   ({ showMapAsOverlay }) =>
     css`
       position: relative;
@@ -291,7 +291,7 @@ const VMContainer = styled(Box)<WithShowAsMapOverlay>(
           `}
     `
 );
-const VContainer = styled(Box)<WithShowAsMapOverlay>(
+const VideoContainer = styled(Box)<WithShowAsMapOverlay>(
   ({ showMapAsOverlay }) =>
     css`
       position: absolute;
@@ -306,14 +306,14 @@ const VContainer = styled(Box)<WithShowAsMapOverlay>(
           `}
     `
 );
-const EditingMContainer = styled(Box)`
+const EditingMapContainer = styled(Box)`
   /* width: calc(36% - 8px); */
   height: 100%;
   position: absolute;
   right: 0;
   aspect-ratio: 1/1;
 `;
-const ViewingMContainer = styled(Box)`
+const ViewingMapContainer = styled(Box)`
   position: absolute;
   top: 0;
   right: 0;
