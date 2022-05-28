@@ -2,7 +2,6 @@ import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models";
 import styled, { css } from "styled-components";
-import { EditingControlsArea } from "./EditingControlsArea";
 import { VideoPlayer } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
@@ -38,6 +37,7 @@ import {
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
+import { TimingPointsList } from "./TimingPointsList";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -149,8 +149,16 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     () => _addTimingPoint(playedSeconds, currentDistanceMM, setTimingPoints),
     [playedSeconds, currentDistanceMM, setTimingPoints]
   );
+  const deleteTimingPointById = useCallback(
+    (id: string) => setTimingPoints((oldTimingPoints) => oldTimingPoints.filter((tp) => tp.uuid !== id)),
+    [setTimingPoints]
+  );
 
   const showMapAsOverlay = !isEditingModeOn;
+
+  // TODO: show total path length & video duration in editing mode
+  // TODO: allow editing of title editing mode
+  // TODO: show track UUID & video URL in editing mode
 
   return (
     <div>
@@ -172,14 +180,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
                   Reverse Path
                 </Button>
               </Stack>
-              <EditingControlsArea
-                trackState={trackState}
-                options={viewOptions.trackPointsEditorOptions}
-                playedSeconds={playedSeconds}
-                currentDistance={currentDistanceMM}
-                precedingTimingPointIndex={precedingTrackPointIndex}
-                pathLengthMM={pathLengthMM}
-              />
+              <TimingPointsListMemo timingPoints={timingPoints} onDeleteTimingPoint={deleteTimingPointById} />
             </Stack>
           </TrackPointsCol>
         )}
@@ -220,6 +221,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     </div>
   );
 };
+
+const TimingPointsListMemo = memo(TimingPointsList);
 
 const ImportOsmXmlButton: FC<{ onPathUploaded: (path: ReadonlyArray<LatLngLiteral & HasUuid>) => void }> = ({
   onPathUploaded,

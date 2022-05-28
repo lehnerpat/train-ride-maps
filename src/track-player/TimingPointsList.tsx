@@ -23,6 +23,8 @@ interface TimingPointsListProps {
   onDeleteTimingPoint: (uuid: string) => void;
 }
 
+// TODO: highlight current timing points
+// TODO: autoscroll when option is on
 export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
   return (
     <Card raised>
