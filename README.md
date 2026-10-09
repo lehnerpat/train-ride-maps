@@ -24,7 +24,7 @@ Note that timing & location data must be entered manually with this webapp; this
 
 ## Development
 
-Use Node.js 24 and Yarn 1. Run `yarn install` to install dependencies, `yarn start` to start the Vite development server, `yarn test --run` to run tests, `yarn typecheck` to check TypeScript, and `yarn build` to create the production build in `build/`.
+Use Node.js 24 and npm. Run `npm install` to install dependencies, `npm start` to start the Vite development server, `npm test -- --run` to run tests, `npm run typecheck` to check TypeScript, and `npm run build` to create the production build in `build/`.
 
 ---
 

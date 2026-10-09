@@ -23,8 +23,8 @@
   },
   "scripts": {
     "update-build-info": "echo 'export const gitCommitSha = \"'$(git rev-parse HEAD)'\";' > src/build-info.ts",
-    "start": "yarn update-build-info && vite",
-    "build": "yarn update-build-info && vite build",
+    "start": "npm run update-build-info && vite",
+    "build": "npm run update-build-info && vite build",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
