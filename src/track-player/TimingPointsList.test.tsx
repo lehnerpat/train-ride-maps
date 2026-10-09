@@ -15,7 +15,7 @@ describe("TimingPointsList", () => {
     );
 
     fireEvent.click(screen.getByRole("button"));
-    fireEvent.click(screen.getByRole("menuitem", { name: /^Delete timing point/ }));
+    fireEvent.click(screen.getByRole("menuitem", { name: /^Delete/ }));
 
     expect(onDeleteTimingPoint).toHaveBeenCalledWith("timing-point-1");
   });
