@@ -27,7 +27,7 @@ Other known gaps seen in the code: OSM import errors are not shown in the track 
 - [#6][issue-6]: Timing point markers on the path: implemented (green circles).
 - [#7][issue-7]: Path geometry editing via [Leaflet.DraggableLines](https://github.com/FacilMap/Leaflet.DraggableLines) chosen over geoman; implemented, performance could improve.
 - [#8][issue-8]: Material UI migration: done.
-- [#20][issue-20]: DraggableLines broken in production: caused by the old CRA/webpack ES5 production output (`browserslist` made prod transpile classes to ES5, which broke the plugin's ES6-class + Leaflet `Handler` inheritance). After the Vite migration the production build works (verified: drag handles appear, no console errors). The issue is still open on GitHub and can be closed. The `browserslist` entry in `package.json` is a CRA leftover that Vite ignores.
+- [#20][issue-20]: DraggableLines broken in production: caused by the old CRA/webpack ES5 production output (`browserslist` made prod transpile classes to ES5, which broke the plugin's ES6-class + Leaflet `Handler` inheritance). After the Vite migration the production build works (verified: drag handles appear, no console errors).
 
 ## Development notes
 

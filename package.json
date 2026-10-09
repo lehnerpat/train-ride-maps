@@ -47,18 +47,6 @@
     "typecheck": "tsc --noEmit",
     "postinstall": "patch -i react-player-fix/Player.js.patch node_modules/react-player/lib/Player.js -N || true"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "prettier": {},
   "devDependencies": {
     "@vitejs/plugin-react": "^6.1.2",
