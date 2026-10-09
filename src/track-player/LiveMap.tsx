@@ -260,7 +260,7 @@ interface TrackPathPaneEditingModeState {
 
 class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeProps, TrackPathPaneEditingModeState> {
   static contextType = LeafletContext;
-  context!: NonNullable<React.ContextType<typeof LeafletContext>>;
+  declare context: NonNullable<React.ContextType<typeof LeafletContext>>;
 
   state: Readonly<TrackPathPaneEditingModeState> = {
     isPathEditing: false,
