@@ -14,7 +14,7 @@ Originally each track point combined time and place, so refining a curve also re
 
 ## Track JSON format
 
-Defined in [src/track-models/index.ts](../src/track-models/index.ts) (validated with `io-ts` when loading):
+Defined in [src/track-models/index.ts](../src/track-models/index.ts) (validated with `zod` when loading):
 
 ```jsonc
 {
