@@ -12,7 +12,7 @@ Collated from the GitHub issues/PRs (state checked against the code on the curre
 - [#12][issue-12]: Create a path from scratch in the app (currently empty tracks need an import)
 - [#13][issue-13]: "Download as file" button per track on the start page (exists only inside the track page)
 - [#14][issue-14]: Mark example tracks that are shadowed by a local copy
-- [#15][issue-15]: Show video duration in Video Info (hint: `onDuration` of `react-player`, state in `TrackPlayer`)
+- [#15][issue-15]: Show video duration in Video Info (hint: `onDurationChange` of `react-player`, state in `TrackPlayer`)
 - [#16][issue-16]: Interactive OSM route builder (select ways/nodes)
 - [#17][issue-17], [#18][issue-18], [PR #21][pr-21], [PR #22][pr-22]: Documentation (this folder partly addresses it; the PRs are unmerged drafts, [#22][pr-22] only adds screenshots)
 - [#19][issue-19]: Custom train marker instead of the default pin, ideally rotating with direction of travel
