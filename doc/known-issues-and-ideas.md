@@ -31,7 +31,7 @@ Other known gaps seen in the code: OSM import errors are not shown in the track 
 
 ## Development notes
 
-- Node 24, npm: `npm install`, `npm start`, `npm test -- --run`, `npm run typecheck`, `npm run build` (output in `build/`).
+- Node 26, npm: `npm install`, `npm start`, `npm test -- --run`, `npm run typecheck`, `npm run build` (output in `build/`).
 - Video playback uses `react-player` 3 (YouTube via `youtube-video-element`); the former `postinstall` patch for repeated reloads is no longer needed.
 - Dev-only routes: `/osm-test` and `/osm-import` (OSM parser test pages).
 - Distance-function benchmarks and rationale are in [src/geo/distance.ts](../src/geo/distance.ts).
