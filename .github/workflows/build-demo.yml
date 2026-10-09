@@ -10,8 +10,14 @@ jobs:
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
       - run: yarn install --frozen-lockfile
+      - run: yarn typecheck
+      - run: yarn test --run
       - run: yarn build
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.5

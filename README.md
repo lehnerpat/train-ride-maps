@@ -76,6 +76,10 @@ Displays all current timing points in order by video time elapsed and distance t
 
 ![Screenshot highlighting Reverse path button]()
 
+## Development
+
+Use Node.js 24 and Yarn 1. Run `yarn install` to install dependencies, `yarn start` to start the Vite development server, `yarn test --run` to run tests, `yarn typecheck` to check TypeScript, and `yarn build` to create the production build in `build/`.
+
 ---
 
 ## License
