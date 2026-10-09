@@ -16,7 +16,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-leaflet": "^4.0.0",
-    "react-player": "^2.10.0",
+    "react-player": "^3",
     "react-window": "^2",
     "web-vitals": "^2.1.0",
     "wouter": "^2.8.0-alpha.2",
@@ -27,8 +27,7 @@
     "start": "yarn update-build-info && vite",
     "build": "yarn update-build-info && vite build",
     "test": "vitest",
-    "typecheck": "tsc --noEmit",
-    "postinstall": "patch -i react-player-fix/Player.js.patch node_modules/react-player/lib/Player.js -N || true"
+    "typecheck": "tsc --noEmit"
   },
   "prettier": {},
   "devDependencies": {

@@ -32,7 +32,7 @@ Other known gaps seen in the code: OSM import errors are not shown in the track 
 ## Development notes
 
 - Node 24, Yarn 1: `yarn install`, `yarn start`, `yarn test --run`, `yarn typecheck`, `yarn build` (output in `build/`).
-- `postinstall` applies [react-player-fix/Player.js.patch](../react-player-fix/Player.js.patch) to `react-player`, preventing the player from being reloaded with the same URL repeatedly.
+- Video playback uses `react-player` 3 (YouTube via `youtube-video-element`); the former `postinstall` patch for repeated reloads is no longer needed.
 - Dev-only routes: `/osm-test` and `/osm-import` (OSM parser test pages).
 - Distance-function benchmarks and rationale are in [src/geo/distance.ts](../src/geo/distance.ts).
 
