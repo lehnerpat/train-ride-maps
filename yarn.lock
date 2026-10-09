@@ -1199,21 +1199,14 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-leaflet-draggable-lines@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/leaflet-draggable-lines/-/leaflet-draggable-lines-1.1.0.tgz#492c303ee3c09d3e35bca1c5ce17bf804d144b1e"
-  integrity sha512-ah/ZMX9I4a7Jwneyosu8q4KMvEfTcaOnkU/qoHKyfuhfhf0bHmcvTWqdbPCpDidRk3MIZS6nJSrgQZB1r0Pt+Q==
+leaflet-draggable-lines@^3:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/leaflet-draggable-lines/-/leaflet-draggable-lines-3.4.0.tgz#28d7e06ed310aa1ede8720ebd145583ee158a8a0"
+  integrity sha512-psFT0ADDEobHi3TJmaRdu+CORtK/IENLIOOoexWg6WGejy0KIZgJqb3REUx3ayNdLNFagWe79L/IWN80bdn/Cg==
   dependencies:
-    leaflet-geometryutil "^0.10.1"
+    typescript "5.9.3"
 
-leaflet-geometryutil@^0.10.1:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/leaflet-geometryutil/-/leaflet-geometryutil-0.10.1.tgz#d9e7f662991dac71d234faf2db9c7641abf57523"
-  integrity sha512-xfyBxv0Ls2H45V4nrzn5ASi/qw0VXgEVAkbXZqQE2Qhs52fMqmWyl7egA5ht2xbyPHqjTN9ssr9lXrmXWE91yw==
-  dependencies:
-    leaflet "^1.6.0"
-
-leaflet@^1.6.0, leaflet@^1.8.0:
+leaflet@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.8.0.tgz#4615db4a22a304e8e692cae9270b983b38a2055e"
   integrity sha512-gwhMjFCQiYs3x/Sf+d49f10ERXaEFCPr+nVTryhAW8DWbMGqJqt9G4XuIaHmFW08zYvhgdzqXGr8AlW8v8dQkA==
@@ -1717,7 +1710,7 @@ twitch-video-element@^0.1.5:
   resolved "https://registry.yarnpkg.com/twitch-video-element/-/twitch-video-element-0.1.6.tgz#986668a6b676b5b42f2abab365014208e2f6edff"
   integrity sha512-X7l8gy+DEFKJ/EztUwaVnAYwQN9fUJxPkOVJj2sE62sGvGU4DNLyvmOsmVulM+8Plc5dMg6hYIMNRAPaH+39Uw==
 
-typescript@^5.9.3:
+typescript@5.9.3, typescript@^5.9.3:
   version "5.9.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.3.tgz#5b4f59e15310ab17a216f5d6cf53ee476ede670f"
   integrity sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==

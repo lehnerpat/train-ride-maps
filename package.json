@@ -10,7 +10,7 @@
     "@react-hook/resize-observer": "^2.0.2",
     "fs-extra": "9",
     "leaflet": "^1.8.0",
-    "leaflet-draggable-lines": "^1.1.0",
+    "leaflet-draggable-lines": "^3",
     "material-ui-popup-state": "^5.3.7",
     "prettier": "^2.6.2",
     "react": "18.3.1",

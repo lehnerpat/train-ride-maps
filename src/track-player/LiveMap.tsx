@@ -37,7 +37,7 @@ interface LiveMapProps {
   viewOptions: MapViewOptions;
 }
 
-function createDragMarker(layer: LeafletPolyline, i: number, length: number) {
+function createDragMarker(layer: unknown, i: number, length: number) {
   const color = i === 0 ? "lime" : i === length - 1 ? "red" : "purple";
   return {
     icon: new DivIcon({
@@ -282,9 +282,10 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
       enableForLayer: false,
       dragMarkerOptions: createDragMarker,
     });
-    this.draggableLines.on("dragend insert remove", (ev) => {
-      this.saveTrackState();
-    });
+    const onPathEdited = () => this.saveTrackState();
+    this.draggableLines.on("dragend", onPathEdited);
+    this.draggableLines.on("insert", onPathEdited);
+    this.draggableLines.on("remove", onPathEdited);
     this.polyline = new LeafletPolyline(this.props.path as any /* TODO */, {
       color: "purple",
       interactive: true,
