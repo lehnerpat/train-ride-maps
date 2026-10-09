@@ -23,7 +23,7 @@ function App() {
             <OsmImport />
           </Route>
           <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
-          <Route path="/:rest*">{(params) => <Error404Page path={params.rest} />}</Route>
+          <Route path="/*">{(params) => <Error404Page path={params["*"]} />}</Route>
         </Switch>
         <ReturnLinkContainer>
           <span>
