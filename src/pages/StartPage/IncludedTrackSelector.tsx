@@ -62,7 +62,7 @@ export const IncludedTrackSelector: FC = () => {
                   </ListItem>
                 ))
               ) : (
-                <ListItem sx={{ pl: 4 }} disabled>
+                <ListItem aria-disabled="true" sx={{ pl: 4, color: "text.disabled" }}>
                   <ListItemText primary="No local tracks. Create one below." />
                 </ListItem>
               )}
