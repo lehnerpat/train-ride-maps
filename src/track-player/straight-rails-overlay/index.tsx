@@ -1,6 +1,7 @@
 import { createContext, FC, ReactNode, RefObject, useMemo, useRef } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+import { Button } from "@mui/material";
 import { pickState, usePickedState, UseState } from "../../common/utils/state-utils";
 import { StraightRailsOverlayViewOptions } from "../ViewOptions";
 import {
@@ -24,10 +25,10 @@ export const StraightRailsOverlay: FC<StraightRailsOverlayProps> = ({ optionsSta
       <StraightTracksOverlayContainer className="tracksoverlay" isEditing={options.isEditing}>
         <OverlayArea settingsState={settingsState} />
         {options.isEditing && (
-          <>
-            <EditingControls settingsState={settingsState} />
-            <FinishEditingButton onClick={() => setOptions((prev) => ({ ...prev, isEditing: false }))} />
-          </>
+          <EditingControls
+            settingsState={settingsState}
+            onFinishEditing={() => setOptions((prev) => ({ ...prev, isEditing: false }))}
+          />
         )}
       </StraightTracksOverlayContainer>
     </EditingContext.Provider>
@@ -36,8 +37,9 @@ export const StraightRailsOverlay: FC<StraightRailsOverlayProps> = ({ optionsSta
 
 interface EditingControlsProps {
   settingsState: UseState<StraightRailsOverlaySettings>;
+  onFinishEditing: React.MouseEventHandler<HTMLButtonElement>;
 }
-const EditingControls: FC<EditingControlsProps> = ({ settingsState }) => {
+const EditingControls: FC<EditingControlsProps> = ({ settingsState, onFinishEditing }) => {
   const [settings] = settingsState;
   const lineColorState = pickState(settingsState, "lineColorRgbHex");
   const lineOpacityState = pickState(settingsState, "lineOpacityPercent");
@@ -47,6 +49,7 @@ const EditingControls: FC<EditingControlsProps> = ({ settingsState }) => {
 
   return (
     <EditingControlsBoxContainer>
+      <FinishEditingButton onClick={onFinishEditing} />
       <EditingControlSpannedRow>
         <SectionHeading style={{ marginTop: 0 }}>Line Coordinates</SectionHeading>
       </EditingControlSpannedRow>
@@ -307,16 +310,13 @@ const OverlayAreaSvg = styled.svg<{ isEditing: boolean }>`
 `;
 
 const FinishEditingButton: FC<{ onClick: React.MouseEventHandler<HTMLButtonElement> }> = ({ onClick }) => (
-  <FinishEditingButtonBtn onClick={onClick}>
-    Finish
-    <br />
-    editing
+  <FinishEditingButtonBtn variant="contained" onClick={onClick}>
+    Finish editing
   </FinishEditingButtonBtn>
 );
-const FinishEditingButtonBtn = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
+const FinishEditingButtonBtn = styled(Button)`
+  grid-column: left / right;
+  justify-self: end;
 `;
 
 const EditingControlsBoxContainer = styled.div`
