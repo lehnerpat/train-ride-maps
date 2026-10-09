@@ -4,13 +4,15 @@ import path from "path";
 import { distanceInMM } from "../geo/distance";
 
 describe("parseOsmXml", () => {
-  test("it works", async () => {
-    const osmXml = await fs.readFile(path.resolve("public/miyamai_line_miyafuku_line.osm"), "utf-8");
+  test("parses the route nodes and calculates its total distance", async () => {
+    const osmXml = await fs.readFile(path.resolve(__dirname, "test-data/miyamai_line_miyafuku_line.osm"), "utf-8");
     const nodes = parseOsmXml(osmXml);
     let distance = 0;
     for (let i = 0; i < nodes.length - 1; i++) {
       distance += distanceInMM(nodes[i].coord, nodes[i + 1].coord);
     }
-    console.log("overall distance", distance, "mm");
+
+    expect(nodes).toHaveLength(985);
+    expect(Math.round(distance / 1000)).toBe(55340);
   });
 });
