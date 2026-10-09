@@ -37,7 +37,7 @@ import {
 } from "@mui/icons-material";
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
-import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
+import { formatDistanceMeters, formatTimeSec, formatVideoDuration } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,6 +76,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const trackState = useAutosavingTrackState(initialTrack);
   const [track] = trackState;
   const [playedSeconds, setPlayedSeconds] = useState(0);
+  const [videoDuration, setVideoDuration] = useState<number>();
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
@@ -200,6 +201,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               onProgress={(ev) => {
                 setPlayedSeconds(ev.playedSeconds);
               }}
+              onDuration={(duration) => {
+                if (Number.isFinite(duration) && duration >= 0) {
+                  setVideoDuration(duration);
+                }
+              }}
             />
             {/* <Placeholder width="100%" height="100%" text="Video player" /> */}
           </>
@@ -255,6 +261,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
             <VideoInfoArea
               trackTitle={track.title}
               videoUrl={track.videoUrl}
+              videoDuration={videoDuration}
               pathLengthMM={pathLengthMM}
               onPathUploaded={setPath}
               onReversePathClicked={reversePath}
@@ -280,6 +287,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 interface VideoInfoAreaProps {
   trackTitle: string;
   videoUrl: string;
+  videoDuration?: number;
   pathLengthMM: number;
   onPathUploaded: (path: ReadonlyArray<LatLngLiteral & HasUuid>) => void;
   onReversePathClicked: () => void;
@@ -287,11 +295,12 @@ interface VideoInfoAreaProps {
 const VideoInfoArea: FC<VideoInfoAreaProps> = ({
   trackTitle,
   videoUrl,
+  videoDuration,
   pathLengthMM,
   onPathUploaded,
   onReversePathClicked,
 }) => (
-  // TODO: show UUID & video duration in editing mode
+  // TODO: show UUID in editing mode
   // TODO: allow editing of title editing mode
   <Card raised sx={{ p: 2 }}>
     <Stack direction="row" spacing={1}>
@@ -307,7 +316,9 @@ const VideoInfoArea: FC<VideoInfoAreaProps> = ({
             <Typography variant="body1">Video: {videoUrl}</Typography>
           </Box>
           <Stack direction="row" spacing={2}>
-            <Typography variant="body1">Duration: --</Typography>
+            <Typography variant="body1">
+              Duration: {isUndefined(videoDuration) ? "--" : formatVideoDuration(videoDuration)}
+            </Typography>
             <Typography variant="body1">Total path length: {formatDistanceMeters(pathLengthMM)}</Typography>
           </Stack>
         </Stack>
