@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer } from "react-leaflet";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { closestPointOnPath } from "../geo/distance";
 
 export const OsmTest: FC = () => {

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 export const useFileUpload = (id: string, onFileUploaded: (file: File) => void) => {
   const fileInputRef = useRef<HTMLInputElement>(null);

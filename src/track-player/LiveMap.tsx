@@ -10,7 +10,7 @@ import {
 import React, { createContext, FC, useCallback, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { Theme, CSSObject } from "@mui/material/styles";
 import useResizeObserver from "@react-hook/resize-observer";
 import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
@@ -117,13 +117,13 @@ export const LiveMap: FC<LiveMapProps> = ({
 
           <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
             <CustomAttributionContainer>
-              <CustomAttributionTextContainer>
+              <CustomAttributionTextContainer className="attribution-text">
                 <div
                   className="leaflet-control-attribution leaflet-control"
                   dangerouslySetInnerHTML={{ __html: attributionHtml }}
                 />
               </CustomAttributionTextContainer>
-              <CustomAttributionGlyphContainer>©</CustomAttributionGlyphContainer>
+              <CustomAttributionGlyphContainer className="attribution-glyph">©</CustomAttributionGlyphContainer>
             </CustomAttributionContainer>
           </CustomLeafletControl>
 
@@ -175,15 +175,15 @@ const CustomAttributionContainer = styled.div`
   border-radius: 15px;
   box-sizing: border-box;
 
-  > ${CustomAttributionTextContainer} {
+  > .attribution-text {
     display: none;
   }
 
   &:hover {
-    > ${CustomAttributionTextContainer} {
+    > .attribution-text {
       display: block;
     }
-    > ${CustomAttributionGlyphContainer} {
+    > .attribution-glyph {
       display: none;
     }
   }

@@ -1,5 +1,5 @@
 import { FC, useRef, useState } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { parseOsmXml } from "./parse-osm-xml";
 
 export const OsmImport: FC = () => {

@@ -17,7 +17,6 @@
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
     "@types/react-window": "^1.8.5",
-    "@types/styled-components": "^5.1.25",
     "fp-ts": "^2.12.1",
     "fs-extra": "9",
     "globby": "^13.1.1",
@@ -32,7 +31,6 @@
     "react-leaflet": "^4.0.0",
     "react-player": "^2.10.0",
     "react-window": "^1.8.7",
-    "styled-components": "^5.3.5",
     "web-vitals": "^2.1.0",
     "wouter": "^2.8.0-alpha.2"
   },
