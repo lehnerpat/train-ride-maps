@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { parseOsmXml } from "./parse-osm-xml";
 import { readFile } from "node:fs/promises";
 import path from "path";

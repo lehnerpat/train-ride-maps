@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { TimingPointsList } from "./TimingPointsList";
 

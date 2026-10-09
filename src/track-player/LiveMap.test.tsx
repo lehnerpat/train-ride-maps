@@ -1,3 +1,4 @@
+import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { LiveMap } from "./LiveMap";

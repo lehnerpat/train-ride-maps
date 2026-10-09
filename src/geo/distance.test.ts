@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { LatLngLiteral } from "leaflet";
 import { closestPointOnPath, closestPointOnSegment, distanceInMFunctions, distanceInMM } from "./distance";
 
