@@ -1,5 +1,11 @@
 {
-  "name": "trm-react-ui",
+  "name": "train-ride-maps",
+  "license": "MIT",
+  "homepage": "https://train-ride-maps.lehnerpat.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrick/train-ride-maps.git"
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
