@@ -2,6 +2,8 @@
 
 See also [concepts.md](concepts.md) for the underlying data model.
 
+The current page is stored in the URL fragment (for example, `/#/track/<id>`), so track links and bookmarks work on static hosting. Tracks saved only in browser storage remain available only in that browser.
+
 ## Start page
 
 - **Example tracks**: bundled tracks. Opening one in a browser that has a locally-edited copy opens the local copy (see [persistence](concepts.md#persistence)).

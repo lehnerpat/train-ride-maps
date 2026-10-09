@@ -1,6 +1,7 @@
 import { FC } from "react";
 import styled from "@emotion/styled";
-import { Route, Switch } from "wouter";
+import { Route, Router, Switch } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import { gitCommitSha } from "./build-info";
 import { OsmTest } from "./osm-input/OsmTest";
 import { ReturnLink, ReturnLinkContainer } from "./common/components/return-links";
@@ -12,19 +13,21 @@ function App() {
   return (
     <MainCenterer>
       <MainContainer>
-        <Switch>
-          <Route path="/">
-            <StartPage />
-          </Route>
-          <Route path="/osm-test">
-            <OsmTest />
-          </Route>
-          <Route path="/osm-import">
-            <OsmImport />
-          </Route>
-          <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
-          <Route path="/*">{(params) => <Error404Page path={params["*"]} />}</Route>
-        </Switch>
+        <Router hook={useHashLocation}>
+          <Switch>
+            <Route path="/">
+              <StartPage />
+            </Route>
+            <Route path="/osm-test">
+              <OsmTest />
+            </Route>
+            <Route path="/osm-import">
+              <OsmImport />
+            </Route>
+            <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
+            <Route path="/*">{(params) => <Error404Page path={params["*"]} />}</Route>
+          </Switch>
+        </Router>
         <ReturnLinkContainer>
           <span>
             Built from commit <code>{gitCommitSha}</code>
