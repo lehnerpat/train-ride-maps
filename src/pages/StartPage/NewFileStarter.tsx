@@ -22,7 +22,7 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
           required
           id="new-track-title"
           label="Title"
-          InputLabelProps={{ shrink: true }}
+          slotProps={{ inputLabel: { shrink: true } }}
           value={trackTitle}
           onChange={(ev) => {
             setTrackTitle(ev.target.value);
@@ -32,14 +32,14 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
           required
           id="new-track-video-url"
           label="Video URL"
-          InputLabelProps={{ shrink: true }}
+          slotProps={{ inputLabel: { shrink: true } }}
           placeholder="https://www.youtube.com/watch?v=..."
           value={videoUrl}
           onChange={(ev) => {
             setVideoUrl(ev.target.value);
           }}
         />
-        <Box justifyContent="flex-end" display="flex">
+        <Box sx={{ justifyContent: "flex-end", display: "flex" }}>
           <Button
             variant="contained"
             disabled={inputsInvalid}

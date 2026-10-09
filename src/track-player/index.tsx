@@ -46,15 +46,17 @@ const Placeholder: FC<{ width?: number | string; height?: number | string; text?
   height,
   text,
 }) => (
-  <Box bgcolor="rgba(255, 255, 255, 0.13)" width={width} height={height}>
+  <Box sx={{ bgcolor: "rgba(255, 255, 255, 0.13)", width, height }}>
     <Box
-      width="100%"
-      height="100%"
-      border="1px solid gray"
-      boxSizing="border-box"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
+      sx={{
+        width: "100%",
+        height: "100%",
+        border: "1px solid gray",
+        boxSizing: "border-box",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
       {text}
     </Box>
@@ -248,7 +250,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
       </VideoAndMapContainer>
 
       {isEditingModeOn && (
-        <Stack direction="row" mt={2} spacing={2} width="90%" mx="auto">
+        <Stack direction="row" spacing={2} sx={{ mt: 2, width: "90%", mx: "auto" }}>
           <Box sx={{ flexGrow: 1, height: "200px" }}>
             <VideoInfoArea
               trackTitle={track.title}
@@ -258,7 +260,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
               onReversePathClicked={reversePath}
             />
           </Box>
-          <Box width={300}>
+          <Box sx={{ width: 300 }}>
             <>
               <TimingPointsListMemo
                 timingPoints={timingPoints}
@@ -293,7 +295,7 @@ const VideoInfoArea: FC<VideoInfoAreaProps> = ({
   // TODO: allow editing of title editing mode
   <Card raised sx={{ p: 2 }}>
     <Stack direction="row" spacing={1}>
-      <Box flexGrow={1}>
+      <Box sx={{ flexGrow: 1 }}>
         <Stack spacing={1}>
           <Box>
             <Typography variant="h6">Video Info:</Typography>
@@ -310,7 +312,7 @@ const VideoInfoArea: FC<VideoInfoAreaProps> = ({
           </Stack>
         </Stack>
       </Box>
-      <Stack spacing={1} width={170}>
+      <Stack spacing={1} sx={{ width: 170 }}>
         <ImportOsmXmlButton onPathUploaded={onPathUploaded} />
         <Button variant="outlined" color="inherit" size="small" onClick={onReversePathClicked}>
           Reverse Path
@@ -422,7 +424,7 @@ const MenuBar: FC<{
   <AppBar position="static" sx={{ mb: 2 }}>
     <Toolbar>
       {/* TODO: make text wrap properly or cut off with ellipsis if too long */}
-      <Typography variant="h6" component="div" flexGrow={1}>
+      <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         {trackTitle}
       </Typography>
       <ToggleButtonGroup
@@ -433,13 +435,13 @@ const MenuBar: FC<{
         sx={{ mr: 3 }}
       >
         <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-          <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
+          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>
             Viewing
           </Box>
           <SmartDisplayIcon />
         </ToggleButton>
         <ToggleButton value={"editing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-          <Box mr={0.5} display={{ xs: "none", md: "initial" }}>
+          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>
             Editing
           </Box>
           <EditIcon />
@@ -481,14 +483,14 @@ const AddTimingPointWidget: FC<{
   currentDistanceMM: number | undefined;
   onAddButtonClicked: () => void;
 }> = ({ playedSeconds, currentDistanceMM, onAddButtonClicked }) => (
-  <Box position="absolute" bottom={0} right={0} zIndex={1000} m={2}>
+  <Box sx={{ position: "absolute", bottom: 0, right: 0, zIndex: 1000, m: 2 }}>
     <Card raised sx={{ pl: 2, pr: 1 }}>
-      <Stack direction="row" alignItems="center" spacing={2}>
+      <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
         <Box>
-          <Typography fontFamily="monospace" my={1}>
+          <Typography sx={{ fontFamily: "monospace", my: 1 }}>
             t = {formatTimeSec(playedSeconds)}
           </Typography>
-          <Typography fontFamily="monospace" my={1}>
+          <Typography sx={{ fontFamily: "monospace", my: 1 }}>
             d = {isUndefined(currentDistanceMM) ? "--" : formatDistanceMeters(currentDistanceMM)}
           </Typography>
         </Box>

@@ -111,7 +111,7 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
       <SectionHeading>Straight Rail Overlay</SectionHeading>
       <Stack>
         <Stack direction="row">
-          <Box flexGrow={1}>
+          <Box sx={{ flexGrow: 1 }}>
             <ToggleSwitch
               id="straightRailsOverlay-isOn"
               checkedState={pickState(straightRailsOverlayViewOptionsState, "isOn")}

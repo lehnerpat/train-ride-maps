@@ -17,7 +17,7 @@ export const IncludedTrackSelector: FC = () => {
       <TopLevelCard>
         <List disablePadding>
           <ListItemButton onClick={() => setExampleTracksOpen(!isExampleTracksOpen)}>
-            <ListItemText primary="Example tracks" primaryTypographyProps={{ variant: "h5", pt: 1 }} />
+            <ListItemText primary="Example tracks" slotProps={{ primary: { variant: "h5", sx: { pt: 1 } } }} />
             {isExampleTracksOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={isExampleTracksOpen}>
@@ -33,7 +33,7 @@ export const IncludedTrackSelector: FC = () => {
           <Divider />
 
           <ListItemButton onClick={() => setLocalTracksOpen(!isLocalTracksOpen)}>
-            <ListItemText primary="Tracks saved in browser" primaryTypographyProps={{ variant: "h5", pt: 1 }} />
+            <ListItemText primary="Tracks saved in browser" slotProps={{ primary: { variant: "h5", sx: { pt: 1 } } }} />
             {isLocalTracksOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={isLocalTracksOpen}>

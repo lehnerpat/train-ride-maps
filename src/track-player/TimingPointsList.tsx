@@ -45,7 +45,7 @@ export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
 
   return (
     <Card raised>
-      <Typography variant="h6" p={2}>
+      <Typography variant="h6" sx={{ p: 2 }}>
         Timing Points:
       </Typography>
       <FixedSizeList
@@ -93,7 +93,7 @@ class ItemRenderer extends PureComponent<ListChildComponentProps<TimingPointsLis
 }
 
 const TimingPointData: FC<{ timingPoint: TimingPoint & HasUuid }> = ({ timingPoint }) => (
-  <Stack direction="row" flexGrow={1} sx={{ px: 1, fontFamily: "monospace" }} spacing={0.5}>
+  <Stack direction="row" spacing={0.5} sx={{ flexGrow: 1, px: 1, fontFamily: "monospace" }}>
     <Box>t={formatTimeSec(timingPoint.t)}</Box>
     <Box sx={{ opacity: 0.6 }}>|</Box>
     <Box>d={formatDistanceMeters(timingPoint.d)}</Box>
