@@ -56,7 +56,10 @@ function validateNoClosedWays(ways: Iterable<OsmWay>) {
 }
 
 class NodeOccurrence {
-  constructor(public readonly way: OsmWay, public readonly index: number) {}
+  constructor(
+    public readonly way: OsmWay,
+    public readonly index: number,
+  ) {}
   isFirstInWay(): boolean {
     return this.index === 0;
   }
@@ -155,14 +158,14 @@ function buildOverallNodeList(wayMap: Map<string, OsmWay>, nodeMap: Map<string, 
     }
 
     throw new Error(
-      `doubleOccurrenceNodeMap.size==${doubleOccurrenceNodeMap.size} but contains neither node#${firstNodeRef} nor node#${lastNodeRef}`
+      `doubleOccurrenceNodeMap.size==${doubleOccurrenceNodeMap.size} but contains neither node#${firstNodeRef} nor node#${lastNodeRef}`,
     );
   }
 
   const overallNodeRefSet = new Set(overallNodeRefList);
   if (overallNodeRefList.length !== overallNodeRefSet.size)
     throw new Error(
-      `overallNodeRefList.length ${overallNodeRefList.length} !== overallNodeRefSet.size ${overallNodeRefSet.size}`
+      `overallNodeRefList.length ${overallNodeRefList.length} !== overallNodeRefSet.size ${overallNodeRefSet.size}`,
     );
 
   return overallNodeRefList.map((nodeRef) => nodeMap.get(nodeRef)!);
@@ -232,7 +235,7 @@ function deserializeOsmWay(e: Element): OsmWay {
         throw new Error(
           `Way has children that are not <tag>s or <nd>s, and not ignored (${ignoredWayChildElements.join(", ")}): ${
             e.outerHTML
-          }`
+          }`,
         );
       }
     } else {

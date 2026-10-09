@@ -42,7 +42,7 @@ describe("LiveMap", () => {
         observe() {}
         unobserve() {}
         disconnect() {}
-      }
+      },
     );
   });
   afterAll(() => {

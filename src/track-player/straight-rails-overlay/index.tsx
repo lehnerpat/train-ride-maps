@@ -81,7 +81,10 @@ interface MovableLineInfo {
   toPi: PointInfo;
 }
 
-function useMovableLineRef(svgRef: RefObject<SVGSVGElement | null>, lineState: UseState<PercentageLine>): MovableLineInfo {
+function useMovableLineRef(
+  svgRef: RefObject<SVGSVGElement | null>,
+  lineState: UseState<PercentageLine>,
+): MovableLineInfo {
   const [, setLine] = lineState;
   const lineRef = useRef<SVGLineElement>(null);
   const fromRef = useRef<SVGEllipseElement>(null);

@@ -1,7 +1,7 @@
 export const useFileDownload = (
   filename: string,
   provideFileContents: () => string,
-  fileType: string = "application/json"
+  fileType: string = "application/json",
 ) => {
   return () => {
     const contents = provideFileContents();

@@ -4,7 +4,7 @@ export class LocalStorageService<T extends object> {
   constructor(
     private readonly storageKey: string,
     private readonly defaultValue: T,
-    private readonly normalizers: Partial<{ [Property in keyof T]: (value: T[Property]) => T[Property] }>
+    private readonly normalizers: Partial<{ [Property in keyof T]: (value: T[Property]) => T[Property] }>,
   ) {}
 
   load(): T {

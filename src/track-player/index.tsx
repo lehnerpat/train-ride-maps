@@ -71,7 +71,7 @@ interface TrackPlayerProps {
 export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const initialCoord = useMemo(
     () => (initialTrack.path.length > 0 ? initialTrack.path[0] : { lat: 0, lng: 0 }),
-    [initialTrack]
+    [initialTrack],
   );
   const trackState = useAutosavingTrackState(initialTrack);
   const [track] = trackState;
@@ -129,7 +129,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
       interpolatedDistance = interpolateDistance(
         timingPoints[precedingIndex],
         timingPoints[precedingIndex + 1],
-        playedSeconds
+        playedSeconds,
       );
     }
 
@@ -152,7 +152,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn, setEditingModeOn]);
   const enterFullscreen = useCallback(
     () => _enterFullscreen(videoPlayerAndMapRef, isEditingModeOn),
-    [videoPlayerAndMapRef, isEditingModeOn]
+    [videoPlayerAndMapRef, isEditingModeOn],
   );
 
   const keyHandler = useCallback(
@@ -163,7 +163,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
         toggleEditingMode();
       }
     },
-    [toggleEditingMode, enterFullscreen]
+    [toggleEditingMode, enterFullscreen],
   );
   useKeyPressHandler(keyHandler);
 
@@ -171,11 +171,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
   const addTimingPoint = useCallback(
     () => _addTimingPoint(playedSeconds, currentDistanceMM, setTimingPoints),
-    [playedSeconds, currentDistanceMM, setTimingPoints]
+    [playedSeconds, currentDistanceMM, setTimingPoints],
   );
   const deleteTimingPointById = useCallback(
     (id: string) => setTimingPoints((oldTimingPoints) => oldTimingPoints.filter((tp) => tp.uuid !== id)),
-    [setTimingPoints]
+    [setTimingPoints],
   );
 
   const showMapAsOverlay = !isEditingModeOn;
@@ -326,13 +326,13 @@ interface WithShowAsMapOverlay {
   showMapAsOverlay: boolean;
 }
 const VideoAndMapContainer = styled(Box)<WithShowAsMapOverlay>(
-  ({ showMapAsOverlay }) =>
-    css`
-      position: relative;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      ${showMapAsOverlay
+  ({ showMapAsOverlay }) => css`
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    ${
+      showMapAsOverlay
         ? css`
             max-height: calc(100vh - 64px - 32px);
             aspect-ratio: 16/9;
@@ -340,23 +340,25 @@ const VideoAndMapContainer = styled(Box)<WithShowAsMapOverlay>(
         : css`
             width: calc(90%);
             aspect-ratio: 25/9;
-          `}
-    `
+          `
+    }
+  `,
 );
 const VideoContainer = styled(Box)<WithShowAsMapOverlay>(
-  ({ showMapAsOverlay }) =>
-    css`
-      position: absolute;
-      aspect-ratio: 16/9;
-      ${showMapAsOverlay
+  ({ showMapAsOverlay }) => css`
+    position: absolute;
+    aspect-ratio: 16/9;
+    ${
+      showMapAsOverlay
         ? css`
             width: 100%;
           `
         : css`
             /* width: calc(64% - 8px); */
             height: 100%;
-          `}
-    `
+          `
+    }
+  `,
 );
 const EditingMapContainer = styled(Box)`
   /* width: calc(36% - 8px); */
@@ -435,15 +437,11 @@ const MenuBar: FC<{
         sx={{ mr: 3 }}
       >
         <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>
-            Viewing
-          </Box>
+          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>Viewing</Box>
           <SmartDisplayIcon />
         </ToggleButton>
         <ToggleButton value={"editing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>
-            Editing
-          </Box>
+          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>Editing</Box>
           <EditIcon />
         </ToggleButton>
       </ToggleButtonGroup>
@@ -487,9 +485,7 @@ const AddTimingPointWidget: FC<{
     <Card raised sx={{ pl: 2, pr: 1 }}>
       <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
         <Box>
-          <Typography sx={{ fontFamily: "monospace", my: 1 }}>
-            t = {formatTimeSec(playedSeconds)}
-          </Typography>
+          <Typography sx={{ fontFamily: "monospace", my: 1 }}>t = {formatTimeSec(playedSeconds)}</Typography>
           <Typography sx={{ fontFamily: "monospace", my: 1 }}>
             d = {isUndefined(currentDistanceMM) ? "--" : formatDistanceMeters(currentDistanceMM)}
           </Typography>
@@ -535,11 +531,11 @@ function interpolateDistance(prevTP: TimingPoint, nextTP: TimingPoint, offsetSec
 function interpolateCoordinates(
   prevCoord: DistanceWithCoord,
   nextCoord: DistanceWithCoord,
-  distance: number
+  distance: number,
 ): LatLngLiteral {
   if (distance < prevCoord[0] || distance > nextCoord[0])
     throw new Error(
-      `Given distance ${distance} was outside of DistanceWithCoord range [${prevCoord[0]}, ${nextCoord[0]}]`
+      `Given distance ${distance} was outside of DistanceWithCoord range [${prevCoord[0]}, ${nextCoord[0]}]`,
     );
   const p = (distance - prevCoord[0]) / (nextCoord[0] - prevCoord[0]);
   const lat = prevCoord[1].lat + p * (nextCoord[1].lat - prevCoord[1].lat);
@@ -575,7 +571,7 @@ function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): Distan
 
 function computeTimingPointLocations(
   distanceFromStartMap: DistanceWithCoord[],
-  timingPoints: ReadonlyArray<TimingPoint>
+  timingPoints: ReadonlyArray<TimingPoint>,
 ): ReadonlyArray<LatLngLiteral> {
   let dfsIdx = 1,
     tpIdx = 0;
@@ -585,7 +581,7 @@ function computeTimingPointLocations(
       const tpCoord = interpolateCoordinates(
         distanceFromStartMap[dfsIdx - 1],
         distanceFromStartMap[dfsIdx],
-        timingPoints[tpIdx].d
+        timingPoints[tpIdx].d,
       );
       result.push(tpCoord);
       tpIdx++;
@@ -596,7 +592,10 @@ function computeTimingPointLocations(
   return result;
 }
 
-async function _enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivElement | null>, isEditingModeOn: boolean) {
+async function _enterFullscreen(
+  videoPlayerAndMapRef: React.RefObject<HTMLDivElement | null>,
+  isEditingModeOn: boolean,
+) {
   const el = videoPlayerAndMapRef.current;
   if (!el || isEditingModeOn) return;
   if (!!document.fullscreenElement || !!(document as any).webkitFullscreenElement) {
@@ -617,7 +616,7 @@ async function _enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivEle
 function _addTimingPoint(
   playedSeconds: number,
   currentDistanceMM: number | undefined,
-  setTimingPoints: SetState<ReadonlyArray<TimingPoint & HasUuid>>
+  setTimingPoints: SetState<ReadonlyArray<TimingPoint & HasUuid>>,
 ) {
   if (isUndefined(currentDistanceMM)) return;
 

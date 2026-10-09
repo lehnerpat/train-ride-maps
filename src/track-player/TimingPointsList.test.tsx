@@ -11,7 +11,7 @@ describe("TimingPointsList", () => {
         onDeleteTimingPoint={onDeleteTimingPoint}
         precedingIndex={0}
         isAutoScrollOn={false}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole("button"));

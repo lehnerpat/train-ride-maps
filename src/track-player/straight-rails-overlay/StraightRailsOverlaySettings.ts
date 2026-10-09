@@ -35,7 +35,7 @@ export const DefaultStraightRailsOverlaySettings: Readonly<StraightRailsOverlayS
 export const StraightRailsOverlaySettingsStorage = new LocalStorageService(
   "trm_straight-rails-overlay-settings",
   DefaultStraightRailsOverlaySettings,
-  {}
+  {},
 );
 
 export const useStraightRailsOverlaySettingsState: () => UseState<StraightRailsOverlaySettings> = () => {
@@ -48,7 +48,7 @@ export const useStraightRailsOverlaySettingsState: () => UseState<StraightRailsO
           : newState;
         return StraightRailsOverlaySettingsStorage.save(newSettings);
       }),
-    [setSettings]
+    [setSettings],
   );
   return useMemo(() => [settings, setSettingsWithSave], [settings, setSettingsWithSave]);
 };

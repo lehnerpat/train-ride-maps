@@ -100,7 +100,7 @@ export function distanceInMM(p1: LatLngLiteral, p2: LatLngLiteral): number {
 export function closestPointOnSegment(
   p: LatLngLiteral,
   p1: LatLngLiteral,
-  p2: LatLngLiteral
+  p2: LatLngLiteral,
 ): { closestOnSegment: LatLngLiteral; distanceFromPMM: number } {
   const φ = p.lat * radPerDeg;
   const λ = p.lng * radPerDeg;
