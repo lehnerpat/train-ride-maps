@@ -1,4 +1,4 @@
-import { FC, PureComponent, useLayoutEffect, useRef } from "react";
+import { FC, useLayoutEffect, useRef } from "react";
 import {
   Box,
   Card,
@@ -14,7 +14,7 @@ import {
 import { MoreHoriz as MoreIcon, DeleteForever as DeleteIcon } from "@mui/icons-material";
 import { TimingPoint } from "../track-models";
 import { HasUuid } from "../common/utils/uuid";
-import { FixedSizeList, ListChildComponentProps } from "react-window";
+import { List, RowComponentProps, useListRef } from "react-window";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 import { Theme, lighten } from "@mui/material/styles";
@@ -26,70 +26,74 @@ interface TimingPointsListProps {
   isAutoScrollOn: boolean;
 }
 
+type RowData = Pick<TimingPointsListProps, "timingPoints" | "onDeleteTimingPoint" | "precedingIndex">;
+
 export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
-  const { isAutoScrollOn, precedingIndex } = props;
-  const listRef = useRef<FixedSizeList>(null);
+  const { isAutoScrollOn, precedingIndex, timingPoints, onDeleteTimingPoint } = props;
+  const listRef = useListRef(null);
   const prevPrecedingIndex = useRef(precedingIndex);
 
   useLayoutEffect(() => {
     const ref = listRef.current;
     if (!isAutoScrollOn || ref === null) return;
 
-    if (precedingIndex >= prevPrecedingIndex.current) {
-      ref.scrollToItem(precedingIndex + 1, "smart");
-    } else {
-      ref.scrollToItem(precedingIndex, "smart");
+    const index = precedingIndex >= prevPrecedingIndex.current ? precedingIndex + 1 : precedingIndex;
+    // scrollToRow throws a RangeError for out-of-range indexes
+    if (index >= 0 && index < timingPoints.length) {
+      ref.scrollToRow({ index, align: "smart" });
     }
     prevPrecedingIndex.current = precedingIndex;
-  }, [precedingIndex, isAutoScrollOn]);
+  }, [precedingIndex, isAutoScrollOn, timingPoints.length, listRef]);
 
   return (
     <Card raised>
       <Typography variant="h6" sx={{ p: 2 }}>
         Timing Points:
       </Typography>
-      <FixedSizeList
-        height={300}
-        width="100%"
-        itemSize={34}
-        itemCount={props.timingPoints.length}
+      <List
+        style={{ height: 300, width: "100%" }}
+        rowHeight={34}
+        rowCount={timingPoints.length}
         overscanCount={5}
-        itemData={props}
-        ref={listRef}
-      >
-        {ItemRenderer}
-      </FixedSizeList>
+        rowComponent={ItemRenderer}
+        rowProps={{ timingPoints, onDeleteTimingPoint, precedingIndex }}
+        listRef={listRef}
+      />
     </Card>
   );
 };
 
-class ItemRenderer extends PureComponent<ListChildComponentProps<TimingPointsListProps>> {
-  render() {
-    const { timingPoints, onDeleteTimingPoint, precedingIndex } = this.props.data;
-    const timingPoint = timingPoints[this.props.index];
-    const isCurrent = this.props.index === precedingIndex || this.props.index === precedingIndex + 1;
+function ItemRenderer({
+  index,
+  style,
+  ariaAttributes,
+  timingPoints,
+  onDeleteTimingPoint,
+  precedingIndex,
+}: RowComponentProps<RowData>) {
+  const timingPoint = timingPoints[index];
+  const isCurrent = index === precedingIndex || index === precedingIndex + 1;
 
-    return (
-      <ListItem
-        style={this.props.style}
-        key={timingPoint.uuid}
-        component="div"
-        disablePadding
-        dense
-        sx={[
-          { px: 1 },
-          isCurrent &&
-            ((theme: Theme) => ({
-              backgroundColor: lighten(theme.palette.background.paper, 0.2),
-              fontWeight: "bold",
-            })),
-        ]}
-      >
-        <TimingPointData timingPoint={timingPoint} />
-        <DeleteMenu timingPoint={timingPoint} onDeleteTimingPoint={onDeleteTimingPoint} />
-      </ListItem>
-    );
-  }
+  return (
+    <ListItem
+      {...ariaAttributes}
+      style={style}
+      component="div"
+      disablePadding
+      dense
+      sx={[
+        { px: 1 },
+        isCurrent &&
+          ((theme: Theme) => ({
+            backgroundColor: lighten(theme.palette.background.paper, 0.2),
+            fontWeight: "bold",
+          })),
+      ]}
+    >
+      <TimingPointData timingPoint={timingPoint} />
+      <DeleteMenu timingPoint={timingPoint} onDeleteTimingPoint={onDeleteTimingPoint} />
+    </ListItem>
+  );
 }
 
 const TimingPointData: FC<{ timingPoint: TimingPoint & HasUuid }> = ({ timingPoint }) => (
