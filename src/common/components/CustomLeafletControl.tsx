@@ -19,7 +19,7 @@ const POSITION_CLASSES = {
   topright: "leaflet-top leaflet-right",
 };
 
-const Control = (props: Props): JSX.Element => {
+const Control = (props: Props): React.JSX.Element => {
   const [container, setContainer] = React.useState<any>(document.createElement("div"));
   const positionClass = (props.position && POSITION_CLASSES[props.position]) || POSITION_CLASSES.topright;
 

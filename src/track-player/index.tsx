@@ -596,7 +596,7 @@ function computeTimingPointLocations(
   return result;
 }
 
-async function _enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivElement>, isEditingModeOn: boolean) {
+async function _enterFullscreen(videoPlayerAndMapRef: React.RefObject<HTMLDivElement | null>, isEditingModeOn: boolean) {
   const el = videoPlayerAndMapRef.current;
   if (!el || isEditingModeOn) return;
   if (!!document.fullscreenElement || !!(document as any).webkitFullscreenElement) {

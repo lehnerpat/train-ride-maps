@@ -70,18 +70,18 @@ const EditingControls: FC<EditingControlsProps> = ({ settingsState }) => {
 };
 
 interface PointInfo {
-  ref: RefObject<SVGEllipseElement>;
+  ref: RefObject<SVGEllipseElement | null>;
   onDrag(p: Point): void;
   onDrop(p: Point): void;
 }
 
 interface MovableLineInfo {
-  lineRef: RefObject<SVGLineElement>;
+  lineRef: RefObject<SVGLineElement | null>;
   fromPi: PointInfo;
   toPi: PointInfo;
 }
 
-function useMovableLineRef(svgRef: RefObject<SVGSVGElement>, lineState: UseState<PercentageLine>): MovableLineInfo {
+function useMovableLineRef(svgRef: RefObject<SVGSVGElement | null>, lineState: UseState<PercentageLine>): MovableLineInfo {
   const [, setLine] = lineState;
   const lineRef = useRef<SVGLineElement>(null);
   const fromRef = useRef<SVGEllipseElement>(null);
@@ -176,7 +176,7 @@ const OverlayArea: FC<OverlayAreaProps> = ({ settingsState }) => {
   );
 };
 
-function useOverlay(svgRef: RefObject<SVGSVGElement>, getPointInfos: () => PointInfo[]) {
+function useOverlay(svgRef: RefObject<SVGSVGElement | null>, getPointInfos: () => PointInfo[]) {
   const ref = useMemo(() => {
     const pointInfos = getPointInfos();
     console.log("creating x");
