@@ -41,6 +41,7 @@ import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec, formatVideoDuration } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
 import { Link } from "wouter";
+import { VideoInfoArea } from "./VideoInfoArea";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
@@ -76,7 +77,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     [initialTrack],
   );
   const trackState = useAutosavingTrackState(initialTrack);
-  const [track] = trackState;
+  const [track, setTrack] = trackState;
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const [videoDuration, setVideoDuration] = useState<number>();
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
@@ -259,12 +260,13 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
 
       {isEditingModeOn && (
         <Stack direction="row" spacing={2} sx={{ mt: 2, width: "90%", mx: "auto" }}>
-          <Box sx={{ flexGrow: 1, height: "200px" }}>
+          <Box sx={{ flexGrow: 1, minHeight: "200px" }}>
             <VideoInfoArea
               trackTitle={track.title}
               videoUrl={track.videoUrl}
               videoDuration={videoDuration}
               pathLengthMM={pathLengthMM}
+              onTrackInfoChanged={(title, videoUrl) => setTrack((prev) => ({ ...prev, title, videoUrl }))}
               onPathUploaded={setPath}
               onReversePathClicked={reversePath}
             />
@@ -285,55 +287,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
     </div>
   );
 };
-
-interface VideoInfoAreaProps {
-  trackTitle: string;
-  videoUrl: string;
-  videoDuration?: number;
-  pathLengthMM: number;
-  onPathUploaded: (path: ReadonlyArray<LatLngLiteral & HasUuid>) => void;
-  onReversePathClicked: () => void;
-}
-const VideoInfoArea: FC<VideoInfoAreaProps> = ({
-  trackTitle,
-  videoUrl,
-  videoDuration,
-  pathLengthMM,
-  onPathUploaded,
-  onReversePathClicked,
-}) => (
-  // TODO: show UUID in editing mode
-  // TODO: allow editing of title editing mode
-  <Card raised sx={{ p: 2 }}>
-    <Stack direction="row" spacing={1}>
-      <Box sx={{ flexGrow: 1 }}>
-        <Stack spacing={1}>
-          <Box>
-            <Typography variant="h6">Video Info:</Typography>
-          </Box>
-          <Box>
-            <Typography variant="body1">Title: {trackTitle}</Typography>
-          </Box>
-          <Box>
-            <Typography variant="body1">Video: {videoUrl}</Typography>
-          </Box>
-          <Stack direction="row" spacing={2}>
-            <Typography variant="body1">
-              Duration: {isUndefined(videoDuration) ? "--" : formatVideoDuration(videoDuration)}
-            </Typography>
-            <Typography variant="body1">Total path length: {formatDistanceMeters(pathLengthMM)}</Typography>
-          </Stack>
-        </Stack>
-      </Box>
-      <Stack spacing={1} sx={{ width: 170 }}>
-        <ImportOsmXmlButton onPathUploaded={onPathUploaded} />
-        <Button variant="outlined" color="inherit" size="small" onClick={onReversePathClicked}>
-          Reverse Path
-        </Button>
-      </Stack>
-    </Stack>
-  </Card>
-);
 
 interface WithShowAsMapOverlay {
   showMapAsOverlay: boolean;
@@ -389,29 +342,6 @@ const ViewingMapContainer = styled(Box)`
 `;
 
 const TimingPointsListMemo = memo(TimingPointsList);
-
-const ImportOsmXmlButton: FC<{ onPathUploaded: (path: ReadonlyArray<LatLngLiteral & HasUuid>) => void }> = ({
-  onPathUploaded,
-}) => {
-  const onOsmFileUploaded = async (file: File) => {
-    const osmXml = await file.text();
-    // TODO error handling
-    const nodes = parseOsmXml(osmXml);
-    console.log("parsed ", nodes.length, "nodes");
-    const path = nodes.map((n) => n.coord);
-    onPathUploaded(path.map(augmentUuid));
-  };
-  const { HiddenFileInput, showUploadDialog } = useFileUpload("osm-import", onOsmFileUploaded);
-
-  return (
-    <>
-      <Button variant="outlined" color="inherit" size="small" onClick={showUploadDialog}>
-        Import OSM XML
-      </Button>
-      <HiddenFileInput />
-    </>
-  );
-};
 
 function useKeyPressHandler(keyHandler: (ev: KeyboardEvent) => void) {
   useEffect(() => {
