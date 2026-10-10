@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { PageRouting } from "../../page-routing";
 import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
 import { Tracks } from "../../track-models";
+import { isTrackInfoValid } from "../../track-models/track-info-validation";
 import { TopLevelCard } from "../../common/components/TopLevelCard";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 
@@ -12,7 +13,7 @@ export const NewFileStarter: FC<NewFileStarterProps> = () => {
   const [trackTitle, setTrackTitle] = useState("");
   const [, setLocation] = useLocation();
 
-  const inputsInvalid = !trackTitle || !videoUrl || !videoUrl.startsWith("https://");
+  const inputsInvalid = !isTrackInfoValid(trackTitle, videoUrl);
 
   return (
     <TopLevelCard>
