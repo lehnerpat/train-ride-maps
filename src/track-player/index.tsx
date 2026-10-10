@@ -29,6 +29,7 @@ import {
 } from "@mui/material";
 import {
   Add as AddIcon,
+  ArrowBack as ArrowBackIcon,
   Download as DownloadIcon,
   Edit as EditIcon,
   Fullscreen as FullscreenIcon,
@@ -39,6 +40,7 @@ import { useFileDownload } from "../common/hooks/useFileDownload";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec, formatVideoDuration } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
+import { Link } from "wouter";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
@@ -436,6 +438,11 @@ const MenuBar: FC<{
 }) => (
   <AppBar position="static" sx={{ mb: 2 }}>
     <Toolbar>
+      <Box sx={{ mr: 2 }}>
+        <IconButton color="inherit" title="Back to start page" component={Link} href="/">
+          <ArrowBackIcon />
+        </IconButton>
+      </Box>
       {/* TODO: make text wrap properly or cut off with ellipsis if too long */}
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         {trackTitle}

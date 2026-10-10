@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { ReturnLink, ReturnLinkContainer } from "../common/components/return-links";
 import { IncludedDataMap } from "../included-data";
 import { Track } from "../track-models";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
@@ -20,14 +19,7 @@ export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
       </>
     );
 
-  return (
-    <>
-      <TrackPlayer initialTrack={track} />
-      <ReturnLinkContainer>
-        <ReturnLink href="/">Return to start page</ReturnLink>
-      </ReturnLinkContainer>
-    </>
-  );
+  return <TrackPlayer initialTrack={track} />;
 };
 
 function loadTrackFromStorage(trackUuid: string): Track | null {
