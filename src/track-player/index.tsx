@@ -3,7 +3,7 @@ import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { VideoPlayer } from "./VideoPlayer";
+import { VideoPlayer, VideoPlayerHandle } from "./VideoPlayer";
 import { LiveMap } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
@@ -93,6 +93,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
+  const [centerOnLocation, setCenterOnLocation] = useState<{ center: LatLngLiteral; requestId: number }>();
+  const videoPlayerRef = useRef<VideoPlayerHandle>(null);
+  const locationRequestId = useRef(0);
   const [, navigate] = useLocation();
   const isEditingModeOn = mode === "edit";
   const setEditingModeOn = useCallback<SetState<boolean>>(
@@ -118,7 +121,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
 
   useEffect(() => {
     const dfsMap = computeDistanceFromStartMap(path);
-    const pathLength = dfsMap[dfsMap.length - 1][0];
+    const pathLength = dfsMap[dfsMap.length - 1]?.[0] ?? 0;
     setPathLengthMM(pathLength);
     setDistanceFromStartMap(dfsMap);
   }, [path, setPathLengthMM]);
@@ -200,6 +203,14 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
     (id: string) => setTimingPoints((oldTimingPoints) => oldTimingPoints.filter((tp) => tp.uuid !== id)),
     [setTimingPoints],
   );
+  const jumpToLocation = useCallback(
+    (distanceMM: number) => {
+      const center = findCoordinateAtDistance(distanceFromStartMap, distanceMM);
+      if (!center) return;
+      setCenterOnLocation({ center, requestId: ++locationRequestId.current });
+    },
+    [distanceFromStartMap],
+  );
 
   const showMapAsOverlay = !isEditingModeOn;
 
@@ -219,6 +230,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
         <VideoContainer showMapAsOverlay={showMapAsOverlay}>
           <>
             <VideoPlayer
+              ref={videoPlayerRef}
               videoUrl={track.videoUrl}
               onProgress={(ev) => {
                 setPlayedSeconds(ev.playedSeconds);
@@ -260,6 +272,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
                 timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
                 initialCenter={initialCoord}
                 currentCenter={currentCenter}
+                centerOnLocation={centerOnLocation}
                 onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
@@ -295,6 +308,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
               <TimingPointsListMemo
                 timingPoints={timingPoints}
                 onDeleteTimingPoint={deleteTimingPointById}
+                onJumpToTime={(timeSeconds) => videoPlayerRef.current?.seekTo(timeSeconds)}
+                onJumpToLocation={jumpToLocation}
                 precedingIndex={precedingTrackPointIndex}
                 isAutoScrollOn={viewOptions.trackPointsEditorOptions.isAutoscrollTimingPointsListOn}
               />
@@ -524,6 +539,7 @@ function computePathLength(path: ReadonlyArray<LatLngLiteral>, lastPointIndex?: 
 
 type DistanceWithCoord = [number, LatLngLiteral];
 function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): DistanceWithCoord[] {
+  if (path.length === 0) return [];
   let totalDistance = 0;
   let prevPoint = path[0];
   let distanceFromStartMap: DistanceWithCoord[] = [[0, prevPoint]];
@@ -534,6 +550,25 @@ function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): Distan
     prevPoint = point;
   }
   return distanceFromStartMap;
+}
+
+function findCoordinateAtDistance(
+  distanceFromStartMap: ReadonlyArray<DistanceWithCoord>,
+  distance: number,
+): LatLngLiteral | undefined {
+  if (distanceFromStartMap.length === 0) return undefined;
+  if (distance <= distanceFromStartMap[0][0]) return distanceFromStartMap[0][1];
+
+  for (let i = 1; i < distanceFromStartMap.length; i++) {
+    const prev = distanceFromStartMap[i - 1];
+    const next = distanceFromStartMap[i];
+    if (distance <= next[0]) {
+      if (distance === next[0] || next[0] === prev[0]) return next[1];
+      return interpolateCoordinates(prev, next, distance);
+    }
+  }
+
+  return distanceFromStartMap[distanceFromStartMap.length - 1][1];
 }
 
 function computeTimingPointLocations(

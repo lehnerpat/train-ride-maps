@@ -32,6 +32,7 @@ interface LiveMapProps {
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
+  centerOnLocation?: { center: LatLngLiteral; requestId: number };
   playedSeconds: number;
   isEditingModeOn: boolean;
   viewOptions: MapViewOptions;
@@ -54,6 +55,7 @@ export const LiveMap: FC<LiveMapProps> = ({
   timingPointLocations,
   initialCenter,
   currentCenter,
+  centerOnLocation,
   onMapMoved,
   isEditingModeOn,
   viewOptions,
@@ -79,6 +81,15 @@ export const LiveMap: FC<LiveMapProps> = ({
       console.error("Error while auto-panning the map:", e);
     }
   }, [map, currentCenter, isAutopanOn]);
+
+  useEffect(() => {
+    if (map === null || !centerOnLocation) return;
+    try {
+      map.panTo(centerOnLocation.center, { animate: true });
+    } catch (e) {
+      console.error("Error while centering the map on a timing point:", e);
+    }
+  }, [map, centerOnLocation]);
 
   const zoomIn = useCallback(() => map?.zoomIn(), [map]);
   const zoomOut = useCallback(() => map?.zoomOut(), [map]);

@@ -89,7 +89,10 @@ Tips for the workflow:
 Notes:
 
 - Adding does nothing if the path is empty/undefined distance (`d = --`).
-- Timing points are listed in the "Timing Points" panel, ordered by video time and distance, and appear as green circles on the map. Use the "…" menu of an entry and select "delete" to remove it. There is no editing of existing points: delete and re-add.
+- Timing points are listed in the "Timing Points" panel, ordered by video time and distance, and appear as green circles on the map. Use an entry's "…" menu to:
+  - **Jump to time**: seek the video to that timing point; the map follows the usual auto-pan setting.
+  - **Jump to location**: center the map at that timing point without changing the video time. If auto-pan is on, it resumes following the video when the video time next changes.
+  - **Delete**: remove the timing point. There is no editing of existing points: delete and re-add.
 
 ![Screenshot highlighting the timing points list](assets/timing_points_list.jpg)
 

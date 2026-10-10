@@ -11,7 +11,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { MoreHoriz as MoreIcon, DeleteForever as DeleteIcon } from "@mui/icons-material";
+import {
+  AccessTime as JumpToTimeIcon,
+  DeleteForever as DeleteIcon,
+  MoreHoriz as MoreIcon,
+  Place as JumpToLocationIcon,
+} from "@mui/icons-material";
 import { TimingPoint } from "../track-models";
 import { HasUuid } from "../common/utils/uuid";
 import { List, RowComponentProps, useListRef } from "react-window";
@@ -22,14 +27,20 @@ import { Theme, lighten } from "@mui/material/styles";
 interface TimingPointsListProps {
   timingPoints: ReadonlyArray<TimingPoint & HasUuid>;
   onDeleteTimingPoint: (uuid: string) => void;
+  onJumpToTime: (timeSeconds: number) => void;
+  onJumpToLocation: (distanceMM: number) => void;
   precedingIndex: number;
   isAutoScrollOn: boolean;
 }
 
-type RowData = Pick<TimingPointsListProps, "timingPoints" | "onDeleteTimingPoint" | "precedingIndex">;
+type RowData = Pick<
+  TimingPointsListProps,
+  "timingPoints" | "onDeleteTimingPoint" | "onJumpToTime" | "onJumpToLocation" | "precedingIndex"
+>;
 
 export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
-  const { isAutoScrollOn, precedingIndex, timingPoints, onDeleteTimingPoint } = props;
+  const { isAutoScrollOn, precedingIndex, timingPoints, onDeleteTimingPoint, onJumpToTime, onJumpToLocation } =
+    props;
   const listRef = useListRef(null);
   const prevPrecedingIndex = useRef(precedingIndex);
 
@@ -56,7 +67,7 @@ export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
         rowCount={timingPoints.length}
         overscanCount={5}
         rowComponent={ItemRenderer}
-        rowProps={{ timingPoints, onDeleteTimingPoint, precedingIndex }}
+        rowProps={{ timingPoints, onDeleteTimingPoint, onJumpToTime, onJumpToLocation, precedingIndex }}
         listRef={listRef}
       />
     </Card>
@@ -69,6 +80,8 @@ function ItemRenderer({
   ariaAttributes,
   timingPoints,
   onDeleteTimingPoint,
+  onJumpToTime,
+  onJumpToLocation,
   precedingIndex,
 }: RowComponentProps<RowData>) {
   const timingPoint = timingPoints[index];
@@ -91,7 +104,12 @@ function ItemRenderer({
       ]}
     >
       <TimingPointData timingPoint={timingPoint} />
-      <DeleteMenu timingPoint={timingPoint} onDeleteTimingPoint={onDeleteTimingPoint} />
+      <TimingPointMenu
+        timingPoint={timingPoint}
+        onDeleteTimingPoint={onDeleteTimingPoint}
+        onJumpToTime={onJumpToTime}
+        onJumpToLocation={onJumpToLocation}
+      />
     </ListItem>
   );
 }
@@ -104,20 +122,49 @@ const TimingPointData: FC<{ timingPoint: TimingPoint & HasUuid }> = ({ timingPoi
   </Stack>
 );
 
-const DeleteMenu: FC<{ timingPoint: TimingPoint & HasUuid; onDeleteTimingPoint: (uuid: string) => void }> = ({
-  timingPoint,
-  onDeleteTimingPoint,
-}) => (
+const TimingPointMenu: FC<{
+  timingPoint: TimingPoint & HasUuid;
+  onDeleteTimingPoint: (uuid: string) => void;
+  onJumpToTime: (timeSeconds: number) => void;
+  onJumpToLocation: (distanceMM: number) => void;
+}> = ({ timingPoint, onDeleteTimingPoint, onJumpToTime, onJumpToLocation }) => (
   <PopupState variant="popover" popupId={`tp_menu_${timingPoint.uuid}`}>
     {(popupState) => {
       return (
         <>
-          <IconButton size="small" {...bindTrigger(popupState)}>
+          <IconButton size="small" title="Timing point actions" {...bindTrigger(popupState)}>
             <MoreIcon />
           </IconButton>
           <Menu {...bindMenu(popupState)}>
             <MenuItem
-              onClick={() => onDeleteTimingPoint(timingPoint.uuid)}
+              onClick={() => {
+                onJumpToTime(timingPoint.t);
+                popupState.close();
+              }}
+              title={`Jump to time ${formatTimeSec(timingPoint.t)}`}
+            >
+              <ListItemIcon>
+                <JumpToTimeIcon />
+              </ListItemIcon>
+              <ListItemText>Jump to time</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                onJumpToLocation(timingPoint.d);
+                popupState.close();
+              }}
+              title={`Jump to location ${formatDistanceMeters(timingPoint.d)}`}
+            >
+              <ListItemIcon>
+                <JumpToLocationIcon />
+              </ListItemIcon>
+              <ListItemText>Jump to location</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                onDeleteTimingPoint(timingPoint.uuid);
+                popupState.close();
+              }}
               title={`Delete timing point t=${formatTimeSec(timingPoint.t)} / d=${formatDistanceMeters(timingPoint.d)}`}
             >
               <ListItemIcon>

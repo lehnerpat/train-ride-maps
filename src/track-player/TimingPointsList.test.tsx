@@ -10,6 +10,8 @@ describe("TimingPointsList", () => {
       <TimingPointsList
         timingPoints={[{ uuid: "timing-point-1", t: 12, d: 3456 }]}
         onDeleteTimingPoint={onDeleteTimingPoint}
+        onJumpToTime={() => {}}
+        onJumpToLocation={() => {}}
         precedingIndex={0}
         isAutoScrollOn={false}
       />,
@@ -19,5 +21,29 @@ describe("TimingPointsList", () => {
     fireEvent.click(screen.getByRole("menuitem", { name: /^Delete/ }));
 
     expect(onDeleteTimingPoint).toHaveBeenCalledWith("timing-point-1");
+  });
+
+  test("jumps to the timing point's time and location from its action menu", () => {
+    const onJumpToTime = vi.fn();
+    const onJumpToLocation = vi.fn();
+
+    render(
+      <TimingPointsList
+        timingPoints={[{ uuid: "timing-point-1", t: 12, d: 3456 }]}
+        onDeleteTimingPoint={() => {}}
+        onJumpToTime={onJumpToTime}
+        onJumpToLocation={onJumpToLocation}
+        precedingIndex={0}
+        isAutoScrollOn={false}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Jump to time" }));
+    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Jump to location" }));
+
+    expect(onJumpToTime).toHaveBeenCalledWith(12);
+    expect(onJumpToLocation).toHaveBeenCalledWith(3456);
   });
 });
