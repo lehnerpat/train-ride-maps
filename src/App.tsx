@@ -24,7 +24,9 @@ function App() {
             <Route path="/osm-import">
               <OsmImport />
             </Route>
-            <Route path="/track/:id">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
+            <Route path="/track/:id/:mode?">
+              {(params) => <ViewTrackPage trackUuid={params.id} mode={params.mode} />}
+            </Route>
             <Route path="/*">{(params) => <Error404Page path={params["*"]} />}</Route>
           </Switch>
         </Router>

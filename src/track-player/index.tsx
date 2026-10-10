@@ -40,8 +40,9 @@ import { useFileDownload } from "../common/hooks/useFileDownload";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec, formatVideoDuration } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { VideoInfoArea } from "./VideoInfoArea";
+import { PageRouting } from "../page-routing";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
@@ -68,10 +69,17 @@ const Placeholder: FC<{ width?: number | string; height?: number | string; text?
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
+export type TrackPlayerMode = "view" | "edit";
+
+export function isTrackPlayerMode(mode: string): mode is TrackPlayerMode {
+  return ["view", "edit"].includes(mode);
+}
+
 interface TrackPlayerProps {
   initialTrack: Track;
+  mode: TrackPlayerMode;
 }
-export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
+export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const initialCoord = useMemo(
     () => (initialTrack.path.length > 0 ? initialTrack.path[0] : { lat: 0, lng: 0 }),
     [initialTrack],
@@ -85,8 +93,19 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack }) => {
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
-  const isEditingModeOnState = useState(false);
-  const [isEditingModeOn, setEditingModeOn] = isEditingModeOnState;
+  const [, navigate] = useLocation();
+  const isEditingModeOn = mode === "edit";
+  const setEditingModeOn = useCallback<SetState<boolean>>(
+    (action) =>
+      navigate(
+        PageRouting.viewTrackPage(
+          track.uuid,
+          (isFunction(action) ? action(isEditingModeOn) : action) ? "edit" : "view",
+        ),
+      ),
+    [isEditingModeOn],
+  );
+  const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOn];
   const viewOptionsState = useMemoState(DefaultViewOptions);
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
 
