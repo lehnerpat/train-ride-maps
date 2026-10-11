@@ -32,6 +32,9 @@ These app-level shortcuts are handled on `keypress` of the page body, so they ma
 | --------- | ------------------------------------ |
 | `f`       | Enter fullscreen (viewing mode only) |
 | `Shift+E` | Toggle editing mode                  |
+| `Space`   | Play or pause the video              |
+
+`Space` works in both modes, with or without keyboard-focused mode. It is ignored while typing in text-entry controls or when a button or link has focus (where Space activates that control).
 
 In Editing mode, turn on **Keyboard shortcuts** in the top bar to use these additional shortcuts while focus is on the page:
 

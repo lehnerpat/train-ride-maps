@@ -210,16 +210,27 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   useKeyPressHandler(keyHandler);
 
   useEffect(() => {
-    if (!isKeyboardFocusedModeOn) return;
+    const togglePlayback = () => {
+      const playback = videoPlayerRef.current?.togglePlayback();
+      if (playback) {
+        void playback.catch((error) => console.error("Error while toggling video playback:", error));
+      }
+    };
 
     const onKeyboardShortcut = (ev: KeyboardEvent) => {
       if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) return;
-      if (
-        ev.target instanceof Element &&
-        ev.target.closest("input, textarea, select, [contenteditable='true'], [role='textbox']")
-      ) {
+      const target = ev.target instanceof Element ? ev.target : null;
+      if (target?.closest("input, textarea, select, [contenteditable='true'], [role='textbox']")) return;
+
+      if (ev.key === " ") {
+        // Space natively activates focused buttons and links
+        if (target?.closest("button, a[href], summary, [role='button'], [role='switch'], [role='menuitem']")) return;
+        ev.preventDefault();
+        togglePlayback();
         return;
       }
+
+      if (!isKeyboardFocusedModeOn) return;
 
       const key = ev.key.toLowerCase();
       if (!["j", "k", "l", "w", "a", "s", "d"].includes(key)) return;
@@ -230,10 +241,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
       if (key === "j") {
         videoPlayerRef.current?.seekBy(-10);
       } else if (key === "k") {
-        const playback = videoPlayerRef.current?.togglePlayback();
-        if (playback) {
-          void playback.catch((error) => console.error("Error while toggling video playback:", error));
-        }
+        togglePlayback();
       } else if (key === "l") {
         videoPlayerRef.current?.seekBy(10);
       } else {
