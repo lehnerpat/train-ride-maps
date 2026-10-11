@@ -66,7 +66,7 @@ export const LiveMap: FC<LiveMapProps> = ({
 
   const containerRef = useRef(null);
 
-  const { isAutopanOn } = viewOptions;
+  const isAutopanOn = isEditingModeOn ? viewOptions.isAutopanOnEditing : viewOptions.isAutopanOnViewing;
 
   useResizeObserver(containerRef, () => {
     if (map === null) return;
