@@ -21,20 +21,17 @@ vi.mock("@videojs/react/media/youtube-video", () => ({
     mediaRef,
     onTimeUpdate,
     onDurationChange,
-    onLoadedMetadata,
-    source,
+    src,
   }: {
     mediaRef: { current: unknown };
     onTimeUpdate: () => void;
     onDurationChange: () => void;
-    onLoadedMetadata: () => void;
-    source: { src: string; engine: { youtube: { disablekb: number } } };
+    src: string;
   }) => {
     mediaRef.current = media;
     return (
       <>
-        <div data-testid="youtube-disablekb" data-value={source.engine.youtube.disablekb} />
-        <button onClick={onLoadedMetadata}>Load video metadata</button>
+        <div data-testid="youtube-src" data-value={src} />
         <button onClick={onDurationChange}>Load video duration</button>
         <button onClick={onTimeUpdate}>Update time</button>
       </>
@@ -46,14 +43,7 @@ describe("VideoPlayer", () => {
   test("reports the duration from the player event", () => {
     const onDuration = vi.fn();
 
-    render(
-      <VideoPlayer
-        videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn={false}
-        onProgress={() => {}}
-        onDuration={onDuration}
-      />,
-    );
+    render(<VideoPlayer videoUrl="https://example.com/video.mp4" onProgress={() => {}} onDuration={onDuration} />);
     fireEvent.click(screen.getByRole("button", { name: "Load video duration" }));
 
     expect(onDuration).toHaveBeenCalledWith(123);
@@ -63,14 +53,7 @@ describe("VideoPlayer", () => {
     const onProgress = vi.fn();
     media.currentTime = 7;
 
-    render(
-      <VideoPlayer
-        videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn={false}
-        onProgress={onProgress}
-        onDuration={() => {}}
-      />,
-    );
+    render(<VideoPlayer videoUrl="https://example.com/video.mp4" onProgress={onProgress} onDuration={() => {}} />);
     fireEvent.click(screen.getByRole("button", { name: "Update time" }));
 
     expect(onProgress).toHaveBeenCalledWith({ playedSeconds: 7 });
@@ -82,7 +65,6 @@ describe("VideoPlayer", () => {
       <VideoPlayer
         ref={playerRef}
         videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn={false}
         onProgress={() => {}}
         onDuration={() => {}}
       />,
@@ -101,7 +83,6 @@ describe("VideoPlayer", () => {
       <VideoPlayer
         ref={playerRef}
         videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn={false}
         onProgress={() => {}}
         onDuration={() => {}}
       />,
@@ -125,7 +106,6 @@ describe("VideoPlayer", () => {
       <VideoPlayer
         ref={playerRef}
         videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn={false}
         onProgress={() => {}}
         onDuration={() => {}}
       />,
@@ -138,60 +118,8 @@ describe("VideoPlayer", () => {
     expect(pause).toHaveBeenCalledOnce();
   });
 
-  test("disables YouTube keyboard controls only in keyboard-focused mode", () => {
-    const { rerender } = render(
-      <VideoPlayer
-        videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn={false}
-        onProgress={() => {}}
-        onDuration={() => {}}
-      />,
-    );
-    expect(screen.getByTestId("youtube-disablekb").getAttribute("data-value")).toBe("0");
-
-    rerender(
-      <VideoPlayer
-        videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn
-        onProgress={() => {}}
-        onDuration={() => {}}
-      />,
-    );
-    expect(screen.getByTestId("youtube-disablekb").getAttribute("data-value")).toBe("1");
-  });
-
-  test("restores the playback position and state after YouTube reloads for keyboard mode", async () => {
-    const playerRef = createRef<VideoPlayerHandle>();
-    const play = vi.fn(() => Promise.resolve());
-    media.currentTime = 35;
-    media.paused = false;
-    media.play = play;
-
-    const { rerender } = render(
-      <VideoPlayer
-        ref={playerRef}
-        videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn={false}
-        onProgress={() => {}}
-        onDuration={() => {}}
-      />,
-    );
-    playerRef.current?.preservePlaybackOnKeyboardModeChange();
-    media.currentTime = 0;
-    media.paused = true;
-
-    rerender(
-      <VideoPlayer
-        ref={playerRef}
-        videoUrl="https://example.com/video.mp4"
-        isKeyboardFocusedModeOn
-        onProgress={() => {}}
-        onDuration={() => {}}
-      />,
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Load video metadata" }));
-
-    expect(media.currentTime).toBe(35);
-    expect(play).toHaveBeenCalledOnce();
+  test("passes the video URL directly without changing YouTube keyboard settings", () => {
+    render(<VideoPlayer videoUrl="https://example.com/video.mp4" onProgress={() => {}} onDuration={() => {}} />);
+    expect(screen.getByTestId("youtube-src").getAttribute("data-value")).toBe("https://example.com/video.mp4");
   });
 });

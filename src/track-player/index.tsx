@@ -115,17 +115,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
       ),
     [isEditingModeOn],
   );
-  const setEditingModeOnWithPlaybackPreserved = useCallback<SetState<boolean>>(
-    (action) => {
-      const nextIsEditingModeOn = isFunction(action) ? action(isEditingModeOn) : action;
-      if (isEditingModeOn && !nextIsEditingModeOn && isKeyboardFocusedModeOn) {
-        videoPlayerRef.current?.preservePlaybackOnKeyboardModeChange();
-      }
-      setEditingModeOn(nextIsEditingModeOn);
-    },
-    [isEditingModeOn, isKeyboardFocusedModeOn, setEditingModeOn],
-  );
-  const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOnWithPlaybackPreserved];
+  const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOn];
   const viewOptionsState = useMemoState(DefaultViewOptions);
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
 
@@ -198,12 +188,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
     setCurrentCenter(interpolatedCoord);
   }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
 
-  const toggleEditingMode = useCallback(
-    () => setEditingModeOnWithPlaybackPreserved(!isEditingModeOn),
-    [isEditingModeOn, setEditingModeOnWithPlaybackPreserved],
-  );
+  const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn, setEditingModeOn]);
   const toggleKeyboardMode = useCallback(() => {
-    videoPlayerRef.current?.preservePlaybackOnKeyboardModeChange();
     setIsKeyboardModeActive((active) => !active);
   }, []);
   const enterFullscreen = useCallback(
@@ -305,7 +291,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
             <VideoPlayer
               ref={videoPlayerRef}
               videoUrl={track.videoUrl}
-              isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
               onProgress={(ev) => {
                 setPlayedSeconds(ev.playedSeconds);
               }}
@@ -494,12 +479,23 @@ const MenuBar: FC<{
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         {trackTitle}
       </Typography>
+      {isEditingModeOn && (
+        <IconButton
+          color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
+          title={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
+          aria-label={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
+          aria-pressed={isKeyboardFocusedModeOn}
+          onClick={onToggleKeyboardMode}
+        >
+          <KeyboardIcon />
+        </IconButton>
+      )}
       <ToggleButtonGroup
         value={isEditingModeOn ? "editing" : "viewing"}
         exclusive
         onChange={(_, newValue) => setIsEditingModeOn(newValue === "editing")}
         size="small"
-        sx={{ mr: 3 }}
+        sx={{ mx: 3 }}
       >
         <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
           <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>Viewing</Box>
@@ -510,16 +506,6 @@ const MenuBar: FC<{
           <EditIcon />
         </ToggleButton>
       </ToggleButtonGroup>
-      <IconButton
-        color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
-        title={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
-        aria-label={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
-        aria-pressed={isKeyboardFocusedModeOn}
-        disabled={!isEditingModeOn}
-        onClick={onToggleKeyboardMode}
-      >
-        <KeyboardIcon />
-      </IconButton>
       <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
         <DownloadIcon />
       </IconButton>

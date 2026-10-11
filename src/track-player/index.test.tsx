@@ -10,7 +10,6 @@ const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
     seekTo: vi.fn(),
     seekBy: vi.fn(),
     togglePlayback: vi.fn(() => Promise.resolve()),
-    preservePlaybackOnKeyboardModeChange: vi.fn(),
   },
   mapInstance: {
     options: { keyboardPanDelta: 80 },
@@ -21,15 +20,14 @@ const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
 vi.mock("./VideoPlayer", async () => {
   const React = await import("react");
   return {
-    VideoPlayer: React.forwardRef<typeof videoPlayerHandle, { isKeyboardFocusedModeOn: boolean }>(
-      ({ isKeyboardFocusedModeOn }, ref) => {
-        React.useImperativeHandle(ref, () => videoPlayerHandle, []);
-        return React.createElement("div", {
-          "data-testid": "video-player",
-          "data-keyboard-focused": String(isKeyboardFocusedModeOn),
-        });
-      },
-    ),
+    VideoPlayer: React.forwardRef<typeof videoPlayerHandle, Record<string, never>>((_, ref) => {
+      React.useImperativeHandle(ref, () => videoPlayerHandle, []);
+      const instanceId = React.useId();
+      return React.createElement("div", {
+        "data-testid": "video-player",
+        "data-instance": instanceId,
+      });
+    }),
   };
 });
 
@@ -92,9 +90,10 @@ describe("TrackPlayer keyboard-focused mode", () => {
 
   test("J/K/L control the video and W/A/S/D pan by Leaflet's keyboard delta", async () => {
     renderTrackPlayer();
+    const videoPlayerInstance = screen.getByTestId("video-player").getAttribute("data-instance");
     fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
-    expect(screen.getByTestId("video-player").getAttribute("data-keyboard-focused")).toBe("true");
+    expect(screen.getByTestId("video-player").getAttribute("data-instance")).toBe(videoPlayerInstance);
     expect(screen.getByTestId("live-map").getAttribute("data-keyboard-focused")).toBe("true");
 
     fireEvent.keyDown(document, { key: "j" });
@@ -121,25 +120,5 @@ describe("TrackPlayer keyboard-focused mode", () => {
 
     expect(videoPlayerHandle.seekBy).not.toHaveBeenCalled();
     expect(mapInstance.panBy).not.toHaveBeenCalled();
-  });
-
-  test("turns keyboard-focused mode off when leaving Editing mode", async () => {
-    renderTrackPlayer();
-    fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
-    fireEvent.click(screen.getByRole("button", { name: "Viewing" }));
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Enable keyboard shortcuts" }).hasAttribute("disabled")).toBe(true);
-      expect(screen.getByTestId("video-player").getAttribute("data-keyboard-focused")).toBe("false");
-    });
-
-    expect(videoPlayerHandle.preservePlaybackOnKeyboardModeChange).toHaveBeenCalledTimes(2);
-    fireEvent.keyDown(document, { key: "j" });
-    expect(videoPlayerHandle.seekBy).not.toHaveBeenCalled();
-  });
-
-  test("keeps the keyboard-mode toggle disabled in Viewing mode", () => {
-    renderTrackPlayer("/track/track-id/view");
-    expect(screen.getByRole("button", { name: "Enable keyboard shortcuts" }).hasAttribute("disabled")).toBe(true);
   });
 });

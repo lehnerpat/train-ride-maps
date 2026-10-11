@@ -41,7 +41,7 @@ In Editing mode, turn on **Keyboard shortcuts** in the top bar to use these addi
 | `j` / `k` / `l` | Seek back 10 seconds / play or pause / forward 10 seconds |
 | `w` / `a` / `s` / `d` | Pan the map up / left / down / right         |
 
-Keyboard-focused mode disables the YouTube and Leaflet keyboard shortcuts while active, and turns off automatically when leaving Editing mode. Shortcuts do not intercept modified key combinations or typing in text-entry controls. Since the YouTube player is a cross-origin iframe, the page cannot receive these shortcuts while the iframe itself has focus; move focus back to the page to use them.
+Keyboard-focused mode disables Leaflet's keyboard navigation while active, and turns off automatically when leaving Editing mode. YouTube's own shortcuts remain enabled inside its player; the app does not change the player's keyboard settings, avoiding an iframe reload when toggling modes. App shortcuts do not intercept modified key combinations or typing in text-entry controls. Since the YouTube player is a cross-origin iframe, the page cannot receive app shortcuts while the iframe itself has focus; move focus back to the page to use them.
 
 ### View options
 
