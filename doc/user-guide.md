@@ -28,11 +28,12 @@ Shows the video with the map as an overlay and the train's current position as a
 
 These app-level shortcuts are handled on `keypress` of the page body, so they may not fire while an element such as the video iframe has focus:
 
-| Key       | Action                               |
-| --------- | ------------------------------------ |
-| `f`       | Enter fullscreen (viewing mode only) |
-| `Shift+E` | Toggle editing mode                  |
-| `Space`   | Play or pause the video              |
+| Key       | Action                                |
+| --------- | ------------------------------------- |
+| `f`       | Enter fullscreen (viewing mode only)  |
+| `Shift+E` | Toggle editing mode                   |
+| `Space`   | Play or pause the video               |
+| `Esc`     | Remove focus from the focused element |
 
 `Space` works in both modes, with or without keyboard-focused mode. It is ignored while typing in text-entry controls or when a button or link has focus (where Space activates that control).
 

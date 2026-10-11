@@ -219,6 +219,14 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
 
     const onKeyboardShortcut = (ev: KeyboardEvent) => {
       if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) return;
+      if (ev.key === "Escape") {
+        // Release focus from whatever element captured it, so other shortcuts reach the page again
+        if (document.activeElement instanceof HTMLElement && document.activeElement !== document.body) {
+          document.activeElement.blur();
+        }
+        return;
+      }
+
       const target = ev.target instanceof Element ? ev.target : null;
       if (target?.closest("input, textarea, select, [contenteditable='true'], [role='textbox']")) return;
 

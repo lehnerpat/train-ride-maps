@@ -172,4 +172,14 @@ describe("TrackPlayer keyboard-focused mode", () => {
 
     expect(videoPlayerHandle.togglePlayback).not.toHaveBeenCalled();
   });
+
+  test("Escape removes focus from the focused element", () => {
+    renderTrackPlayer();
+    const input = screen.getByRole("textbox", { name: "Video title" });
+    input.focus();
+    expect(document.activeElement).toBe(input);
+
+    fireEvent.keyDown(input, { key: "Escape" });
+    expect(document.activeElement).toBe(document.body);
+  });
 });
