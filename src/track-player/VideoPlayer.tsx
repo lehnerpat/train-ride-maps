@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
 
-import { VideoPlayer as VideoJsPlayer } from "@videojs/react/video";
+import { Video, VideoPlayer as VideoJsPlayer, NeutralVideoSkin } from "@videojs/react/video";
 import { YouTubeVideo } from "@videojs/react/media/youtube-video";
 import type { YouTubeAdapter } from "@videojs/youtube-video";
 import "@videojs/react/video/neutral-skin.css";
@@ -19,7 +19,7 @@ export interface VideoPlayerHandle {
 
 export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
   ({ videoUrl, onProgress, onDuration }, ref) => {
-    const playerRef = useRef<YouTubeAdapter>(null);
+    const playerRef = useRef<YouTubeAdapter & HTMLVideoElement>(null);
 
     useImperativeHandle(
       ref,
@@ -51,21 +51,41 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
 
     return (
       <VideoJsPlayer>
-        <YouTubeVideo
-          controls
-          src={videoUrl}
-          mediaRef={playerRef}
-          onTimeUpdate={() => {
-            if (playerRef.current) {
-              onProgress({ playedSeconds: playerRef.current.currentTime });
-            }
-          }}
-          onDurationChange={() => {
-            if (playerRef.current) {
-              onDuration(playerRef.current.duration);
-            }
-          }}
-        />
+        {videoUrl.startsWith("https://www.youtube.com") ? (
+          <YouTubeVideo
+            controls
+            src={videoUrl}
+            mediaRef={playerRef}
+            onTimeUpdate={() => {
+              if (playerRef.current) {
+                onProgress({ playedSeconds: playerRef.current.currentTime });
+              }
+            }}
+            onDurationChange={() => {
+              if (playerRef.current) {
+                onDuration(playerRef.current.duration);
+              }
+            }}
+          />
+        ) : (
+          <NeutralVideoSkin>
+            <Video
+              playsInline
+              mediaRef={playerRef}
+              src={videoUrl}
+              onTimeUpdate={() => {
+                if (playerRef.current) {
+                  onProgress({ playedSeconds: playerRef.current.currentTime });
+                }
+              }}
+              onDurationChange={() => {
+                if (playerRef.current) {
+                  onDuration(playerRef.current.duration);
+                }
+              }}
+            />
+          </NeutralVideoSkin>
+        )}
       </VideoJsPlayer>
     );
   },

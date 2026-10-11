@@ -13,6 +13,7 @@ const media = {
 
 vi.mock("@videojs/react/video", () => ({
   VideoPlayer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Video: ({ src }: { src?: string }) => <div data-testid="video-src" data-value={src} />,
   NeutralVideoSkin: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
@@ -43,7 +44,9 @@ describe("VideoPlayer", () => {
   test("reports the duration from the player event", () => {
     const onDuration = vi.fn();
 
-    render(<VideoPlayer videoUrl="https://example.com/video.mp4" onProgress={() => {}} onDuration={onDuration} />);
+    render(
+      <VideoPlayer videoUrl="https://www.youtube.com/watch?v=abc" onProgress={() => {}} onDuration={onDuration} />,
+    );
     fireEvent.click(screen.getByRole("button", { name: "Load video duration" }));
 
     expect(onDuration).toHaveBeenCalledWith(123);
@@ -53,7 +56,9 @@ describe("VideoPlayer", () => {
     const onProgress = vi.fn();
     media.currentTime = 7;
 
-    render(<VideoPlayer videoUrl="https://example.com/video.mp4" onProgress={onProgress} onDuration={() => {}} />);
+    render(
+      <VideoPlayer videoUrl="https://www.youtube.com/watch?v=abc" onProgress={onProgress} onDuration={() => {}} />,
+    );
     fireEvent.click(screen.getByRole("button", { name: "Update time" }));
 
     expect(onProgress).toHaveBeenCalledWith({ playedSeconds: 7 });
@@ -64,7 +69,7 @@ describe("VideoPlayer", () => {
     render(
       <VideoPlayer
         ref={playerRef}
-        videoUrl="https://example.com/video.mp4"
+        videoUrl="https://www.youtube.com/watch?v=abc"
         onProgress={() => {}}
         onDuration={() => {}}
       />,
@@ -82,7 +87,7 @@ describe("VideoPlayer", () => {
     render(
       <VideoPlayer
         ref={playerRef}
-        videoUrl="https://example.com/video.mp4"
+        videoUrl="https://www.youtube.com/watch?v=abc"
         onProgress={() => {}}
         onDuration={() => {}}
       />,
@@ -105,7 +110,7 @@ describe("VideoPlayer", () => {
     render(
       <VideoPlayer
         ref={playerRef}
-        videoUrl="https://example.com/video.mp4"
+        videoUrl="https://www.youtube.com/watch?v=abc"
         onProgress={() => {}}
         onDuration={() => {}}
       />,
@@ -119,7 +124,7 @@ describe("VideoPlayer", () => {
   });
 
   test("passes the video URL directly without changing YouTube keyboard settings", () => {
-    render(<VideoPlayer videoUrl="https://example.com/video.mp4" onProgress={() => {}} onDuration={() => {}} />);
-    expect(screen.getByTestId("youtube-src").getAttribute("data-value")).toBe("https://example.com/video.mp4");
+    render(<VideoPlayer videoUrl="https://www.youtube.com/watch?v=abc" onProgress={() => {}} onDuration={() => {}} />);
+    expect(screen.getByTestId("youtube-src").getAttribute("data-value")).toBe("https://www.youtube.com/watch?v=abc");
   });
 });

@@ -44,6 +44,8 @@ import { TimingPointsList } from "./TimingPointsList";
 import { Link, useLocation } from "wouter";
 import { VideoInfoArea } from "./VideoInfoArea";
 import { PageRouting } from "../page-routing";
+import { VideoOverrideButton } from "./VideoOverrideButton";
+import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
@@ -98,6 +100,18 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const videoPlayerRef = useRef<VideoPlayerHandle>(null);
   const keyboardMapRef = useRef<LeafletMap | null>(null);
   const [isKeyboardModeActive, setIsKeyboardModeActive] = useState(false);
+  const [videoUrlOverride, setVideoUrlOverride] = useState(() => loadVideoUrlOverride(initialTrack.uuid));
+  const changeVideoUrlOverride = useCallback(
+    (url: string | undefined, options?: { isLocalFile?: boolean }) => {
+      setVideoUrlOverride((prev) => {
+        if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+        return url;
+      });
+      // Object URLs are meaningless after a reload, so only persist real URLs
+      saveVideoUrlOverride(initialTrack.uuid, options?.isLocalFile ? undefined : url);
+    },
+    [initialTrack.uuid],
+  );
   const locationRequestId = useRef(0);
   const [, navigate] = useLocation();
   const isEditingModeOn = mode === "edit";
@@ -295,6 +309,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
         isEditingState={isEditingModeOnState}
         isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
         onToggleKeyboardMode={toggleKeyboardMode}
+        videoUrlOverride={videoUrlOverride}
+        onVideoUrlOverrideChange={changeVideoUrlOverride}
         viewOptionsState={viewOptionsState}
         trackTitle={track.title}
         onDownloadFileClicked={downloadTrackAsFile}
@@ -306,7 +322,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
           <>
             <VideoPlayer
               ref={videoPlayerRef}
-              videoUrl={track.videoUrl}
+              videoUrl={videoUrlOverride ?? track.videoUrl}
               onProgress={(ev) => {
                 setPlayedSeconds(ev.playedSeconds);
               }}
@@ -472,6 +488,8 @@ const MenuBar: FC<{
   isEditingState: UseState<boolean>;
   isKeyboardFocusedModeOn: boolean;
   onToggleKeyboardMode: () => void;
+  videoUrlOverride: string | undefined;
+  onVideoUrlOverrideChange: (url: string | undefined, options?: { isLocalFile?: boolean }) => void;
   viewOptionsState: UseState<ViewOptions>;
   onDownloadFileClicked: () => void;
   onEnterFullscreenClicked: () => void;
@@ -480,6 +498,8 @@ const MenuBar: FC<{
   isEditingState: [isEditingModeOn, setIsEditingModeOn],
   isKeyboardFocusedModeOn,
   onToggleKeyboardMode,
+  videoUrlOverride,
+  onVideoUrlOverrideChange,
   viewOptionsState,
   onDownloadFileClicked,
   onEnterFullscreenClicked,
@@ -495,6 +515,7 @@ const MenuBar: FC<{
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         {trackTitle}
       </Typography>
+      {isEditingModeOn && <VideoOverrideButton override={videoUrlOverride} onChange={onVideoUrlOverrideChange} />}
       {isEditingModeOn && (
         <IconButton
           color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
