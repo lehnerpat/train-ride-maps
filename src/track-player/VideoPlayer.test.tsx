@@ -3,20 +3,32 @@ import { describe, expect, test, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { VideoPlayer, VideoPlayerHandle } from "./VideoPlayer";
 
-vi.mock("react-player", async () => {
-  const React = await import("react");
-  return {
-    default: React.forwardRef<
-      HTMLVideoElement,
-      { onDurationChange?: (event: { currentTarget: { duration: number } }) => void }
-    >(({ onDurationChange }, ref) => (
+const media = { currentTime: 0, duration: 123 };
+
+vi.mock("@videojs/react/video", () => ({
+  VideoPlayer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  NeutralVideoSkin: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+vi.mock("@videojs/react/media/youtube-video", () => ({
+  YouTubeVideo: ({
+    mediaRef,
+    onTimeUpdate,
+    onDurationChange,
+  }: {
+    mediaRef: { current: unknown };
+    onTimeUpdate: () => void;
+    onDurationChange: () => void;
+  }) => {
+    mediaRef.current = media;
+    return (
       <>
-        <video ref={ref} />
-        <button onClick={() => onDurationChange?.({ currentTarget: { duration: 123 } })}>Load video duration</button>
+        <button onClick={onDurationChange}>Load video duration</button>
+        <button onClick={onTimeUpdate}>Update time</button>
       </>
-    )),
-  };
-});
+    );
+  },
+}));
 
 describe("VideoPlayer", () => {
   test("reports the duration from the player event", () => {
@@ -28,9 +40,19 @@ describe("VideoPlayer", () => {
     expect(onDuration).toHaveBeenCalledWith(123);
   });
 
+  test("reports the played seconds on time updates", () => {
+    const onProgress = vi.fn();
+    media.currentTime = 7;
+
+    render(<VideoPlayer videoUrl="https://example.com/video.mp4" onProgress={onProgress} onDuration={() => {}} />);
+    fireEvent.click(screen.getByRole("button", { name: "Update time" }));
+
+    expect(onProgress).toHaveBeenCalledWith({ playedSeconds: 7 });
+  });
+
   test("seeks the video to the requested time", () => {
     const playerRef = createRef<VideoPlayerHandle>();
-    const { container } = render(
+    render(
       <VideoPlayer
         ref={playerRef}
         videoUrl="https://example.com/video.mp4"
@@ -41,6 +63,6 @@ describe("VideoPlayer", () => {
 
     playerRef.current?.seekTo(42);
 
-    expect(container.querySelector("video")?.currentTime).toBe(42);
+    expect(media.currentTime).toBe(42);
   });
 });

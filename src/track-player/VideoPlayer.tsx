@@ -1,5 +1,9 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import ReactPlayer from "react-player";
+
+import { VideoPlayer as VideoJsPlayer } from "@videojs/react/video";
+import { YouTubeVideo } from "@videojs/react/media/youtube-video";
+import type { YouTubeAdapter } from "@videojs/youtube-video";
+import "@videojs/react/video/neutral-skin.css";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -13,30 +17,38 @@ export interface VideoPlayerHandle {
 
 export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
   ({ videoUrl, onProgress, onDuration }, ref) => {
-    const playerRef = useRef<HTMLVideoElement>(null);
+    const playerRef = useRef<YouTubeAdapter>(null);
 
     useImperativeHandle(
       ref,
       () => ({
         seekTo: (timeSeconds) => {
-          if (playerRef.current) playerRef.current.currentTime = timeSeconds;
+          if (playerRef.current) {
+            playerRef.current.currentTime = timeSeconds;
+          }
         },
       }),
       [],
     );
 
     return (
-      <ReactPlayer
-        ref={playerRef}
-        className="react-player"
-        controls
-        width="100%"
-        height="100%"
-        src={videoUrl}
-        onTimeUpdate={(ev) => onProgress({ playedSeconds: ev.currentTarget.currentTime })}
-        onDurationChange={(ev) => onDuration(ev.currentTarget.duration)}
-        config={{ youtube: { start: 1, fs: 0 } }}
-      />
+      <VideoJsPlayer>
+        <YouTubeVideo
+          controls
+          src={videoUrl}
+          mediaRef={playerRef}
+          onTimeUpdate={() => {
+            if (playerRef.current) {
+              onProgress({ playedSeconds: playerRef.current.currentTime });
+            }
+          }}
+          onDurationChange={() => {
+            if (playerRef.current) {
+              onDuration(playerRef.current.duration);
+            }
+          }}
+        />
+      </VideoJsPlayer>
     );
   },
 );
