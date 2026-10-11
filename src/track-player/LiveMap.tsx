@@ -35,6 +35,8 @@ interface LiveMapProps {
   centerOnLocation?: { center: LatLngLiteral; requestId: number };
   playedSeconds: number;
   isEditingModeOn: boolean;
+  isKeyboardFocusedModeOn: boolean;
+  onMapReady?: (map: LeafletMap | null) => void;
   viewOptions: MapViewOptions;
 }
 
@@ -58,6 +60,8 @@ export const LiveMap: FC<LiveMapProps> = ({
   centerOnLocation,
   onMapMoved,
   isEditingModeOn,
+  isKeyboardFocusedModeOn,
+  onMapReady,
   viewOptions,
 }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
@@ -94,6 +98,15 @@ export const LiveMap: FC<LiveMapProps> = ({
   const zoomIn = useCallback(() => map?.zoomIn(), [map]);
   const zoomOut = useCallback(() => map?.zoomOut(), [map]);
 
+  useEffect(() => {
+    if (map === null) return;
+    if (isKeyboardFocusedModeOn) {
+      map.keyboard.disable();
+    } else {
+      map.keyboard.enable();
+    }
+  }, [map, isKeyboardFocusedModeOn]);
+
   return (
     <LiveMapContainer ref={containerRef}>
       <LiveMapContext.Provider value={{ isEditingModeOn, viewOptions }}>
@@ -101,11 +114,17 @@ export const LiveMap: FC<LiveMapProps> = ({
           center={initialCenter}
           zoom={17}
           style={{ height: "100%", width: "100%" }}
-          ref={useCallback((map: LeafletMap | null) => {
-            if (map === null) return;
-            setMap(map);
-            setAttributionHtml(collectAttributions(map));
-          }, [])}
+          keyboard={!isKeyboardFocusedModeOn}
+          ref={useCallback(
+            (map: LeafletMap | null) => {
+              setMap(map);
+              onMapReady?.(map);
+              if (map !== null) {
+                setAttributionHtml(collectAttributions(map));
+              }
+            },
+            [onMapReady],
+          )}
           attributionControl={false}
           zoomControl={false}
         >

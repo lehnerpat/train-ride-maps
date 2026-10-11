@@ -22,21 +22,30 @@ Shows the video with the map as an overlay and the train's current position as a
 | Download                 | Save the track as `track_<uuid>.json` |
 | Fullscreen               | Fullscreens video + map together (disabled in editing mode; the YouTube player's own fullscreen is disabled on purpose). Not available on iPhone Safari, which lacks the Fullscreen API |
 | View options             | See below                             |
+| Keyboard shortcuts       | Enable keyboard-focused mode (available only in Editing mode) |
 
 ### Keyboard shortcuts
 
-Only these app-level shortcuts exist (handled on `keypress` of the page body, so they may not fire while an element such as the video iframe has focus):
+These app-level shortcuts are handled on `keypress` of the page body, so they may not fire while an element such as the video iframe has focus:
 
 | Key       | Action                               |
 | --------- | ------------------------------------ |
 | `f`       | Enter fullscreen (viewing mode only) |
 | `Shift+E` | Toggle editing mode                  |
 
-The YouTube player and Leaflet map have their own built-in shortcuts while focused (e.g. space/arrows for the player; `+`/`-` and arrow keys for the map). There is no way yet to control the player while the map has focus ([#10][issue-10]).
+In Editing mode, turn on **Keyboard shortcuts** in the top bar to use these additional shortcuts while focus is on the page:
+
+<!-- prettier-ignore -->
+| Key             | Action                                            |
+| --------------- | ------------------------------------------------- |
+| `j` / `k` / `l` | Seek back 10 seconds / play or pause / forward 10 seconds |
+| `w` / `a` / `s` / `d` | Pan the map up / left / down / right         |
+
+Keyboard-focused mode disables the YouTube and Leaflet keyboard shortcuts while active, and turns off automatically when leaving Editing mode. Shortcuts do not intercept modified key combinations or typing in text-entry controls. Since the YouTube player is a cross-origin iframe, the page cannot receive these shortcuts while the iframe itself has focus; move focus back to the page to use them.
 
 ### View options
 
-- Auto-pan map to current position
+- Auto-pan map to current position: independent settings for Viewing and Editing modes (on by default in Viewing; off by default in Editing)
 - Show track path
 - Editing mode: crosshair overlay for map centre, timing point markers on the path
 - Timing points list: auto-scroll to the current timing point
@@ -68,6 +77,7 @@ The **timing points map** appears on the right side of the editing mode screen. 
 - While the video is paused, pan with:
   - mouse click and drag,
   - the arrow keys (Leaflet default, while the map has focus).
+- In keyboard-focused mode, use `w` / `a` / `s` / `d` to pan without focusing the map. Playback auto-pan remains active and can recenter the map when the video position changes.
 
 ### Adding timing points
 

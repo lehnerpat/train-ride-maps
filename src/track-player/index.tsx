@@ -1,5 +1,5 @@
 import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LatLngLiteral } from "leaflet";
+import { LatLngLiteral, Map as LeafletMap } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
@@ -33,6 +33,7 @@ import {
   Download as DownloadIcon,
   Edit as EditIcon,
   Fullscreen as FullscreenIcon,
+  Keyboard as KeyboardIcon,
   SmartDisplay as SmartDisplayIcon,
   Tune as TuneIcon,
 } from "@mui/icons-material";
@@ -95,9 +96,15 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [centerOnLocation, setCenterOnLocation] = useState<{ center: LatLngLiteral; requestId: number }>();
   const videoPlayerRef = useRef<VideoPlayerHandle>(null);
+  const keyboardMapRef = useRef<LeafletMap | null>(null);
+  const [isKeyboardModeActive, setIsKeyboardModeActive] = useState(false);
   const locationRequestId = useRef(0);
   const [, navigate] = useLocation();
   const isEditingModeOn = mode === "edit";
+  const isKeyboardFocusedModeOn = isEditingModeOn && isKeyboardModeActive;
+  const setKeyboardMap = useCallback((map: LeafletMap | null) => {
+    keyboardMapRef.current = map;
+  }, []);
   const setEditingModeOn = useCallback<SetState<boolean>>(
     (action) =>
       navigate(
@@ -108,7 +115,17 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
       ),
     [isEditingModeOn],
   );
-  const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOn];
+  const setEditingModeOnWithPlaybackPreserved = useCallback<SetState<boolean>>(
+    (action) => {
+      const nextIsEditingModeOn = isFunction(action) ? action(isEditingModeOn) : action;
+      if (isEditingModeOn && !nextIsEditingModeOn && isKeyboardFocusedModeOn) {
+        videoPlayerRef.current?.preservePlaybackOnKeyboardModeChange();
+      }
+      setEditingModeOn(nextIsEditingModeOn);
+    },
+    [isEditingModeOn, isKeyboardFocusedModeOn, setEditingModeOn],
+  );
+  const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOnWithPlaybackPreserved];
   const viewOptionsState = useMemoState(DefaultViewOptions);
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
 
@@ -118,6 +135,12 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const timingPoints = track.timingPoints;
   const [path, setPath] = usePickedState(trackState, "path");
   const [, setTimingPoints] = usePickedState(trackState, "timingPoints");
+
+  useEffect(() => {
+    if (!isEditingModeOn) {
+      setIsKeyboardModeActive(false);
+    }
+  }, [isEditingModeOn]);
 
   useEffect(() => {
     const dfsMap = computeDistanceFromStartMap(path);
@@ -175,7 +198,14 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
     setCurrentCenter(interpolatedCoord);
   }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
 
-  const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn, setEditingModeOn]);
+  const toggleEditingMode = useCallback(
+    () => setEditingModeOnWithPlaybackPreserved(!isEditingModeOn),
+    [isEditingModeOn, setEditingModeOnWithPlaybackPreserved],
+  );
+  const toggleKeyboardMode = useCallback(() => {
+    videoPlayerRef.current?.preservePlaybackOnKeyboardModeChange();
+    setIsKeyboardModeActive((active) => !active);
+  }, []);
   const enterFullscreen = useCallback(
     () => _enterFullscreen(videoPlayerAndMapRef, isEditingModeOn),
     [videoPlayerAndMapRef, isEditingModeOn],
@@ -192,6 +222,47 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
     [toggleEditingMode, enterFullscreen],
   );
   useKeyPressHandler(keyHandler);
+
+  useEffect(() => {
+    if (!isKeyboardFocusedModeOn) return;
+
+    const onKeyboardShortcut = (ev: KeyboardEvent) => {
+      if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) return;
+      if (
+        ev.target instanceof Element &&
+        ev.target.closest("input, textarea, select, [contenteditable='true'], [role='textbox']")
+      ) {
+        return;
+      }
+
+      const key = ev.key.toLowerCase();
+      if (!["j", "k", "l", "w", "a", "s", "d"].includes(key)) return;
+
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      if (key === "j") {
+        videoPlayerRef.current?.seekBy(-10);
+      } else if (key === "k") {
+        const playback = videoPlayerRef.current?.togglePlayback();
+        if (playback) {
+          void playback.catch((error) => console.error("Error while toggling video playback:", error));
+        }
+      } else if (key === "l") {
+        videoPlayerRef.current?.seekBy(10);
+      } else {
+        const map = keyboardMapRef.current;
+        if (!map) return;
+        const delta = map.options.keyboardPanDelta ?? 80;
+        const panOffset: [number, number] =
+          key === "w" ? [0, -delta] : key === "a" ? [-delta, 0] : key === "s" ? [0, delta] : [delta, 0];
+        map.panBy(panOffset);
+      }
+    };
+
+    document.addEventListener("keydown", onKeyboardShortcut);
+    return () => document.removeEventListener("keydown", onKeyboardShortcut);
+  }, [isKeyboardFocusedModeOn]);
 
   const reversePath = useCallback(() => setPath((path) => [...path].reverse()), [setPath]);
   const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
@@ -220,6 +291,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
     <div>
       <MenuBar
         isEditingState={isEditingModeOnState}
+        isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
+        onToggleKeyboardMode={toggleKeyboardMode}
         viewOptionsState={viewOptionsState}
         trackTitle={track.title}
         onDownloadFileClicked={downloadTrackAsFile}
@@ -232,6 +305,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
             <VideoPlayer
               ref={videoPlayerRef}
               videoUrl={track.videoUrl}
+              isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
               onProgress={(ev) => {
                 setPlayedSeconds(ev.playedSeconds);
               }}
@@ -256,6 +330,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
                   onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
                   playedSeconds={playedSeconds}
                   isEditingModeOn={isEditingModeOn}
+                  isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
                   viewOptions={viewOptions.mapViewOptions}
                 />
                 {/* <Placeholder width="100%" height="100%" text="Map" /> */}
@@ -276,6 +351,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
                 onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
+                isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
+                onMapReady={setKeyboardMap}
                 viewOptions={viewOptions.mapViewOptions}
               />
               {/* <Placeholder width="100%" height="100%" text="Map" /> */}
@@ -325,7 +402,9 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
 interface WithShowAsMapOverlay {
   showMapAsOverlay: boolean;
 }
-const VideoAndMapContainer = styled(Box)<WithShowAsMapOverlay>(
+const VideoAndMapContainer = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "showMapAsOverlay",
+})<WithShowAsMapOverlay>(
   ({ showMapAsOverlay }) => css`
     position: relative;
     margin: 0 auto;
@@ -344,7 +423,7 @@ const VideoAndMapContainer = styled(Box)<WithShowAsMapOverlay>(
     }
   `,
 );
-const VideoContainer = styled(Box)<WithShowAsMapOverlay>(
+const VideoContainer = styled(Box, { shouldForwardProp: (prop) => prop !== "showMapAsOverlay" })<WithShowAsMapOverlay>(
   ({ showMapAsOverlay }) => css`
     position: absolute;
     aspect-ratio: 16/9;
@@ -390,12 +469,16 @@ function useKeyPressHandler(keyHandler: (ev: KeyboardEvent) => void) {
 const MenuBar: FC<{
   trackTitle: string;
   isEditingState: UseState<boolean>;
+  isKeyboardFocusedModeOn: boolean;
+  onToggleKeyboardMode: () => void;
   viewOptionsState: UseState<ViewOptions>;
   onDownloadFileClicked: () => void;
   onEnterFullscreenClicked: () => void;
 }> = ({
   trackTitle,
   isEditingState: [isEditingModeOn, setIsEditingModeOn],
+  isKeyboardFocusedModeOn,
+  onToggleKeyboardMode,
   viewOptionsState,
   onDownloadFileClicked,
   onEnterFullscreenClicked,
@@ -427,6 +510,16 @@ const MenuBar: FC<{
           <EditIcon />
         </ToggleButton>
       </ToggleButtonGroup>
+      <IconButton
+        color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
+        title={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
+        aria-label={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
+        aria-pressed={isKeyboardFocusedModeOn}
+        disabled={!isEditingModeOn}
+        onClick={onToggleKeyboardMode}
+      >
+        <KeyboardIcon />
+      </IconButton>
       <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
         <DownloadIcon />
       </IconButton>

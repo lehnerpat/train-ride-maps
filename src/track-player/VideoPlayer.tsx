@@ -7,17 +7,22 @@ import "@videojs/react/video/neutral-skin.css";
 
 interface VideoPlayerProps {
   videoUrl: string;
+  isKeyboardFocusedModeOn: boolean;
   onProgress: (state: { playedSeconds: number }) => void;
   onDuration: (duration: number) => void;
 }
 
 export interface VideoPlayerHandle {
   seekTo: (timeSeconds: number) => void;
+  seekBy: (offsetSeconds: number) => void;
+  togglePlayback: () => Promise<void>;
+  preservePlaybackOnKeyboardModeChange: () => void;
 }
 
 export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
-  ({ videoUrl, onProgress, onDuration }, ref) => {
+  ({ videoUrl, isKeyboardFocusedModeOn, onProgress, onDuration }, ref) => {
     const playerRef = useRef<YouTubeAdapter>(null);
+    const pendingPlaybackRestoreRef = useRef<{ timeSeconds: number; wasPlaying: boolean } | undefined>(undefined);
 
     useImperativeHandle(
       ref,
@@ -27,16 +32,58 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
             playerRef.current.currentTime = timeSeconds;
           }
         },
+        seekBy: (offsetSeconds) => {
+          if (!playerRef.current) return;
+          const currentTime = Number.isFinite(playerRef.current.currentTime) ? playerRef.current.currentTime : 0;
+          const duration = playerRef.current.duration;
+          const targetTime = Math.max(0, currentTime + offsetSeconds);
+          playerRef.current.currentTime =
+            Number.isFinite(duration) && duration > 0 ? Math.min(targetTime, duration) : targetTime;
+        },
+        togglePlayback: () => {
+          const player = playerRef.current;
+          if (!player || !player.paused) {
+            player?.pause();
+            return Promise.resolve();
+          }
+          return player.play();
+        },
+        preservePlaybackOnKeyboardModeChange: () => {
+          const player = playerRef.current;
+          if (!player || pendingPlaybackRestoreRef.current) return;
+          pendingPlaybackRestoreRef.current = {
+            timeSeconds: Number.isFinite(player.currentTime) ? player.currentTime : 0,
+            wasPlaying: !player.paused,
+          };
+        },
       }),
       [],
     );
+
+    const restorePlaybackAfterLoad = () => {
+      const player = playerRef.current;
+      const pendingPlayback = pendingPlaybackRestoreRef.current;
+      if (!player || !pendingPlayback) return;
+
+      pendingPlaybackRestoreRef.current = undefined;
+      player.currentTime = pendingPlayback.timeSeconds;
+      if (pendingPlayback.wasPlaying) {
+        void player
+          .play()
+          .catch((error) => console.error("Error while resuming video after keyboard mode change:", error));
+      }
+    };
 
     return (
       <VideoJsPlayer>
         <YouTubeVideo
           controls
-          src={videoUrl}
+          source={{
+            src: videoUrl,
+            engine: { youtube: { disablekb: isKeyboardFocusedModeOn ? 1 : 0 } },
+          }}
           mediaRef={playerRef}
+          onLoadedMetadata={restorePlaybackAfterLoad}
           onTimeUpdate={() => {
             if (playerRef.current) {
               onProgress({ playedSeconds: playerRef.current.currentTime });

@@ -79,16 +79,10 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
     <Card raised sx={{ p: 2 }}>
       <SectionHeading>Map Options</SectionHeading>
       <Stack>
-        <ToggleSwitch
-          id="isAutoPanOnViewing"
-          checkedState={pickState(mapViewOptionsState, "isAutopanOnViewing")}
-        >
+        <ToggleSwitch id="isAutoPanOnViewing" checkedState={pickState(mapViewOptionsState, "isAutopanOnViewing")}>
           Viewing mode: auto-pan map to current position
         </ToggleSwitch>
-        <ToggleSwitch
-          id="isAutoPanOnEditing"
-          checkedState={pickState(mapViewOptionsState, "isAutopanOnEditing")}
-        >
+        <ToggleSwitch id="isAutoPanOnEditing" checkedState={pickState(mapViewOptionsState, "isAutopanOnEditing")}>
           Editing mode: auto-pan map to current position
         </ToggleSwitch>
         <ToggleSwitch id="isTrackPolylineOn" checkedState={pickState(mapViewOptionsState, "isTrackPolylineOn")}>
