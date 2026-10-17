@@ -14,14 +14,20 @@ import styled from "@emotion/styled";
 import { Theme, CSSObject } from "@mui/material/styles";
 import useResizeObserver from "@react-hook/resize-observer";
 import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
-import { SetState, UseState } from "../common/utils/state-utils";
+import { SetState, usePickedState, UseState } from "../common/utils/state-utils";
 import { closestPointOnPath } from "../geo/distance";
 import DraggableLines from "leaflet-draggable-lines";
 import { LeafletContext } from "@react-leaflet/core";
 import { Track } from "../track-models";
 import { augmentUuid } from "../common/utils/uuid";
 import { Button, ButtonGroup, ButtonProps } from "@mui/material";
-import { Add as AddIcon, Remove as RemoveIcon, Timeline as TimelineIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  Timeline as TimelineIcon,
+  NavigationOutlined as NavigationIcon,
+} from "@mui/icons-material";
+import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
@@ -38,6 +44,7 @@ interface LiveMapProps {
   isKeyboardFocusedModeOn: boolean;
   onMapReady?: (map: LeafletMap | null) => void;
   viewOptions: MapViewOptions;
+  mapViewOptionsState: UseState<MapViewOptions>;
 }
 
 function createDragMarker(layer: unknown, i: number, length: number) {
@@ -63,6 +70,7 @@ export const LiveMap: FC<LiveMapProps> = ({
   isKeyboardFocusedModeOn,
   onMapReady,
   viewOptions,
+  mapViewOptionsState,
 }) => {
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [attributionHtml, setAttributionHtml] = useState("");
@@ -70,7 +78,9 @@ export const LiveMap: FC<LiveMapProps> = ({
 
   const containerRef = useRef(null);
 
-  const isAutopanOn = isEditingModeOn ? viewOptions.isAutopanOnEditing : viewOptions.isAutopanOnViewing;
+  const [isAutopanOn, setIsAutopanOn] = isEditingModeOn
+    ? usePickedState(mapViewOptionsState, "isAutopanOnEditing")
+    : usePickedState(mapViewOptionsState, "isAutopanOnViewing");
 
   useResizeObserver(containerRef, () => {
     if (map === null) return;
@@ -170,6 +180,35 @@ export const LiveMap: FC<LiveMapProps> = ({
               <Button onClick={zoomOut}>
                 <RemoveIcon />
               </Button>
+            </ButtonGroup>
+          </CustomLeafletControl>
+          <CustomLeafletControl position="topleft">
+            <ButtonGroup
+              orientation="vertical"
+              variant="contained"
+              size="small"
+              sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
+            >
+              <MapPushButton
+                pushed={isAutopanOn}
+                onClick={() => setIsAutopanOn(!isAutopanOn)}
+                title="Autopan map when video is playing"
+              >
+                <NavigationIcon />
+              </MapPushButton>
+              {!isAutopanOn && (
+                <Button sx={mapControlButtonMixin}>
+                  <KeyboardTabIcon
+                    onClick={() => {
+                      try {
+                        map?.setView(currentCenter, undefined, { animate: true });
+                      } catch (e) {
+                        console.error("Error while auto-panning the map:", e);
+                      }
+                    }}
+                  />
+                </Button>
+              )}
             </ButtonGroup>
           </CustomLeafletControl>
         </MapContainer>
@@ -366,10 +405,12 @@ class TrackPathPaneEditingMode extends React.Component<TrackPathPaneEditingModeP
 }
 
 const pushedButtonMixin = (theme: Theme): CSSObject => ({
-  backgroundColor: theme.palette.primary.dark,
-  boxShadow: theme.shadows[8],
-  "&:hover": {
-    backgroundColor: theme.palette.primary.main,
+  "&&&&": {
+    backgroundColor: theme.palette.primary.dark,
+    boxShadow: theme.shadows[8],
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main,
+    },
   },
 });
 

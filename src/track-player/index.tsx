@@ -328,6 +328,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const showMapAsOverlay = !isEditingModeOn;
 
   const straightRailOptionsState = usePickedState(viewOptionsState, "straightRailsOverlay");
+  const mapViewOptionsState = usePickedState(viewOptionsState, "mapViewOptions");
 
   return (
     <div>
@@ -375,6 +376,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
                   isEditingModeOn={isEditingModeOn}
                   isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
                   viewOptions={viewOptions.mapViewOptions}
+                  mapViewOptionsState={mapViewOptionsState}
                 />
                 {/* <Placeholder width="100%" height="100%" text="Map" /> */}
               </>
@@ -396,6 +398,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
                 isEditingModeOn={isEditingModeOn}
                 isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
                 viewOptions={viewOptions.mapViewOptions}
+                mapViewOptionsState={mapViewOptionsState}
               />
               {/* <Placeholder width="100%" height="100%" text="Map" /> */}
             </>
