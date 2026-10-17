@@ -145,6 +145,10 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   }, [isEditingModeOn]);
 
   useEffect(() => {
+    console.log("precedingTrackPointIndex", precedingTrackPointIndex);
+  }, [precedingTrackPointIndex]);
+
+  useEffect(() => {
     const dfsMap = computeDistanceFromStartMap(path);
     const pathLength = dfsMap[dfsMap.length - 1]?.[0] ?? 0;
     setPathLengthMM(pathLength);
@@ -199,6 +203,55 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
     setPrecedingTrackPointIndex(precedingIndex);
     setCurrentCenter(interpolatedCoord);
   }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
+
+  const addTimingPoint = useCallback(
+    () => _addTimingPoint(playedSeconds, currentDistanceMM, setTimingPoints),
+    [playedSeconds, currentDistanceMM, setTimingPoints],
+  );
+  const deleteTimingPointById = useCallback(
+    (id: string) => setTimingPoints((oldTimingPoints) => oldTimingPoints.filter((tp) => tp.uuid !== id)),
+    [setTimingPoints],
+  );
+
+  const jumpToTime = useCallback(
+    (time: number) => {
+      videoPlayerRef.current?.seekTo(time);
+    },
+    [videoPlayerRef],
+  );
+  const jumpToLocation = useCallback(
+    (distanceMM: number) => {
+      const center = findCoordinateAtDistance(distanceFromStartMap, distanceMM);
+      if (!center) return;
+      setCenterOnLocation({ center, requestId: ++locationRequestId.current });
+    },
+    [distanceFromStartMap],
+  );
+  const jumpToTimeAndLocation = useCallback(
+    ({ time, distanceMM }: { time: number; distanceMM: number }) => {
+      jumpToTime(time);
+      jumpToLocation(distanceMM);
+    },
+    [jumpToTime, jumpToLocation],
+  );
+
+  const jumpToTimingPointByIndex = useCallback(
+    (index: number) => {
+      if (!timingPoints.length || index < 0 || index >= timingPoints.length) return;
+      const timingPoint = timingPoints[index];
+      if (!timingPoint) return;
+      jumpToTimeAndLocation({ time: timingPoint.t, distanceMM: timingPoint.d });
+    },
+    [timingPoints, jumpToTimeAndLocation],
+  );
+  const jumpToNextTimingPoint = useCallback(() => {
+    console.log("jumpToNextTimingPoint called, precedingTrackPointIndex:", precedingTrackPointIndex);
+    jumpToTimingPointByIndex(precedingTrackPointIndex + 1);
+  }, [jumpToTimingPointByIndex, precedingTrackPointIndex]);
+  const jumpToPreviousTimingPoint = useCallback(() => {
+    console.log("jumpToPreviousTimingPoint called, precedingTrackPointIndex:", precedingTrackPointIndex);
+    jumpToTimingPointByIndex(precedingTrackPointIndex);
+  }, [jumpToTimingPointByIndex, precedingTrackPointIndex]);
 
   const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn, setEditingModeOn]);
   const toggleKeyboardMode = useCallback(() => {
@@ -256,6 +309,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
       }
       return [
         ...sharedKeyboardShortcutHandlers,
+        ksd("w").handleAndStop(() => jumpToPreviousTimingPoint()),
+        ksd("e").handleAndStop(() => jumpToNextTimingPoint()),
         ksd("a").handleAndStop(() => videoPlayerRef.current?.seekBy(-1)),
         ksd("a")
           .shift()
@@ -307,26 +362,17 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
 
     document.addEventListener("keydown", onKeyboardShortcut);
     return () => document.removeEventListener("keydown", onKeyboardShortcut);
-  }, [isKeyboardFocusedModeOn, isEditingModeOn]);
+  }, [
+    isKeyboardFocusedModeOn,
+    isEditingModeOn,
+    videoPlayerRef,
+    liveMapRef,
+    jumpToNextTimingPoint,
+    jumpToPreviousTimingPoint,
+  ]);
 
   const reversePath = useCallback(() => setPath((path) => [...path].reverse()), [setPath]);
   const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
-  const addTimingPoint = useCallback(
-    () => _addTimingPoint(playedSeconds, currentDistanceMM, setTimingPoints),
-    [playedSeconds, currentDistanceMM, setTimingPoints],
-  );
-  const deleteTimingPointById = useCallback(
-    (id: string) => setTimingPoints((oldTimingPoints) => oldTimingPoints.filter((tp) => tp.uuid !== id)),
-    [setTimingPoints],
-  );
-  const jumpToLocation = useCallback(
-    (distanceMM: number) => {
-      const center = findCoordinateAtDistance(distanceFromStartMap, distanceMM);
-      if (!center) return;
-      setCenterOnLocation({ center, requestId: ++locationRequestId.current });
-    },
-    [distanceFromStartMap],
-  );
 
   const showMapAsOverlay = !isEditingModeOn;
 
@@ -436,7 +482,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
                 <TimingPointsListMemo
                   timingPoints={timingPoints}
                   onDeleteTimingPoint={deleteTimingPointById}
-                  onJumpToTime={(timeSeconds) => videoPlayerRef.current?.seekTo(timeSeconds)}
+                  onJumpToTime={jumpToTime}
                   onJumpToLocation={jumpToLocation}
                   precedingIndex={precedingTrackPointIndex}
                   isAutoScrollOn={viewOptions.trackPointsEditorOptions.isAutoscrollTimingPointsListOn}
@@ -471,6 +517,7 @@ function getModeTextAndShortcuts({
       shortcuts: [
         ...sharedEditModeShortcuts,
         { key: "a/s/d/f", label: "seek -1s/-10s/+10s/+0.1s" },
+        { key: "w/e", label: "go to prev/next timing point" },
         { key: "g", label: "recenter map" },
       ],
     };
