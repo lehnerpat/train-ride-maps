@@ -9,14 +9,11 @@ import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOption
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common/utils/state-utils";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
-import { useFileUpload } from "../common/hooks/useFileUpload";
-import { parseOsmXml } from "../osm-input/parse-osm-xml";
 import { distanceInMM } from "../geo/distance";
 import { isFunction, isUndefined } from "../common/utils/type-helpers";
 import {
   AppBar,
   Box,
-  Button,
   Card,
   Dialog,
   Fab,
@@ -26,6 +23,7 @@ import {
   ToggleButtonGroup,
   Toolbar,
   Typography,
+  useTheme,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -39,13 +37,14 @@ import {
 } from "@mui/icons-material";
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import { augmentUuid, HasUuid } from "../common/utils/uuid";
-import { formatDistanceMeters, formatTimeSec, formatVideoDuration } from "./track-info-formatting";
+import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
 import { Link, useLocation } from "wouter";
 import { VideoInfoArea } from "./VideoInfoArea";
 import { PageRouting } from "../page-routing";
 import { VideoOverrideButton } from "./VideoOverrideButton";
 import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override";
+import { deepPurple } from "@mui/material/colors";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
@@ -385,34 +384,63 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
       </VideoAndMapContainer>
 
       {isEditingModeOn && (
-        <Stack direction="row" spacing={2} sx={{ mt: 2, width: "90%", mx: "auto" }}>
-          <Box sx={{ flexGrow: 1, minHeight: "200px" }}>
-            <VideoInfoArea
-              trackTitle={track.title}
-              videoUrl={track.videoUrl}
-              videoDuration={videoDuration}
-              pathLengthMM={pathLengthMM}
-              onTrackInfoChanged={(title, videoUrl) => setTrack((prev) => ({ ...prev, title, videoUrl }))}
-              onPathUploaded={setPath}
-              onReversePathClicked={reversePath}
-            />
-          </Box>
-          <Box sx={{ width: 300 }}>
-            <>
-              <TimingPointsListMemo
-                timingPoints={timingPoints}
-                onDeleteTimingPoint={deleteTimingPointById}
-                onJumpToTime={(timeSeconds) => videoPlayerRef.current?.seekTo(timeSeconds)}
-                onJumpToLocation={jumpToLocation}
-                precedingIndex={precedingTrackPointIndex}
-                isAutoScrollOn={viewOptions.trackPointsEditorOptions.isAutoscrollTimingPointsListOn}
+        <>
+          <Stack direction="row" spacing={2} sx={{ mt: 2, width: "90%", mx: "auto" }}>
+            <Box sx={{ flexGrow: 1, minHeight: "200px" }}>
+              <VideoInfoArea
+                trackTitle={track.title}
+                videoUrl={track.videoUrl}
+                videoDuration={videoDuration}
+                pathLengthMM={pathLengthMM}
+                onTrackInfoChanged={(title, videoUrl) => setTrack((prev) => ({ ...prev, title, videoUrl }))}
+                onPathUploaded={setPath}
+                onReversePathClicked={reversePath}
               />
-              {/* <Placeholder width={300} height={350} text="TP List" /> */}
-            </>
-          </Box>
-        </Stack>
+            </Box>
+            <Box sx={{ width: 300 }}>
+              <>
+                <TimingPointsListMemo
+                  timingPoints={timingPoints}
+                  onDeleteTimingPoint={deleteTimingPointById}
+                  onJumpToTime={(timeSeconds) => videoPlayerRef.current?.seekTo(timeSeconds)}
+                  onJumpToLocation={jumpToLocation}
+                  precedingIndex={precedingTrackPointIndex}
+                  isAutoScrollOn={viewOptions.trackPointsEditorOptions.isAutoscrollTimingPointsListOn}
+                />
+                {/* <Placeholder width={300} height={350} text="TP List" /> */}
+              </>
+            </Box>
+          </Stack>
+          <BottomInfoBar {...{ isEditingModeOn, isKeyboardFocusedModeOn }} />
+        </>
       )}
     </div>
+  );
+};
+
+const BottomInfoBar = ({
+  isEditingModeOn,
+  isKeyboardFocusedModeOn,
+}: {
+  isEditingModeOn: boolean;
+  isKeyboardFocusedModeOn: boolean;
+}) => {
+  const modeText = (() => {
+    if (isEditingModeOn) {
+      if (isKeyboardFocusedModeOn) return "edit/keyboard";
+      return "edit";
+    }
+    return "view";
+  })();
+
+  return (
+    <Box sx={{ position: "fixed", bottom: 0, width: "100%", backgroundColor: "#333" }}>
+      <Stack direction="row" spacing={2}>
+        <Box sx={{ backgroundColor: deepPurple.A100, color: "#222", px: 2 }}>
+          <Typography sx={{ fontFamily: "Fire Code, monospace", fontWeight: "bold" }}>{modeText}</Typography>
+        </Box>
+      </Stack>
+    </Box>
   );
 };
 
