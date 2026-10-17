@@ -45,6 +45,7 @@ import { PageRouting } from "../page-routing";
 import { VideoOverrideButton } from "./VideoOverrideButton";
 import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override";
 import { deepPurple } from "@mui/material/colors";
+import { k, ksd } from "./keyboard-shortcut-utils";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
@@ -97,7 +98,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [centerOnLocation, setCenterOnLocation] = useState<{ center: LatLngLiteral; requestId: number }>();
   const videoPlayerRef = useRef<VideoPlayerHandle>(null);
-  const keyboardMapRef = useRef<LeafletMap | null>(null);
   const [isKeyboardModeActive, setIsKeyboardModeActive] = useState(false);
   const [videoUrlOverride, setVideoUrlOverride] = useState(() => loadVideoUrlOverride(initialTrack.uuid));
   const changeVideoUrlOverride = useCallback(
@@ -115,9 +115,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const [, navigate] = useLocation();
   const isEditingModeOn = mode === "edit";
   const isKeyboardFocusedModeOn = isEditingModeOn && isKeyboardModeActive;
-  const setKeyboardMap = useCallback((map: LeafletMap | null) => {
-    keyboardMapRef.current = map;
-  }, []);
+
   const setEditingModeOn = useCallback<SetState<boolean>>(
     (action) =>
       navigate(
@@ -212,13 +210,13 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
 
   const keyHandler = useCallback(
     (ev: KeyboardEvent) => {
-      if (ev.key === "f") {
+      if (ev.key === "f" && !isEditingModeOn) {
         enterFullscreen();
       } else if (ev.key === "E") {
         toggleEditingMode();
       }
     },
-    [toggleEditingMode, enterFullscreen],
+    [toggleEditingMode, isEditingModeOn, enterFullscreen],
   );
   useKeyPressHandler(keyHandler);
 
@@ -230,9 +228,54 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
       }
     };
 
+    const sharedKeyboardShortcutHandlers = [
+      k()
+        .key(" ")
+        .handle((ev) => {
+          const target = ev.target instanceof Element ? ev.target : null;
+          // Space natively activates focused buttons and links, so do nothing
+          if (
+            target?.closest(
+              "button, a[href], summary, [role='button'], [role='switch'], [role='menuitem'], video, .media-container",
+            )
+          ) {
+            return { shouldStopProcessing: true };
+          }
+          ev.preventDefault();
+          togglePlayback();
+          return { shouldStopProcessing: true };
+        }),
+    ];
+    const keyboardShortcutHandlers = (() => {
+      if (!isEditingModeOn) {
+        return sharedKeyboardShortcutHandlers;
+      }
+      if (!isKeyboardFocusedModeOn) {
+        return sharedKeyboardShortcutHandlers;
+      }
+      return [
+        ...sharedKeyboardShortcutHandlers,
+        ksd("a").handleAndStop(() => videoPlayerRef.current?.seekBy(-1)),
+        ksd("a")
+          .shift()
+          .handleAndStop(() => videoPlayerRef.current?.seekBy(-0.1)),
+        ksd("s").handleAndStop(() => videoPlayerRef.current?.seekBy(-10)),
+        ksd("s")
+          .shift()
+          .handleAndStop(() => videoPlayerRef.current?.seekBy(-30)),
+        ksd("d").handleAndStop(() => videoPlayerRef.current?.seekBy(10)),
+        ksd("d")
+          .shift()
+          .handleAndStop(() => videoPlayerRef.current?.seekBy(30)),
+        ksd("f").handleAndStop(() => videoPlayerRef.current?.seekBy(1)),
+        ksd("f")
+          .shift()
+          .handleAndStop(() => videoPlayerRef.current?.seekBy(0.1)),
+      ];
+    })();
+
     const onKeyboardShortcut = (ev: KeyboardEvent) => {
-      if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) return;
-      if (ev.key === "Escape") {
+      if (ev.key === "Escape" && !ev.altKey && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey) {
         // Release focus from whatever element captured it, so other shortcuts reach the page again
         if (document.activeElement instanceof HTMLElement && document.activeElement !== document.body) {
           document.activeElement.blur();
@@ -241,48 +284,27 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
       }
 
       const target = ev.target instanceof Element ? ev.target : null;
+      // Ignore most keyboard shortcuts when the focus is on an input element
       if (target?.closest("input, textarea, select, [contenteditable='true'], [role='textbox']")) return;
 
-      if (ev.key === " ") {
-        // Space natively activates focused buttons and links
+      const evKeyLowerCase = ev.key.toLowerCase();
+      for (const handler of keyboardShortcutHandlers) {
         if (
-          target?.closest(
-            "button, a[href], summary, [role='button'], [role='switch'], [role='menuitem'], video, .media-container",
-          )
-        )
-          return;
-        ev.preventDefault();
-        togglePlayback();
-        return;
-      }
-
-      if (!isKeyboardFocusedModeOn) return;
-
-      const key = ev.key.toLowerCase();
-      if (!["j", "k", "l", "w", "a", "s", "d"].includes(key)) return;
-
-      ev.preventDefault();
-      ev.stopPropagation();
-
-      if (key === "j") {
-        videoPlayerRef.current?.seekBy(-10);
-      } else if (key === "k") {
-        togglePlayback();
-      } else if (key === "l") {
-        videoPlayerRef.current?.seekBy(10);
-      } else {
-        const map = keyboardMapRef.current;
-        if (!map) return;
-        const delta = map.options.keyboardPanDelta ?? 80;
-        const panOffset: [number, number] =
-          key === "w" ? [0, -delta] : key === "a" ? [-delta, 0] : key === "s" ? [0, delta] : [delta, 0];
-        map.panBy(panOffset);
+          handler.key.toLowerCase() === evKeyLowerCase &&
+          handler.alt === ev.altKey &&
+          handler.ctrl === ev.ctrlKey &&
+          handler.meta === ev.metaKey &&
+          handler.shift === ev.shiftKey
+        ) {
+          const result = handler.handler(ev);
+          if (result.shouldStopProcessing) return;
+        }
       }
     };
 
     document.addEventListener("keydown", onKeyboardShortcut);
     return () => document.removeEventListener("keydown", onKeyboardShortcut);
-  }, [isKeyboardFocusedModeOn]);
+  }, [isKeyboardFocusedModeOn, isEditingModeOn]);
 
   const reversePath = useCallback(() => setPath((path) => [...path].reverse()), [setPath]);
   const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
@@ -373,7 +395,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
                 isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
-                onMapReady={setKeyboardMap}
                 viewOptions={viewOptions.mapViewOptions}
               />
               {/* <Placeholder width="100%" height="100%" text="Map" /> */}
@@ -437,7 +458,10 @@ function getModeTextAndShortcuts({
   const sharedEditModeShortcuts = [{ key: "space", label: "play/pause" }];
 
   if (isKeyboardFocusedModeOn) {
-    return { modeText: "edit/keyboard", shortcuts: [...sharedEditModeShortcuts, { key: "j/l", label: "seek -/+10s" }] };
+    return {
+      modeText: "edit/keyboard",
+      shortcuts: [...sharedEditModeShortcuts, { key: "a/s/d/f", label: "seek -1s/-10s/+10s/+0.1s" }],
+    };
   }
   return { modeText: "edit", shortcuts: [...sharedEditModeShortcuts] };
 }

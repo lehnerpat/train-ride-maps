@@ -28,22 +28,24 @@ Shows the video with the map as an overlay and the train's current position as a
 
 These app-level shortcuts are handled on `keypress` of the page body, so they may not fire while an element such as the video iframe has focus:
 
-| Key       | Action                                |
-| --------- | ------------------------------------- |
-| `f`       | Enter fullscreen (viewing mode only)  |
-| `Shift+E` | Toggle editing mode                   |
-| `Space`   | Play or pause the video               |
-| `Esc`     | Remove focus from the focused element |
+| Key                           | Action                                |
+| ----------------------------- | ------------------------------------- |
+| <kbd>f</kbd>                  | Enter fullscreen (viewing mode only)  |
+| <kbd>shift</kbd>+<kbd>e</kbd> | Toggle editing mode                   |
+| <kbd>space</kbd>              | Play or pause the video               |
+| <kbd>esc</kbd>                | Remove focus from the focused element |
 
 `Space` works in both modes, with or without keyboard-focused mode. It is ignored while typing in text-entry controls or when a button or link has focus (where Space activates that control).
 
 In Editing mode, turn on **Keyboard shortcuts** in the top bar to use these additional shortcuts while focus is on the page:
 
 <!-- prettier-ignore -->
-| Key             | Action                                            |
-| --------------- | ------------------------------------------------- |
-| `j` / `k` / `l` | Seek back 10 seconds / play or pause / forward 10 seconds |
-| `w` / `a` / `s` / `d` | Pan the map up / left / down / right         |
+| Key       | Action                                    |
+| --------- | ----------------------------------------- |
+| <kbd>s</kbd> / <kbd>d</kbd> | Seek back 10 seconds / forward 10 seconds |
+| <kbd>shift</kbd>+<kbd>s</kbd> / <kbd>shift</kbd>+<kbd>d</kbd> | Seek back 30 seconds / forward 30 seconds |
+| <kbd>a</kbd> / <kbd>f</kbd> | Seek back 1 seconds / forward 1 seconds   |
+| <kbd>shift</kbd>+<kbd>a</kbd> / <kbd>shift</kbd>+<kbd>f</kbd> | Seek back 0.1 seconds / forward 0.1 seconds   |
 
 Keyboard-focused mode disables Leaflet's keyboard navigation while active, and turns off automatically when leaving Editing mode. YouTube's own shortcuts remain enabled inside its player; the app does not change the player's keyboard settings, avoiding an iframe reload when toggling modes. App shortcuts do not intercept modified key combinations or typing in text-entry controls. Since the YouTube player is a cross-origin iframe, the page cannot receive app shortcuts while the iframe itself has focus; move focus back to the page to use them.
 
