@@ -7,7 +7,16 @@ import {
   LatLng,
   DivIcon,
 } from "leaflet";
-import React, { createContext, FC, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  FC,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../common/components/CustomLeafletControl";
 import styled from "@emotion/styled";
@@ -30,6 +39,10 @@ import {
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 
 const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
+
+export interface LiveMapHandle {
+  goToCurrentLocation(): void;
+}
 
 interface LiveMapProps {
   trackState: UseState<Track>;
@@ -58,164 +71,170 @@ function createDragMarker(layer: unknown, i: number, length: number) {
   };
 }
 
-export const LiveMap: FC<LiveMapProps> = ({
-  trackState,
-  path,
-  timingPointLocations,
-  initialCenter,
-  currentCenter,
-  centerOnLocation,
-  onMapMoved,
-  isEditingModeOn,
-  isKeyboardFocusedModeOn,
-  onMapReady,
-  viewOptions,
-  mapViewOptionsState,
-}) => {
-  const [map, setMap] = useState<LeafletMap | null>(null);
-  const [attributionHtml, setAttributionHtml] = useState("");
-  const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
+export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
+  (
+    {
+      trackState,
+      path,
+      timingPointLocations,
+      initialCenter,
+      currentCenter,
+      centerOnLocation,
+      onMapMoved,
+      isEditingModeOn,
+      isKeyboardFocusedModeOn,
+      onMapReady,
+      viewOptions,
+      mapViewOptionsState,
+    },
+    ref,
+  ) => {
+    const [map, setMap] = useState<LeafletMap | null>(null);
+    const [attributionHtml, setAttributionHtml] = useState("");
+    const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
 
-  const containerRef = useRef(null);
+    const containerRef = useRef(null);
 
-  const [isAutopanOn, setIsAutopanOn] = isEditingModeOn
-    ? usePickedState(mapViewOptionsState, "isAutopanOnEditing")
-    : usePickedState(mapViewOptionsState, "isAutopanOnViewing");
+    const [isAutopanOn, setIsAutopanOn] = isEditingModeOn
+      ? usePickedState(mapViewOptionsState, "isAutopanOnEditing")
+      : usePickedState(mapViewOptionsState, "isAutopanOnViewing");
 
-  useResizeObserver(containerRef, () => {
-    if (map === null) return;
-    map.invalidateSize();
-  });
+    useResizeObserver(containerRef, () => {
+      if (map === null) return;
+      map.invalidateSize();
+    });
 
-  useEffect(() => {
-    if (map === null || !isAutopanOn) return;
-    try {
-      map.setView(currentCenter, undefined, { animate: true });
-    } catch (e) {
-      console.error("Error while auto-panning the map:", e);
-    }
-  }, [map, currentCenter, isAutopanOn]);
+    useEffect(() => {
+      if (map === null || !isAutopanOn) return;
+      try {
+        map.setView(currentCenter, undefined, { animate: true });
+      } catch (e) {
+        console.error("Error while auto-panning the map:", e);
+      }
+    }, [map, currentCenter, isAutopanOn]);
 
-  useEffect(() => {
-    if (map === null || !centerOnLocation) return;
-    try {
-      map.panTo(centerOnLocation.center, { animate: true });
-    } catch (e) {
-      console.error("Error while centering the map on a timing point:", e);
-    }
-  }, [map, centerOnLocation]);
+    useEffect(() => {
+      if (map === null || !centerOnLocation) return;
+      try {
+        map.panTo(centerOnLocation.center, { animate: true });
+      } catch (e) {
+        console.error("Error while centering the map on a timing point:", e);
+      }
+    }, [map, centerOnLocation]);
 
-  const zoomIn = useCallback(() => map?.zoomIn(), [map]);
-  const zoomOut = useCallback(() => map?.zoomOut(), [map]);
+    const zoomIn = useCallback(() => map?.zoomIn(), [map]);
+    const zoomOut = useCallback(() => map?.zoomOut(), [map]);
+    const goToCurrentLocation = useCallback(
+      () => map?.setView(currentCenter, undefined, { animate: true }),
 
-  useEffect(() => {
-    if (map === null) return;
-    if (isKeyboardFocusedModeOn) {
-      map.keyboard.disable();
-    } else {
-      map.keyboard.enable();
-    }
-  }, [map, isKeyboardFocusedModeOn]);
+      [map, currentCenter],
+    );
 
-  return (
-    <LiveMapContainer ref={containerRef}>
-      <LiveMapContext.Provider value={{ isEditingModeOn, viewOptions }}>
-        <MapContainer
-          center={initialCenter}
-          zoom={17}
-          style={{ height: "100%", width: "100%" }}
-          keyboard={!isKeyboardFocusedModeOn}
-          ref={useCallback(
-            (map: LeafletMap | null) => {
-              setMap(map);
-              onMapReady?.(map);
-              if (map !== null) {
-                setAttributionHtml(collectAttributions(map));
-              }
-            },
-            [onMapReady],
-          )}
-          attributionControl={false}
-          zoomControl={false}
-        >
-          {isEditingModeOn && (
-            <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
-          )}
+    useEffect(() => {
+      if (map === null) return;
+      if (isKeyboardFocusedModeOn) {
+        map.keyboard.disable();
+      } else {
+        map.keyboard.enable();
+      }
+    }, [map, isKeyboardFocusedModeOn]);
 
-          <OsmTileLayer />
-          <OrmTileLayer />
+    useImperativeHandle(ref, () => ({
+      goToCurrentLocation,
+    }));
 
-          {isEditingModeOn ? (
-            <TrackPathPaneEditingMode trackState={trackState} path={path} />
-          ) : (
-            <TrackPathPaneViewingMode path={path} />
-          )}
-          <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
-          <TimingPointsPane timingPointLocations={timingPointLocations} />
-          <CurrentPositionPane currentCenter={currentCenter} />
-          <CrosshairOverlay />
+    return (
+      <LiveMapContainer ref={containerRef}>
+        <LiveMapContext.Provider value={{ isEditingModeOn, viewOptions }}>
+          <MapContainer
+            center={initialCenter}
+            zoom={17}
+            style={{ height: "100%", width: "100%" }}
+            keyboard={!isKeyboardFocusedModeOn}
+            ref={useCallback(
+              (map: LeafletMap | null) => {
+                setMap(map);
+                onMapReady?.(map);
+                if (map !== null) {
+                  setAttributionHtml(collectAttributions(map));
+                }
+              },
+              [onMapReady],
+            )}
+            attributionControl={false}
+            zoomControl={false}
+          >
+            {isEditingModeOn && (
+              <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
+            )}
 
-          <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
-            <CustomAttributionContainer>
-              <CustomAttributionTextContainer className="attribution-text">
-                <div
-                  className="leaflet-control-attribution leaflet-control"
-                  dangerouslySetInnerHTML={{ __html: attributionHtml }}
-                />
-              </CustomAttributionTextContainer>
-              <CustomAttributionGlyphContainer className="attribution-glyph">©</CustomAttributionGlyphContainer>
-            </CustomAttributionContainer>
-          </CustomLeafletControl>
+            <OsmTileLayer />
+            <OrmTileLayer />
 
-          <CustomLeafletControl position="topleft">
-            <ButtonGroup
-              orientation="vertical"
-              variant="contained"
-              size="small"
-              sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
-            >
-              <Button onClick={zoomIn}>
-                <AddIcon />
-              </Button>
-              <Button onClick={zoomOut}>
-                <RemoveIcon />
-              </Button>
-            </ButtonGroup>
-          </CustomLeafletControl>
-          <CustomLeafletControl position="topleft">
-            <ButtonGroup
-              orientation="vertical"
-              variant="contained"
-              size="small"
-              sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
-            >
-              <MapPushButton
-                pushed={isAutopanOn}
-                onClick={() => setIsAutopanOn(!isAutopanOn)}
-                title="Autopan map when video is playing"
-              >
-                <NavigationIcon />
-              </MapPushButton>
-              {!isAutopanOn && (
-                <Button sx={mapControlButtonMixin}>
-                  <KeyboardTabIcon
-                    onClick={() => {
-                      try {
-                        map?.setView(currentCenter, undefined, { animate: true });
-                      } catch (e) {
-                        console.error("Error while auto-panning the map:", e);
-                      }
-                    }}
+            {isEditingModeOn ? (
+              <TrackPathPaneEditingMode trackState={trackState} path={path} />
+            ) : (
+              <TrackPathPaneViewingMode path={path} />
+            )}
+            <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
+            <TimingPointsPane timingPointLocations={timingPointLocations} />
+            <CurrentPositionPane currentCenter={currentCenter} />
+            <CrosshairOverlay />
+
+            <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
+              <CustomAttributionContainer>
+                <CustomAttributionTextContainer className="attribution-text">
+                  <div
+                    className="leaflet-control-attribution leaflet-control"
+                    dangerouslySetInnerHTML={{ __html: attributionHtml }}
                   />
+                </CustomAttributionTextContainer>
+                <CustomAttributionGlyphContainer className="attribution-glyph">©</CustomAttributionGlyphContainer>
+              </CustomAttributionContainer>
+            </CustomLeafletControl>
+
+            <CustomLeafletControl position="topleft">
+              <ButtonGroup
+                orientation="vertical"
+                variant="contained"
+                size="small"
+                sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
+              >
+                <Button onClick={zoomIn}>
+                  <AddIcon />
                 </Button>
-              )}
-            </ButtonGroup>
-          </CustomLeafletControl>
-        </MapContainer>
-      </LiveMapContext.Provider>
-    </LiveMapContainer>
-  );
-};
+                <Button onClick={zoomOut}>
+                  <RemoveIcon />
+                </Button>
+              </ButtonGroup>
+            </CustomLeafletControl>
+            <CustomLeafletControl position="topleft">
+              <ButtonGroup
+                orientation="vertical"
+                variant="contained"
+                size="small"
+                sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
+              >
+                <MapPushButton
+                  pushed={isAutopanOn}
+                  onClick={() => setIsAutopanOn(!isAutopanOn)}
+                  title="Autopan map when video is playing"
+                >
+                  <NavigationIcon />
+                </MapPushButton>
+                {!isAutopanOn && (
+                  <Button sx={mapControlButtonMixin}>
+                    <KeyboardTabIcon onClick={goToCurrentLocation} />
+                  </Button>
+                )}
+              </ButtonGroup>
+            </CustomLeafletControl>
+          </MapContainer>
+        </LiveMapContext.Provider>
+      </LiveMapContainer>
+    );
+  },
+);
 
 const mapControlButtonMixin = (theme: Theme): CSSObject => ({
   minWidth: 0,

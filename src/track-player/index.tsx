@@ -4,7 +4,7 @@ import { TimingPoint, Track, Tracks } from "../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { VideoPlayer, VideoPlayerHandle } from "./VideoPlayer";
-import { LiveMap } from "./LiveMap";
+import { LiveMap, LiveMapHandle } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../common/utils/state-utils";
@@ -97,6 +97,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [centerOnLocation, setCenterOnLocation] = useState<{ center: LatLngLiteral; requestId: number }>();
+  const liveMapRef = useRef<LiveMapHandle>(null);
   const videoPlayerRef = useRef<VideoPlayerHandle>(null);
   const [isKeyboardModeActive, setIsKeyboardModeActive] = useState(false);
   const [videoUrlOverride, setVideoUrlOverride] = useState(() => loadVideoUrlOverride(initialTrack.uuid));
@@ -271,6 +272,8 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
         ksd("f")
           .shift()
           .handleAndStop(() => videoPlayerRef.current?.seekBy(0.1)),
+
+        ksd("g").handleAndStop(() => liveMapRef.current?.goToCurrentLocation()),
       ];
     })();
 
@@ -366,6 +369,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
             <ViewingMapContainer>
               <>
                 <LiveMap
+                  ref={liveMapRef}
                   trackState={trackState}
                   path={path}
                   timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
@@ -387,6 +391,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
           <EditingMapContainer>
             <>
               <LiveMap
+                ref={liveMapRef}
                 trackState={trackState}
                 path={path}
                 timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
@@ -463,7 +468,11 @@ function getModeTextAndShortcuts({
   if (isKeyboardFocusedModeOn) {
     return {
       modeText: "edit/keyboard",
-      shortcuts: [...sharedEditModeShortcuts, { key: "a/s/d/f", label: "seek -1s/-10s/+10s/+0.1s" }],
+      shortcuts: [
+        ...sharedEditModeShortcuts,
+        { key: "a/s/d/f", label: "seek -1s/-10s/+10s/+0.1s" },
+        { key: "g", label: "recenter map" },
+      ],
     };
   }
   return { modeText: "edit", shortcuts: [...sharedEditModeShortcuts] };
