@@ -245,7 +245,12 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
 
       if (ev.key === " ") {
         // Space natively activates focused buttons and links
-        if (target?.closest("button, a[href], summary, [role='button'], [role='switch'], [role='menuitem']")) return;
+        if (
+          target?.closest(
+            "button, a[href], summary, [role='button'], [role='switch'], [role='menuitem'], video, .media-container",
+          )
+        )
+          return;
         ev.preventDefault();
         togglePlayback();
         return;
