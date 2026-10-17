@@ -423,6 +423,25 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
   );
 };
 
+function getModeTextAndShortcuts({
+  isEditingModeOn,
+  isKeyboardFocusedModeOn,
+}: {
+  isEditingModeOn: boolean;
+  isKeyboardFocusedModeOn: boolean;
+}): { modeText: string; shortcuts: { key: string; label: string }[] } {
+  if (!isEditingModeOn) {
+    return { modeText: "view", shortcuts: [] };
+  }
+
+  const sharedEditModeShortcuts = [{ key: "space", label: "play/pause" }];
+
+  if (isKeyboardFocusedModeOn) {
+    return { modeText: "edit/keyboard", shortcuts: [...sharedEditModeShortcuts, { key: "j/l", label: "seek -/+10s" }] };
+  }
+  return { modeText: "edit", shortcuts: [...sharedEditModeShortcuts] };
+}
+
 const BottomInfoBar = ({
   isEditingModeOn,
   isKeyboardFocusedModeOn,
@@ -430,20 +449,34 @@ const BottomInfoBar = ({
   isEditingModeOn: boolean;
   isKeyboardFocusedModeOn: boolean;
 }) => {
-  const modeText = (() => {
-    if (isEditingModeOn) {
-      if (isKeyboardFocusedModeOn) return "edit/keyboard";
-      return "edit";
-    }
-    return "view";
-  })();
+  const { modeText, shortcuts } = getModeTextAndShortcuts({ isEditingModeOn, isKeyboardFocusedModeOn });
 
   return (
     <Box sx={{ position: "fixed", bottom: 0, width: "100%", backgroundColor: "#333" }}>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
         <Box sx={{ backgroundColor: deepPurple.A100, color: "#222", px: 2 }}>
           <Typography sx={{ fontFamily: "Fire Code, monospace", fontWeight: "bold" }}>{modeText}</Typography>
         </Box>
+        {shortcuts.map(({ key, label }, index) => (
+          <>
+            {index > 0 && (
+              <Box key={"separator" + key} sx={{ fontFamily: "Fire Code, monospace", fontSize: "90%" }}>
+                •
+              </Box>
+            )}
+            <Box
+              key={key}
+              sx={{ fontFamily: "Fire Code, monospace", fontSize: "90%", pl: index === 0 ? 1 : undefined }}
+            >
+              <Typography sx={{ fontFamily: "inherit", fontSize: "inherit", color: deepPurple.A100 }} component="span">
+                {key}
+              </Typography>{" "}
+              <Typography sx={{ fontFamily: "inherit", fontSize: "inherit" }} component="span">
+                {label}
+              </Typography>
+            </Box>
+          </>
+        ))}
       </Stack>
     </Box>
   );
