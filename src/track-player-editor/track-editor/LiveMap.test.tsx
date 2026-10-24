@@ -16,13 +16,11 @@ const TestMap = ({
   centerOnLocation,
   currentCenter = path[0],
   isEditingModeOn = true,
-  onMapReady,
   viewOptions = DefaultViewOptions.mapViewOptions,
 }: {
   centerOnLocation?: { center: (typeof path)[number]; requestId: number };
   currentCenter?: (typeof path)[number];
   isEditingModeOn?: boolean;
-  onMapReady?: (map: LeafletMap | null) => void;
   viewOptions?: typeof DefaultViewOptions.mapViewOptions;
 }) => {
   const trackState = useState<Track>({
@@ -43,7 +41,6 @@ const TestMap = ({
         centerOnLocation={centerOnLocation}
         playedSeconds={0}
         isEditingModeOn={isEditingModeOn}
-        onMapReady={onMapReady}
         viewOptions={viewOptions}
         isAutopanOnInitially={isEditingModeOn ? false : true}
       />

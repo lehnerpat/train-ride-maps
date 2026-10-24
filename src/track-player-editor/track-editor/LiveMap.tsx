@@ -7,7 +7,16 @@ import {
   LatLng,
   DivIcon,
 } from "leaflet";
-import React, { FC, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, {
+  FC,
+  forwardRef,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../../common/components/CustomLeafletControl";
 import styled from "@emotion/styled";
@@ -31,21 +40,7 @@ import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 
 export interface LiveMapHandle {
   goToCurrentLocation(): void;
-}
-
-interface LiveMapProps {
-  trackState: UseState<Track>;
-  path: ReadonlyArray<LatLngLiteral>;
-  timingPointLocations: ReadonlyArray<LatLngLiteral>;
-  onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
-  initialCenter: LatLngLiteral;
-  currentCenter: LatLngLiteral;
-  centerOnLocation?: { center: LatLngLiteral; requestId: number };
-  playedSeconds: number;
-  isEditingModeOn: boolean;
-  isAutopanOnInitially: boolean;
-  onMapReady?: (map: LeafletMap | null) => void;
-  viewOptions: MapViewOptions;
+  getCenter(): LatLng | undefined;
 }
 
 function createDragMarker(layer: unknown, i: number, length: number) {
@@ -59,26 +54,77 @@ function createDragMarker(layer: unknown, i: number, length: number) {
   };
 }
 
-export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
-  (
-    {
+interface LiveMapOwnProps {
+  trackState: UseState<Track>;
+  path: ReadonlyArray<LatLngLiteral>;
+  timingPointLocations: ReadonlyArray<LatLngLiteral>;
+  onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
+  currentCenter: LatLngLiteral;
+  playedSeconds: number;
+  isEditingModeOn: boolean;
+  viewOptions: MapViewOptions;
+}
+
+type LiveMapProps = LiveMapOwnProps & BaseLiveMapProps;
+
+export const LiveMap: FC<LiveMapProps & React.RefAttributes<LiveMapHandle>> = forwardRef<LiveMapHandle, LiveMapProps>(
+  (props, ref) => {
+    const {
       trackState,
       path,
       timingPointLocations,
-      initialCenter,
       currentCenter,
-      centerOnLocation,
       onMapMoved,
       isEditingModeOn,
-      isAutopanOnInitially,
-      onMapReady,
       viewOptions,
-    },
-    ref,
-  ) => {
+      ...restProps
+    } = props;
+    const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
+
+    const mapRef = useRef<LiveMapHandle>(null);
+    useImperativeHandle(
+      ref,
+      () => ({
+        goToCurrentLocation: () => {
+          mapRef.current?.goToCurrentLocation();
+        },
+        getCenter: () => mapRef.current?.getCenter(),
+      }),
+      [mapRef],
+    );
+
+    return (
+      <BaseLiveMap {...restProps} currentCenter={currentCenter} ref={mapRef}>
+        {isEditingModeOn && (
+          <>
+            <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
+            <TrackPathPaneEditingMode trackState={trackState} path={path} />
+            <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={mapRef.current?.getCenter()} />
+            {viewOptions.editingModeOptions.isTimingPointMarkersOn && (
+              <TimingPointsPane timingPointLocations={timingPointLocations} />
+            )}
+          </>
+        )}
+        {!isEditingModeOn && viewOptions.isTrackPolylineOn && <TrackPathPaneViewingMode path={path} />}
+        <CurrentPositionPane currentCenter={currentCenter} />
+        {isEditingModeOn && viewOptions.editingModeOptions.isCrosshairOverlayOn && <CrosshairOverlay />}
+      </BaseLiveMap>
+    );
+  },
+);
+
+interface BaseLiveMapProps {
+  initialCenter: LatLngLiteral;
+  currentCenter: LatLngLiteral;
+  centerOnLocation?: { center: LatLngLiteral; requestId: number };
+  playedSeconds: number;
+  isAutopanOnInitially: boolean;
+}
+
+const BaseLiveMap = forwardRef<LiveMapHandle, PropsWithChildren<BaseLiveMapProps>>(
+  ({ initialCenter, currentCenter, centerOnLocation, isAutopanOnInitially, children }, ref) => {
     const [map, setMap] = useState<LeafletMap | null>(null);
     const [attributionHtml, setAttributionHtml] = useState("");
-    const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
 
     const containerRef = useRef(null);
 
@@ -117,9 +163,11 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
 
       [map, currentCenter],
     );
+    const getCenter = useCallback(() => map?.getCenter(), [map]);
 
     useImperativeHandle(ref, () => ({
       goToCurrentLocation,
+      getCenter,
     }));
 
     return (
@@ -129,35 +177,19 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
           zoom={17}
           style={{ height: "100%", width: "100%" }}
           keyboard={false}
-          ref={useCallback(
-            (map: LeafletMap | null) => {
-              setMap(map);
-              onMapReady?.(map);
-              if (map !== null) {
-                setAttributionHtml(collectAttributions(map));
-              }
-            },
-            [onMapReady],
-          )}
+          ref={useCallback((map: LeafletMap | null) => {
+            setMap(map);
+            if (map !== null) {
+              setAttributionHtml(collectAttributions(map));
+            }
+          }, [])}
           attributionControl={false}
           zoomControl={false}
         >
           <OsmTileLayer />
           <OrmTileLayer />
 
-          {isEditingModeOn && (
-            <>
-              <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
-              <TrackPathPaneEditingMode trackState={trackState} path={path} />
-              <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
-              {viewOptions.editingModeOptions.isTimingPointMarkersOn && (
-                <TimingPointsPane timingPointLocations={timingPointLocations} />
-              )}
-            </>
-          )}
-          {!isEditingModeOn && viewOptions.isTrackPolylineOn && <TrackPathPaneViewingMode path={path} />}
-          <CurrentPositionPane currentCenter={currentCenter} />
-          {isEditingModeOn && viewOptions.editingModeOptions.isCrosshairOverlayOn && <CrosshairOverlay />}
+          {children}
 
           <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
             <CustomAttributionContainer>

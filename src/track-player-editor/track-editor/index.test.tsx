@@ -34,17 +34,10 @@ vi.mock("./VideoPlayer", async () => {
 vi.mock("./LiveMap", async () => {
   const React = await import("react");
   return {
-    LiveMap: ({
-      isKeyboardFocusedModeOn,
-      onMapReady,
-    }: {
-      isKeyboardFocusedModeOn: boolean;
-      onMapReady?: (map: typeof mapInstance | null) => void;
-    }) => {
+    LiveMap: ({ isKeyboardFocusedModeOn }: { isKeyboardFocusedModeOn: boolean }) => {
       React.useEffect(() => {
-        onMapReady?.(mapInstance);
-        return () => onMapReady?.(null);
-      }, [onMapReady]);
+        return () => {};
+      }, []);
       return React.createElement("div", {
         "data-testid": "live-map",
         "data-keyboard-focused": String(isKeyboardFocusedModeOn),
