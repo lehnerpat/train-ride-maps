@@ -1,10 +1,8 @@
 import { FC, useEffect, useState } from "react";
-import { AppBar, Box, IconButton, ToggleButton, ToggleButtonGroup, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DownloadIcon from "@mui/icons-material/Download";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import TuneIcon from "@mui/icons-material/Tune";
-import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import EditIcon from "@mui/icons-material/Edit";
 import { LatLngLiteral, Track, Tracks } from "../track-models";
 import { Link } from "wouter";
@@ -22,6 +20,7 @@ import {
 } from "./track-editor";
 import { useMemoState, usePickedState } from "../common/utils/state-utils";
 import { DefaultViewOptions } from "./track-editor/ViewOptions";
+import { PageRouting } from "../page-routing";
 
 interface TrackPlayerProps {
   track: Track;
@@ -86,6 +85,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
   return (
     <div>
       <TopBar
+        trackId={track.uuid}
         trackTitle={track.title}
         onDownloadFileClicked={downloadTrackAsFile}
         onEnterFullscreenClicked={() => {}}
@@ -125,10 +125,11 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
 };
 
 const TopBar: FC<{
+  trackId: string;
   trackTitle: string;
   onDownloadFileClicked: () => void;
   onEnterFullscreenClicked: () => void;
-}> = ({ trackTitle, onDownloadFileClicked, onEnterFullscreenClicked }) => {
+}> = ({ trackId, trackTitle, onDownloadFileClicked, onEnterFullscreenClicked }) => {
   return (
     <AppBar position="static" sx={{ mb: 2 }}>
       <Toolbar>
@@ -140,31 +141,23 @@ const TopBar: FC<{
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {trackTitle}
         </Typography>
-        {
-          // TODO: Remove after snapshot is implemented, and replace with another way to switch to editing mode
-          <ToggleButtonGroup value={"viewing"} exclusive size="small" sx={{ mx: 3 }}>
-            <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-              <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>Viewing</Box>
-              <SmartDisplayIcon />
-            </ToggleButton>
-            <ToggleButton value={"editing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-              <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>Editing</Box>
-              <EditIcon />
-            </ToggleButton>
-          </ToggleButtonGroup>
-        }
+        <Button
+          size="small"
+          variant="outlined"
+          color="inherit"
+          sx={{ mr: 2 }}
+          component={Link}
+          href={PageRouting.editTrackPage(trackId)}
+        >
+          <EditIcon fontSize="small" />
+          <Box sx={{ ml: 0.5, display: { xs: "none", md: "initial" } }}>Edit</Box>
+        </Button>
         <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
           <DownloadIcon />
         </IconButton>
         <IconButton color="inherit" title="Enter fullscreen" onClick={onEnterFullscreenClicked}>
           <FullscreenIcon />
         </IconButton>
-        {
-          // TODO: Remove after snapshot is implemented
-          <IconButton color="inherit" title="Show view options">
-            <TuneIcon />
-          </IconButton>
-        }
       </Toolbar>
     </AppBar>
   );
