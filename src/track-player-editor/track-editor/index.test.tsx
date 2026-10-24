@@ -100,18 +100,10 @@ describe("TrackPlayer keyboard-focused mode", () => {
     expect(screen.getByTestId("video-player").getAttribute("data-instance")).toBe(videoPlayerInstance);
     expect(screen.getByTestId("live-map").getAttribute("data-keyboard-focused")).toBe("true");
 
-    fireEvent.keyDown(document, { key: "j" });
-    fireEvent.keyDown(document, { key: "k" });
-    fireEvent.keyDown(document, { key: "l" });
-    expect(videoPlayerHandle.seekBy).toHaveBeenNthCalledWith(1, -10);
-    expect(videoPlayerHandle.togglePlayback).toHaveBeenCalledOnce();
-    expect(videoPlayerHandle.seekBy).toHaveBeenNthCalledWith(2, 10);
-
-    fireEvent.keyDown(document, { key: "w" });
-    fireEvent.keyDown(document, { key: "a" });
     fireEvent.keyDown(document, { key: "s" });
     fireEvent.keyDown(document, { key: "d" });
-    expect(mapInstance.panBy.mock.calls).toEqual([[[0, -80]], [[-80, 0]], [[0, 80]], [[80, 0]]]);
+    expect(videoPlayerHandle.seekBy).toHaveBeenNthCalledWith(1, -10);
+    expect(videoPlayerHandle.seekBy).toHaveBeenNthCalledWith(2, 10);
   });
 
   test("leaves typing and modified key combinations alone", () => {

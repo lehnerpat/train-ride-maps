@@ -5,6 +5,7 @@ import { Map as LeafletMap } from "leaflet";
 import { LiveMap } from "./LiveMap";
 import { DefaultViewOptions } from "./ViewOptions";
 import { Track } from "../../track-models";
+import { useMemoState, usePickedState } from "../../common/utils/state-utils";
 
 const path = [
   { lat: 52.5, lng: 13.4 },
@@ -33,6 +34,8 @@ const TestMap = ({
     path: path.map((p, i) => ({ ...p, uuid: `p${i}` })),
     timingPoints: [],
   } as unknown as Track);
+  const viewOptionsState = useMemoState(DefaultViewOptions);
+  const mapViewOptionsState = usePickedState(viewOptionsState, "mapViewOptions");
   return (
     <div style={{ width: 400, height: 400 }}>
       <LiveMap
@@ -48,6 +51,7 @@ const TestMap = ({
         isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
         onMapReady={onMapReady}
         viewOptions={viewOptions}
+        mapViewOptionsState={mapViewOptionsState}
       />
     </div>
   );
