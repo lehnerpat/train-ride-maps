@@ -92,13 +92,12 @@ describe("TrackPlayer keyboard-focused mode", () => {
     vi.clearAllMocks();
   });
 
-  test("J/K/L control the video and W/A/S/D pan by Leaflet's keyboard delta", async () => {
+  test("W/S control the video", async () => {
     renderTrackPlayer();
     const videoPlayerInstance = screen.getByTestId("video-player").getAttribute("data-instance");
     fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
     expect(screen.getByTestId("video-player").getAttribute("data-instance")).toBe(videoPlayerInstance);
-    expect(screen.getByTestId("live-map").getAttribute("data-keyboard-focused")).toBe("true");
 
     fireEvent.keyDown(document, { key: "s" });
     fireEvent.keyDown(document, { key: "d" });

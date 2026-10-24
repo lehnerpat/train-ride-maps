@@ -54,7 +54,6 @@ interface LiveMapProps {
   centerOnLocation?: { center: LatLngLiteral; requestId: number };
   playedSeconds: number;
   isEditingModeOn: boolean;
-  isKeyboardFocusedModeOn: boolean;
   onMapReady?: (map: LeafletMap | null) => void;
   viewOptions: MapViewOptions;
   mapViewOptionsState: UseState<MapViewOptions>;
@@ -82,7 +81,6 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
       centerOnLocation,
       onMapMoved,
       isEditingModeOn,
-      isKeyboardFocusedModeOn,
       onMapReady,
       viewOptions,
       mapViewOptionsState,
@@ -130,15 +128,6 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
       [map, currentCenter],
     );
 
-    useEffect(() => {
-      if (map === null) return;
-      if (isKeyboardFocusedModeOn) {
-        map.keyboard.disable();
-      } else {
-        map.keyboard.enable();
-      }
-    }, [map, isKeyboardFocusedModeOn]);
-
     useImperativeHandle(ref, () => ({
       goToCurrentLocation,
     }));
@@ -150,7 +139,7 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
             center={initialCenter}
             zoom={17}
             style={{ height: "100%", width: "100%" }}
-            keyboard={!isKeyboardFocusedModeOn}
+            keyboard={false}
             ref={useCallback(
               (map: LeafletMap | null) => {
                 setMap(map);

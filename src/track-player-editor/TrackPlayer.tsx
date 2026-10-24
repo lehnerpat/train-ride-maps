@@ -114,7 +114,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
               onMapMoved={(newCenter) => {}}
               playedSeconds={playedSeconds}
               isEditingModeOn={false}
-              isKeyboardFocusedModeOn={false}
               viewOptions={viewOptions.mapViewOptions}
               mapViewOptionsState={mapViewOptionsState}
             />

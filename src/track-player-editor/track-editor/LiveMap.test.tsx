@@ -17,14 +17,12 @@ const TestMap = ({
   centerOnLocation,
   currentCenter = path[0],
   isEditingModeOn = true,
-  isKeyboardFocusedModeOn = false,
   onMapReady,
   viewOptions = DefaultViewOptions.mapViewOptions,
 }: {
   centerOnLocation?: { center: (typeof path)[number]; requestId: number };
   currentCenter?: (typeof path)[number];
   isEditingModeOn?: boolean;
-  isKeyboardFocusedModeOn?: boolean;
   onMapReady?: (map: LeafletMap | null) => void;
   viewOptions?: typeof DefaultViewOptions.mapViewOptions;
 }) => {
@@ -48,7 +46,6 @@ const TestMap = ({
         centerOnLocation={centerOnLocation}
         playedSeconds={0}
         isEditingModeOn={isEditingModeOn}
-        isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
         onMapReady={onMapReady}
         viewOptions={viewOptions}
         mapViewOptionsState={mapViewOptionsState}
@@ -92,21 +89,6 @@ describe("LiveMap", () => {
     rerender(<TestMap isEditingModeOn currentCenter={movedCenter} />);
     expect(setView).not.toHaveBeenCalled();
     setView.mockRestore();
-  });
-
-  test("disables Leaflet keyboard navigation in keyboard-focused mode", () => {
-    const onMapReady = vi.fn();
-    const { rerender } = render(<TestMap onMapReady={onMapReady} />);
-
-    const map = onMapReady.mock.calls.find(([instance]) => instance !== null)?.[0];
-    expect(map).toBeInstanceOf(LeafletMap);
-    expect(map?.keyboard.enabled()).toBe(true);
-
-    rerender(<TestMap isKeyboardFocusedModeOn onMapReady={onMapReady} />);
-    expect(map?.keyboard.enabled()).toBe(false);
-
-    rerender(<TestMap onMapReady={onMapReady} />);
-    expect(map?.keyboard.enabled()).toBe(true);
   });
 
   test("renders the map with zoom controls and toggles path editing", () => {

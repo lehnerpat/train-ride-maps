@@ -424,7 +424,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
                   onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
                   playedSeconds={playedSeconds}
                   isEditingModeOn={isEditingModeOn}
-                  isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
                   viewOptions={viewOptions.mapViewOptions}
                   mapViewOptionsState={mapViewOptionsState}
                 />
@@ -447,7 +446,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
                 onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
-                isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
                 viewOptions={viewOptions.mapViewOptions}
                 mapViewOptionsState={mapViewOptionsState}
               />
