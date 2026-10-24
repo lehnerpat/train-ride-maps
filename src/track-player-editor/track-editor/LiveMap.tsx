@@ -18,17 +18,17 @@ import React, {
   useState,
 } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
-import CustomLeafletControl from "../common/components/CustomLeafletControl";
+import CustomLeafletControl from "../../common/components/CustomLeafletControl";
 import styled from "@emotion/styled";
 import { Theme, CSSObject } from "@mui/material/styles";
 import useResizeObserver from "@react-hook/resize-observer";
 import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
-import { SetState, usePickedState, UseState } from "../common/utils/state-utils";
-import { closestPointOnPath } from "../geo/distance";
+import { SetState, usePickedState, UseState } from "../../common/utils/state-utils";
+import { closestPointOnPath } from "../../geo/distance";
 import DraggableLines from "leaflet-draggable-lines";
 import { LeafletContext } from "@react-leaflet/core";
-import { Track } from "../track-models";
-import { augmentUuid } from "../common/utils/uuid";
+import { Track } from "../../track-models";
+import { augmentUuid } from "../../common/utils/uuid";
 import { Button, ButtonGroup, ButtonProps } from "@mui/material";
 import {
   Add as AddIcon,

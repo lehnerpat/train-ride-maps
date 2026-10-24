@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { UseState, pickState } from "../common/utils/state-utils";
+import { UseState, pickState } from "../../common/utils/state-utils";
 import { Box, Button, Card, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 
 export interface MapViewOptions {

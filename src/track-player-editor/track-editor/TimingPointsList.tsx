@@ -18,8 +18,8 @@ import {
   Place as JumpToLocationIcon,
 } from "@mui/icons-material";
 import ForwardIcon from "@mui/icons-material/Forward";
-import { TimingPoint } from "../track-models";
-import { HasUuid } from "../common/utils/uuid";
+import { TimingPoint } from "../../track-models";
+import { HasUuid } from "../../common/utils/uuid";
 import { List, RowComponentProps, useListRef } from "react-window";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";

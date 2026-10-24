@@ -2,11 +2,11 @@ import { FC, useState } from "react";
 import { LatLngLiteral } from "leaflet";
 import { Box, Button, Card, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { Edit as EditIcon } from "@mui/icons-material";
-import { useFileUpload } from "../common/hooks/useFileUpload";
-import { parseOsmXml } from "../osm-input/parse-osm-xml";
-import { augmentUuid, HasUuid } from "../common/utils/uuid";
-import { isUndefined } from "../common/utils/type-helpers";
-import { isTrackTitleValid, isVideoUrlValid } from "../track-models/track-info-validation";
+import { useFileUpload } from "../../common/hooks/useFileUpload";
+import { parseOsmXml } from "../../osm-input/parse-osm-xml";
+import { augmentUuid, HasUuid } from "../../common/utils/uuid";
+import { isUndefined } from "../../common/utils/type-helpers";
+import { isTrackTitleValid, isVideoUrlValid } from "../../track-models/track-info-validation";
 import { formatDistanceMeters, formatVideoDuration } from "./track-info-formatting";
 
 interface VideoInfoAreaProps {

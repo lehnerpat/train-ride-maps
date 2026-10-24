@@ -2,7 +2,7 @@ import { FC } from "react";
 import { IncludedDataMap } from "../included-data";
 import { Track } from "../track-models";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
-import { isTrackPlayerMode, TrackPlayer } from "../track-player";
+import { isTrackPlayerMode, TrackPlayer } from "../track-player-editor/track-editor";
 import { StartPage } from "./StartPage";
 import { Alert, Container } from "@mui/material";
 

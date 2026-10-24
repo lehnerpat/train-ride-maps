@@ -1,16 +1,16 @@
 import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LatLngLiteral, Map as LeafletMap } from "leaflet";
-import { TimingPoint, Track, Tracks } from "../track-models";
+import { TimingPoint, Track, Tracks } from "../../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { VideoPlayer, VideoPlayerHandle } from "./VideoPlayer";
 import { LiveMap, LiveMapHandle } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
-import { useMemoState, usePickedState, UseState, SetState } from "../common/utils/state-utils";
-import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
-import { distanceInMM } from "../geo/distance";
-import { isFunction, isUndefined } from "../common/utils/type-helpers";
+import { useMemoState, usePickedState, UseState, SetState } from "../../common/utils/state-utils";
+import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
+import { distanceInMM } from "../../geo/distance";
+import { isFunction, isUndefined } from "../../common/utils/type-helpers";
 import {
   AppBar,
   Box,
@@ -35,13 +35,13 @@ import {
   SmartDisplay as SmartDisplayIcon,
   Tune as TuneIcon,
 } from "@mui/icons-material";
-import { useFileDownload } from "../common/hooks/useFileDownload";
-import { augmentUuid, HasUuid } from "../common/utils/uuid";
+import { useFileDownload } from "../../common/hooks/useFileDownload";
+import { augmentUuid, HasUuid } from "../../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
 import { Link, useLocation } from "wouter";
 import { VideoInfoArea } from "./VideoInfoArea";
-import { PageRouting } from "../page-routing";
+import { PageRouting } from "../../page-routing";
 import { VideoOverrideButton } from "./VideoOverrideButton";
 import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override";
 import { deepPurple } from "@mui/material/colors";

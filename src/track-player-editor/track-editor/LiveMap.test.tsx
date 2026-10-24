@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Map as LeafletMap } from "leaflet";
 import { LiveMap } from "./LiveMap";
 import { DefaultViewOptions } from "./ViewOptions";
-import { Track } from "../track-models";
+import { Track } from "../../track-models";
 
 const path = [
   { lat: 52.5, lng: 13.4 },

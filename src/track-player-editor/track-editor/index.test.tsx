@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Router, useLocation } from "wouter";
 import { memoryLocation } from "wouter/memory-location";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { Track } from "../track-models";
+import { Track } from "../../track-models";
 import { TrackPlayer } from "./index";
 
 const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
@@ -20,10 +20,7 @@ const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
 vi.mock("./VideoPlayer", async () => {
   const React = await import("react");
   return {
-    VideoPlayer: React.forwardRef<
-      typeof videoPlayerHandle,
-      Record<string, never>
-    >((_, ref) => {
+    VideoPlayer: React.forwardRef<typeof videoPlayerHandle, Record<string, never>>((_, ref) => {
       React.useImperativeHandle(ref, () => videoPlayerHandle, []);
       const instanceId = React.useId();
       return React.createElement("div", {
@@ -59,8 +56,7 @@ vi.mock("./LiveMap", async () => {
 vi.mock("./VideoInfoArea", async () => {
   const React = await import("react");
   return {
-    VideoInfoArea: () =>
-      React.createElement("input", { "aria-label": "Video title" }),
+    VideoInfoArea: () => React.createElement("input", { "aria-label": "Video title" }),
   };
 });
 vi.mock("./TimingPointsList", () => ({ TimingPointsList: () => null }));
@@ -98,19 +94,11 @@ describe("TrackPlayer keyboard-focused mode", () => {
 
   test("J/K/L control the video and W/A/S/D pan by Leaflet's keyboard delta", async () => {
     renderTrackPlayer();
-    const videoPlayerInstance = screen
-      .getByTestId("video-player")
-      .getAttribute("data-instance");
-    fireEvent.click(
-      screen.getByRole("button", { name: "Enable keyboard shortcuts" }),
-    );
+    const videoPlayerInstance = screen.getByTestId("video-player").getAttribute("data-instance");
+    fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
-    expect(
-      screen.getByTestId("video-player").getAttribute("data-instance"),
-    ).toBe(videoPlayerInstance);
-    expect(
-      screen.getByTestId("live-map").getAttribute("data-keyboard-focused"),
-    ).toBe("true");
+    expect(screen.getByTestId("video-player").getAttribute("data-instance")).toBe(videoPlayerInstance);
+    expect(screen.getByTestId("live-map").getAttribute("data-keyboard-focused")).toBe("true");
 
     fireEvent.keyDown(document, { key: "j" });
     fireEvent.keyDown(document, { key: "k" });
@@ -123,19 +111,12 @@ describe("TrackPlayer keyboard-focused mode", () => {
     fireEvent.keyDown(document, { key: "a" });
     fireEvent.keyDown(document, { key: "s" });
     fireEvent.keyDown(document, { key: "d" });
-    expect(mapInstance.panBy.mock.calls).toEqual([
-      [[0, -80]],
-      [[-80, 0]],
-      [[0, 80]],
-      [[80, 0]],
-    ]);
+    expect(mapInstance.panBy.mock.calls).toEqual([[[0, -80]], [[-80, 0]], [[0, 80]], [[80, 0]]]);
   });
 
   test("leaves typing and modified key combinations alone", () => {
     renderTrackPlayer();
-    fireEvent.click(
-      screen.getByRole("button", { name: "Enable keyboard shortcuts" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
     fireEvent.keyDown(screen.getByRole("textbox", { name: "Video title" }), {
       key: "j",
@@ -164,10 +145,7 @@ describe("TrackPlayer keyboard-focused mode", () => {
     fireEvent.keyDown(screen.getByRole("textbox", { name: "Video title" }), {
       key: " ",
     });
-    fireEvent.keyDown(
-      screen.getByRole("button", { name: "Enable keyboard shortcuts" }),
-      { key: " " },
-    );
+    fireEvent.keyDown(screen.getByRole("button", { name: "Enable keyboard shortcuts" }), { key: " " });
     fireEvent.keyDown(document, { key: " ", ctrlKey: true });
 
     expect(videoPlayerHandle.togglePlayback).not.toHaveBeenCalled();
