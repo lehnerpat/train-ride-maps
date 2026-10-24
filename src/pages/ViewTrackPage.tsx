@@ -2,14 +2,14 @@ import { FC } from "react";
 import { IncludedDataMap } from "../included-data";
 import { Track } from "../track-models";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
-import { isTrackPlayerMode, TrackPlayer } from "../track-player-editor/track-editor";
+import { isTrackPlayerEditorMode, TrackEditor } from "../track-player-editor/track-editor";
 import { StartPage } from "./StartPage";
 import { Alert, Container } from "@mui/material";
 
 export const ViewTrackPage: FC<{ trackUuid: string; mode?: string }> = ({ trackUuid, mode = "view" }) => {
   const track = loadTrackFromStorage(trackUuid);
 
-  if (!isTrackPlayerMode(mode)) {
+  if (!isTrackPlayerEditorMode(mode)) {
     return (
       <>
         <Container maxWidth="md" sx={{ pt: 2 }}>
@@ -31,7 +31,7 @@ export const ViewTrackPage: FC<{ trackUuid: string; mode?: string }> = ({ trackU
     );
   }
 
-  return <TrackPlayer initialTrack={track} mode={mode} />;
+  return <TrackEditor initialTrack={track} mode={mode} />;
 };
 
 function loadTrackFromStorage(trackUuid: string): Track | null {

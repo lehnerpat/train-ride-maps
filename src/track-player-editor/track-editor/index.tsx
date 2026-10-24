@@ -72,17 +72,17 @@ const Placeholder: FC<{ width?: number | string; height?: number | string; text?
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
-export type TrackPlayerMode = "view" | "edit";
+export type TrackPlayerEditorMode = "view" | "edit";
 
-export function isTrackPlayerMode(mode: string): mode is TrackPlayerMode {
+export function isTrackPlayerEditorMode(mode: string): mode is TrackPlayerEditorMode {
   return ["view", "edit"].includes(mode);
 }
 
-interface TrackPlayerProps {
+interface TrackEditorProps {
   initialTrack: Track;
-  mode: TrackPlayerMode;
+  mode: TrackPlayerEditorMode;
 }
-export const TrackPlayer: FC<TrackPlayerProps> = ({ initialTrack, mode }) => {
+export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   const initialCoord = useMemo(
     () => (initialTrack.path.length > 0 ? initialTrack.path[0] : { lat: 0, lng: 0 }),
     [initialTrack],

@@ -3,7 +3,7 @@ import { Router, useLocation } from "wouter";
 import { memoryLocation } from "wouter/memory-location";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { Track } from "../../track-models";
-import { TrackPlayer } from "./index";
+import { TrackEditor } from "./index";
 
 const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
   videoPlayerHandle: {
@@ -75,7 +75,7 @@ const track: Track = {
 const TrackPlayerForCurrentLocation = () => {
   const [location] = useLocation();
   const mode = location.endsWith("/edit") ? "edit" : "view";
-  return <TrackPlayer initialTrack={track} mode={mode} />;
+  return <TrackEditor initialTrack={track} mode={mode} />;
 };
 
 function renderTrackPlayer(path = "/track/track-id/edit") {
