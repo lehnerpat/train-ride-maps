@@ -153,22 +153,20 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
             attributionControl={false}
             zoomControl={false}
           >
-            {isEditingModeOn && (
-              <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
-            )}
-
             <OsmTileLayer />
             <OrmTileLayer />
 
-            {isEditingModeOn ? (
-              <TrackPathPaneEditingMode trackState={trackState} path={path} />
-            ) : (
-              <TrackPathPaneViewingMode path={path} />
+            {isEditingModeOn && (
+              <>
+                <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
+                <TrackPathPaneEditingMode trackState={trackState} path={path} />
+                <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
+                <TimingPointsPane timingPointLocations={timingPointLocations} />
+              </>
             )}
-            <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
-            <TimingPointsPane timingPointLocations={timingPointLocations} />
+            {isEditingModeOn ? null : <TrackPathPaneViewingMode path={path} />}
             <CurrentPositionPane currentCenter={currentCenter} />
-            <CrosshairOverlay />
+            {isEditingModeOn && <CrosshairOverlay />}
 
             <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
               <CustomAttributionContainer>
