@@ -17,6 +17,7 @@ import {
   MoreHoriz as MoreIcon,
   Place as JumpToLocationIcon,
 } from "@mui/icons-material";
+import ForwardIcon from "@mui/icons-material/Forward";
 import { TimingPoint } from "../track-models";
 import { HasUuid } from "../common/utils/uuid";
 import { List, RowComponentProps, useListRef } from "react-window";
@@ -39,8 +40,7 @@ type RowData = Pick<
 >;
 
 export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
-  const { isAutoScrollOn, precedingIndex, timingPoints, onDeleteTimingPoint, onJumpToTime, onJumpToLocation } =
-    props;
+  const { isAutoScrollOn, precedingIndex, timingPoints, onDeleteTimingPoint, onJumpToTime, onJumpToLocation } = props;
   const listRef = useListRef(null);
   const prevPrecedingIndex = useRef(precedingIndex);
 
@@ -85,7 +85,8 @@ function ItemRenderer({
   precedingIndex,
 }: RowComponentProps<RowData>) {
   const timingPoint = timingPoints[index];
-  const isCurrent = index === precedingIndex || index === precedingIndex + 1;
+  const isCurrent = index === precedingIndex;
+  const isHighlighted = index === precedingIndex || index === precedingIndex + 1;
 
   return (
     <ListItem
@@ -95,15 +96,15 @@ function ItemRenderer({
       disablePadding
       dense
       sx={[
-        { px: 1 },
-        isCurrent &&
+        { pr: 1 },
+        isHighlighted &&
           ((theme: Theme) => ({
             backgroundColor: lighten(theme.palette.background.paper, 0.2),
             fontWeight: "bold",
           })),
       ]}
     >
-      <TimingPointData timingPoint={timingPoint} />
+      <TimingPointData timingPoint={timingPoint} isCurrent={isCurrent} />
       <TimingPointMenu
         timingPoint={timingPoint}
         onDeleteTimingPoint={onDeleteTimingPoint}
@@ -114,8 +115,18 @@ function ItemRenderer({
   );
 }
 
-const TimingPointData: FC<{ timingPoint: TimingPoint & HasUuid }> = ({ timingPoint }) => (
-  <Stack direction="row" spacing={0.5} sx={{ flexGrow: 1, px: 1, fontFamily: "monospace" }}>
+const TimingPointData: FC<{ timingPoint: TimingPoint & HasUuid; isCurrent: boolean }> = ({
+  timingPoint,
+  isCurrent,
+}) => (
+  <Stack
+    direction="row"
+    spacing={0.5}
+    sx={{ flexGrow: 1, pl: 0.5, pr: 1, fontFamily: "monospace", alignItems: "center" }}
+  >
+    <Box sx={{ display: "flex", alignItems: "center", minWidth: 20 }}>
+      {isCurrent ? <ForwardIcon fontSize="small" /> : null}
+    </Box>
     <Box>t={formatTimeSec(timingPoint.t)}</Box>
     <Box sx={{ opacity: 0.6 }}>|</Box>
     <Box>d={formatDistanceMeters(timingPoint.d)}</Box>
