@@ -756,7 +756,7 @@ function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
   return [track, wrappedSetTrack];
 }
 
-function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: ReadonlyArray<TimingPoint>): number {
+export function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: ReadonlyArray<TimingPoint>): number {
   const timingPointsCount = timingPoints.length;
   if (!timingPoints || !Array.isArray(timingPoints) || timingPointsCount === 0) return -1;
   if (offsetSec < timingPoints[0].t) return -1;
@@ -767,7 +767,7 @@ function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: Readonly
   return nextIndex - 1;
 }
 
-function interpolateDistance(prevTP: TimingPoint, nextTP: TimingPoint, offsetSec: number): number {
+export function interpolateDistance(prevTP: TimingPoint, nextTP: TimingPoint, offsetSec: number): number {
   if (offsetSec < prevTP.t || offsetSec > nextTP.t)
     throw new Error(`Given offsetSec ${offsetSec} was outside of TimingPoint range [${prevTP.t}, ${nextTP.t}]`);
   const p = (offsetSec - prevTP.t) / (nextTP.t - prevTP.t);
@@ -775,7 +775,7 @@ function interpolateDistance(prevTP: TimingPoint, nextTP: TimingPoint, offsetSec
   return d;
 }
 
-function interpolateCoordinates(
+export function interpolateCoordinates(
   prevCoord: DistanceWithCoord,
   nextCoord: DistanceWithCoord,
   distance: number,
@@ -802,8 +802,8 @@ function computePathLength(path: ReadonlyArray<LatLngLiteral>, lastPointIndex?: 
   return distance;
 }
 
-type DistanceWithCoord = [number, LatLngLiteral];
-function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): DistanceWithCoord[] {
+export type DistanceWithCoord = [number, LatLngLiteral];
+export function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): DistanceWithCoord[] {
   if (path.length === 0) return [];
   let totalDistance = 0;
   let prevPoint = path[0];
@@ -836,7 +836,7 @@ function findCoordinateAtDistance(
   return distanceFromStartMap[distanceFromStartMap.length - 1][1];
 }
 
-function computeTimingPointLocations(
+export function computeTimingPointLocations(
   distanceFromStartMap: DistanceWithCoord[],
   timingPoints: ReadonlyArray<TimingPoint>,
 ): ReadonlyArray<LatLngLiteral> {
