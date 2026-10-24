@@ -3,8 +3,6 @@ import { UseState, pickState } from "../../common/utils/state-utils";
 import { Box, Button, Card, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 
 export interface MapViewOptions {
-  isAutopanOnViewing: boolean;
-  isAutopanOnEditing: boolean;
   isTrackPolylineOn: boolean;
   editingModeOptions: {
     isCrosshairOverlayOn: boolean;
@@ -29,8 +27,6 @@ export interface ViewOptions {
 
 export const DefaultViewOptions: ViewOptions = {
   mapViewOptions: {
-    isAutopanOnViewing: true,
-    isAutopanOnEditing: false,
     isTrackPolylineOn: true,
     editingModeOptions: {
       isCrosshairOverlayOn: true,
@@ -79,12 +75,6 @@ export const ViewOptionsDialog: FC<ViewOptionsDialogProps> = ({ viewOptionsState
     <Card raised sx={{ p: 2 }}>
       <SectionHeading>Map Options</SectionHeading>
       <Stack>
-        <ToggleSwitch id="isAutoPanOnViewing" checkedState={pickState(mapViewOptionsState, "isAutopanOnViewing")}>
-          Viewing mode: auto-pan map to current position
-        </ToggleSwitch>
-        <ToggleSwitch id="isAutoPanOnEditing" checkedState={pickState(mapViewOptionsState, "isAutopanOnEditing")}>
-          Editing mode: auto-pan map to current position
-        </ToggleSwitch>
         <ToggleSwitch id="isTrackPolylineOn" checkedState={pickState(mapViewOptionsState, "isTrackPolylineOn")}>
           Show track path
         </ToggleSwitch>

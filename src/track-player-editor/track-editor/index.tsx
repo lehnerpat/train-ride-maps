@@ -1,5 +1,5 @@
 import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LatLngLiteral, Map as LeafletMap } from "leaflet";
+import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
@@ -23,7 +23,6 @@ import {
   ToggleButtonGroup,
   Toolbar,
   Typography,
-  useTheme,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -377,7 +376,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   const showMapAsOverlay = !isEditingModeOn;
 
   const straightRailOptionsState = usePickedState(viewOptionsState, "straightRailsOverlay");
-  const mapViewOptionsState = usePickedState(viewOptionsState, "mapViewOptions");
 
   return (
     <div>
@@ -425,7 +423,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
                   playedSeconds={playedSeconds}
                   isEditingModeOn={isEditingModeOn}
                   viewOptions={viewOptions.mapViewOptions}
-                  mapViewOptionsState={mapViewOptionsState}
+                  isAutopanOnInitially={true}
                 />
                 {/* <Placeholder width="100%" height="100%" text="Map" /> */}
               </>
@@ -447,7 +445,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
                 playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
                 viewOptions={viewOptions.mapViewOptions}
-                mapViewOptionsState={mapViewOptionsState}
+                isAutopanOnInitially={false}
               />
               {/* <Placeholder width="100%" height="100%" text="Map" /> */}
             </>

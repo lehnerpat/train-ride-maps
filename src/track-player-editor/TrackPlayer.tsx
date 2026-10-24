@@ -115,7 +115,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
               playedSeconds={playedSeconds}
               isEditingModeOn={false}
               viewOptions={viewOptions.mapViewOptions}
-              mapViewOptionsState={mapViewOptionsState}
+              isAutopanOnInitially={true}
             />
           </ViewingMapContainer>
         </VideoContainer>

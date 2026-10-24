@@ -54,9 +54,9 @@ interface LiveMapProps {
   centerOnLocation?: { center: LatLngLiteral; requestId: number };
   playedSeconds: number;
   isEditingModeOn: boolean;
+  isAutopanOnInitially: boolean;
   onMapReady?: (map: LeafletMap | null) => void;
   viewOptions: MapViewOptions;
-  mapViewOptionsState: UseState<MapViewOptions>;
 }
 
 function createDragMarker(layer: unknown, i: number, length: number) {
@@ -81,9 +81,9 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
       centerOnLocation,
       onMapMoved,
       isEditingModeOn,
+      isAutopanOnInitially,
       onMapReady,
       viewOptions,
-      mapViewOptionsState,
     },
     ref,
   ) => {
@@ -93,9 +93,10 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
 
     const containerRef = useRef(null);
 
-    const [isAutopanOn, setIsAutopanOn] = isEditingModeOn
-      ? usePickedState(mapViewOptionsState, "isAutopanOnEditing")
-      : usePickedState(mapViewOptionsState, "isAutopanOnViewing");
+    const [isAutopanOn, setIsAutopanOn] = useState(isAutopanOnInitially);
+    useEffect(() => {
+      setIsAutopanOn(isAutopanOnInitially);
+    }, [isAutopanOnInitially]);
 
     useResizeObserver(containerRef, () => {
       if (map === null) return;
