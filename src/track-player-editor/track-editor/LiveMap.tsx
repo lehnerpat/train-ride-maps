@@ -7,23 +7,14 @@ import {
   LatLng,
   DivIcon,
 } from "leaflet";
-import React, {
-  createContext,
-  FC,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import React, { FC, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, TileLayer, useMapEvent } from "react-leaflet";
 import CustomLeafletControl from "../../common/components/CustomLeafletControl";
 import styled from "@emotion/styled";
 import { Theme, CSSObject } from "@mui/material/styles";
 import useResizeObserver from "@react-hook/resize-observer";
-import { DefaultViewOptions, MapViewOptions } from "./ViewOptions";
-import { SetState, usePickedState, UseState } from "../../common/utils/state-utils";
+import { MapViewOptions } from "./ViewOptions";
+import { SetState, UseState } from "../../common/utils/state-utils";
 import { closestPointOnPath } from "../../geo/distance";
 import DraggableLines from "leaflet-draggable-lines";
 import { LeafletContext } from "@react-leaflet/core";
@@ -37,8 +28,6 @@ import {
   NavigationOutlined as NavigationIcon,
 } from "@mui/icons-material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-
-const LiveMapContext = createContext({ isEditingModeOn: false, viewOptions: DefaultViewOptions.mapViewOptions });
 
 export interface LiveMapHandle {
   goToCurrentLocation(): void;
@@ -135,90 +124,90 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(
 
     return (
       <LiveMapContainer ref={containerRef}>
-        <LiveMapContext.Provider value={{ isEditingModeOn, viewOptions }}>
-          <MapContainer
-            center={initialCenter}
-            zoom={17}
-            style={{ height: "100%", width: "100%" }}
-            keyboard={false}
-            ref={useCallback(
-              (map: LeafletMap | null) => {
-                setMap(map);
-                onMapReady?.(map);
-                if (map !== null) {
-                  setAttributionHtml(collectAttributions(map));
-                }
-              },
-              [onMapReady],
-            )}
-            attributionControl={false}
-            zoomControl={false}
-          >
-            <OsmTileLayer />
-            <OrmTileLayer />
+        <MapContainer
+          center={initialCenter}
+          zoom={17}
+          style={{ height: "100%", width: "100%" }}
+          keyboard={false}
+          ref={useCallback(
+            (map: LeafletMap | null) => {
+              setMap(map);
+              onMapReady?.(map);
+              if (map !== null) {
+                setAttributionHtml(collectAttributions(map));
+              }
+            },
+            [onMapReady],
+          )}
+          attributionControl={false}
+          zoomControl={false}
+        >
+          <OsmTileLayer />
+          <OrmTileLayer />
 
-            {isEditingModeOn && (
-              <>
-                <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
-                <TrackPathPaneEditingMode trackState={trackState} path={path} />
-                <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
+          {isEditingModeOn && (
+            <>
+              <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
+              <TrackPathPaneEditingMode trackState={trackState} path={path} />
+              <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={map?.getCenter()} />
+              {viewOptions.editingModeOptions.isTimingPointMarkersOn && (
                 <TimingPointsPane timingPointLocations={timingPointLocations} />
-              </>
-            )}
-            {isEditingModeOn ? null : <TrackPathPaneViewingMode path={path} />}
-            <CurrentPositionPane currentCenter={currentCenter} />
-            {isEditingModeOn && <CrosshairOverlay />}
+              )}
+            </>
+          )}
+          {!isEditingModeOn && viewOptions.isTrackPolylineOn && <TrackPathPaneViewingMode path={path} />}
+          <CurrentPositionPane currentCenter={currentCenter} />
+          {isEditingModeOn && viewOptions.editingModeOptions.isCrosshairOverlayOn && <CrosshairOverlay />}
 
-            <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
-              <CustomAttributionContainer>
-                <CustomAttributionTextContainer className="attribution-text">
-                  <div
-                    className="leaflet-control-attribution leaflet-control"
-                    dangerouslySetInnerHTML={{ __html: attributionHtml }}
-                  />
-                </CustomAttributionTextContainer>
-                <CustomAttributionGlyphContainer className="attribution-glyph">©</CustomAttributionGlyphContainer>
-              </CustomAttributionContainer>
-            </CustomLeafletControl>
+          <CustomLeafletControl position="topright" style={{ border: "none", margin: 0 }}>
+            <CustomAttributionContainer>
+              <CustomAttributionTextContainer className="attribution-text">
+                <div
+                  className="leaflet-control-attribution leaflet-control"
+                  dangerouslySetInnerHTML={{ __html: attributionHtml }}
+                />
+              </CustomAttributionTextContainer>
+              <CustomAttributionGlyphContainer className="attribution-glyph">©</CustomAttributionGlyphContainer>
+            </CustomAttributionContainer>
+          </CustomLeafletControl>
 
-            <CustomLeafletControl position="topleft">
-              <ButtonGroup
-                orientation="vertical"
-                variant="contained"
-                size="small"
-                sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
+          <CustomLeafletControl position="topleft">
+            <ButtonGroup
+              orientation="vertical"
+              variant="contained"
+              size="small"
+              sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
+            >
+              <Button onClick={zoomIn}>
+                <AddIcon />
+              </Button>
+              <Button onClick={zoomOut}>
+                <RemoveIcon />
+              </Button>
+            </ButtonGroup>
+          </CustomLeafletControl>
+          <CustomLeafletControl position="topleft">
+            <ButtonGroup
+              orientation="vertical"
+              variant="contained"
+              size="small"
+              sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
+            >
+              <MapPushButton
+                pushed={isAutopanOn}
+                onClick={() => setIsAutopanOn(!isAutopanOn)}
+                title="Autopan map when video is playing"
               >
-                <Button onClick={zoomIn}>
-                  <AddIcon />
+                <NavigationIcon />
+              </MapPushButton>
+              {!isAutopanOn && (
+                <Button sx={mapControlButtonMixin}>
+                  <KeyboardTabIcon onClick={goToCurrentLocation} />
                 </Button>
-                <Button onClick={zoomOut}>
-                  <RemoveIcon />
-                </Button>
-              </ButtonGroup>
-            </CustomLeafletControl>
-            <CustomLeafletControl position="topleft">
-              <ButtonGroup
-                orientation="vertical"
-                variant="contained"
-                size="small"
-                sx={{ "& .MuiButtonGroup-grouped.MuiButtonGroup-grouped": mapControlButtonMixin }}
-              >
-                <MapPushButton
-                  pushed={isAutopanOn}
-                  onClick={() => setIsAutopanOn(!isAutopanOn)}
-                  title="Autopan map when video is playing"
-                >
-                  <NavigationIcon />
-                </MapPushButton>
-                {!isAutopanOn && (
-                  <Button sx={mapControlButtonMixin}>
-                    <KeyboardTabIcon onClick={goToCurrentLocation} />
-                  </Button>
-                )}
-              </ButtonGroup>
-            </CustomLeafletControl>
-          </MapContainer>
-        </LiveMapContext.Provider>
+              )}
+            </ButtonGroup>
+          </CustomLeafletControl>
+        </MapContainer>
       </LiveMapContainer>
     );
   },
@@ -317,11 +306,7 @@ const OrmTileLayer = () => (
 
 const TrackPathPaneViewingMode: FC<{ path: ReadonlyArray<LatLngLiteral> }> = ({ path }) => (
   <TrackPathPaneContainer name="track-path-pane-viewing-mode">
-    <LiveMapContext.Consumer>
-      {({ viewOptions: { isTrackPolylineOn } }) =>
-        isTrackPolylineOn && <Polyline color="purple" positions={path as any /* TODO */} interactive={false} />
-      }
-    </LiveMapContext.Consumer>
+    <Polyline color="purple" positions={path as any /* TODO */} interactive={false} />
   </TrackPathPaneContainer>
 );
 
@@ -443,18 +428,12 @@ const ProjectedPointPane: FC<{ projectedPoint: LatLngLiteral | undefined; mapCen
   mapCenter,
 }) => (
   <ProjectedPointPaneContainer name="projected-point-pane">
-    <LiveMapContext.Consumer>
-      {({ isEditingModeOn }) =>
-        isEditingModeOn &&
-        !!projectedPoint &&
-        !!mapCenter && (
-          <>
-            <Polyline positions={[mapCenter, projectedPoint]} color="gray" dashArray={[4]} interactive={false} />
-            <CircleMarker center={projectedPoint} radius={3} fillOpacity={1} color="#3388ff" interactive={false} />
-          </>
-        )
-      }
-    </LiveMapContext.Consumer>
+    {projectedPoint && mapCenter && (
+      <>
+        <Polyline positions={[mapCenter, projectedPoint]} color="gray" dashArray={[4]} interactive={false} />
+        <CircleMarker center={projectedPoint} radius={3} fillOpacity={1} color="#3388ff" interactive={false} />
+      </>
+    )}
   </ProjectedPointPaneContainer>
 );
 
@@ -464,15 +443,9 @@ const ProjectedPointPaneContainer = styled(Pane)`
 
 const TimingPointsPane: FC<{ timingPointLocations: ReadonlyArray<LatLngLiteral> }> = ({ timingPointLocations }) => (
   <TimingPointsPaneContainer name="timing-points-pane">
-    <LiveMapContext.Consumer>
-      {({ isEditingModeOn, viewOptions }) =>
-        isEditingModeOn &&
-        viewOptions.editingModeOptions.isTimingPointMarkersOn &&
-        timingPointLocations.map((tp, idx) => (
-          <CircleMarker key={idx} center={tp} color="green" radius={6} interactive={false} />
-        ))
-      }
-    </LiveMapContext.Consumer>
+    {timingPointLocations.map((tp, idx) => (
+      <CircleMarker key={idx} center={tp} color="green" radius={6} interactive={false} />
+    ))}
   </TimingPointsPaneContainer>
 );
 
@@ -491,37 +464,30 @@ const CurrentPositionPaneContainer = styled(Pane)`
 
 const crosshairColor = "#0077ff";
 const CrosshairOverlay: FC = () => (
-  <LiveMapContext.Consumer>
-    {({ isEditingModeOn, viewOptions: { editingModeOptions } }) =>
-      isEditingModeOn &&
-      editingModeOptions.isCrosshairOverlayOn && (
-        <>
-          <CrosshairOverlayItem
-            style={{
-              left: "calc(50% - 20px)",
-              right: "calc(50% - 20px)",
-              top: "50%",
-              bottom: "calc(50% - 1px)",
-              borderTop: `1px solid ${crosshairColor}`,
-              transformOrigin: "center",
-              transform: "rotate(45deg)",
-            }}
-          />
-          <CrosshairOverlayItem
-            style={{
-              left: "50%",
-              right: "calc(50% - 1px)",
-              top: "calc(50% - 20px)",
-              bottom: "calc(50% - 20px)",
-              borderLeft: `1px solid ${crosshairColor}`,
-              transformOrigin: "center",
-              transform: "rotate(45deg)",
-            }}
-          />
-        </>
-      )
-    }
-  </LiveMapContext.Consumer>
+  <>
+    <CrosshairOverlayItem
+      style={{
+        left: "calc(50% - 20px)",
+        right: "calc(50% - 20px)",
+        top: "50%",
+        bottom: "calc(50% - 1px)",
+        borderTop: `1px solid ${crosshairColor}`,
+        transformOrigin: "center",
+        transform: "rotate(45deg)",
+      }}
+    />
+    <CrosshairOverlayItem
+      style={{
+        left: "50%",
+        right: "calc(50% - 1px)",
+        top: "calc(50% - 20px)",
+        bottom: "calc(50% - 20px)",
+        borderLeft: `1px solid ${crosshairColor}`,
+        transformOrigin: "center",
+        transform: "rotate(45deg)",
+      }}
+    />
+  </>
 );
 const CrosshairOverlayItem = styled.div`
   position: absolute;
