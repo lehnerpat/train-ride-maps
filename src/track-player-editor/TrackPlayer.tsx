@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -26,19 +26,11 @@ interface TrackPlayerProps {
   track: Track;
 }
 
-export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
-  const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
+const usePlayerState = (track: Track) => {
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const timingPoints = track.timingPoints;
   const initialCoord = track.path.length > 0 ? track.path[0] : { lat: 0, lng: 0 };
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
-
-  // TODO: can we remove this?
-  const trackState = useState(track);
-  const viewOptionsState = useMemoState(DefaultViewOptions);
-  const [viewOptions] = viewOptionsState;
-  const mapViewOptionsState = usePickedState(viewOptionsState, "mapViewOptions");
-
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
 
   useEffect(() => {
@@ -82,6 +74,30 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
     setCurrentCenter(interpolatedCoord);
   }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
 
+  const onPlayerProgress = useCallback(
+    (ev: { playedSeconds: number }) => {
+      setPlayedSeconds(ev.playedSeconds);
+    },
+    [setPlayedSeconds],
+  );
+
+  return {
+    playedSeconds,
+    distanceFromStartMap,
+    onPlayerProgress,
+    currentCenter,
+  };
+};
+
+export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
+  const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
+  const { distanceFromStartMap, onPlayerProgress, currentCenter } = usePlayerState(track);
+
+  // TODO: can we remove this?
+  const trackState = useState(track);
+  const viewOptionsState = useMemoState(DefaultViewOptions);
+  const [viewOptions] = viewOptionsState;
+
   return (
     <div>
       <TopBar
@@ -95,9 +111,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
         <VideoContainer>
           <VideoPlayer
             videoUrl={track.videoUrl}
-            onProgress={(ev) => {
-              setPlayedSeconds(ev.playedSeconds);
-            }}
+            onProgress={onPlayerProgress}
             onDuration={(duration) => {
               // if (Number.isFinite(duration) && duration >= 0) {
               //   setVideoDuration(duration);
@@ -109,10 +123,10 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
               trackState={trackState}
               path={track.path}
               timingPointLocations={computeTimingPointLocations(distanceFromStartMap, track.timingPoints)}
-              initialCenter={initialCoord}
+              initialCenter={currentCenter}
               currentCenter={currentCenter}
               onMapMoved={(newCenter) => {}}
-              playedSeconds={playedSeconds}
+              playedSeconds={0}
               isEditingModeOn={false}
               viewOptions={viewOptions.mapViewOptions}
               isAutopanOnInitially={true}
