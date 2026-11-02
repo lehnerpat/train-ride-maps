@@ -58,8 +58,8 @@ export const useVideoPlayer = ({
 
 interface VideoPlayerProps {
   videoUrl: string;
-  onProgress: (state: { playedSeconds: number }) => void;
-  onDuration: (duration: number) => void;
+  onProgress?: (state: { playedSeconds: number }) => void;
+  onDuration?: (duration: number) => void;
 }
 
 export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
@@ -103,12 +103,12 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
             mediaRef={playerRef}
             onTimeUpdate={() => {
               if (playerRef.current) {
-                onProgress({ playedSeconds: playerRef.current.currentTime });
+                onProgress?.({ playedSeconds: playerRef.current.currentTime });
               }
             }}
             onDurationChange={() => {
               if (playerRef.current) {
-                onDuration(playerRef.current.duration);
+                onDuration?.(playerRef.current.duration);
               }
             }}
           />
@@ -120,12 +120,12 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
               src={videoUrl}
               onTimeUpdate={() => {
                 if (playerRef.current) {
-                  onProgress({ playedSeconds: playerRef.current.currentTime });
+                  onProgress?.({ playedSeconds: playerRef.current.currentTime });
                 }
               }}
               onDurationChange={() => {
                 if (playerRef.current) {
-                  onDuration(playerRef.current.duration);
+                  onDuration?.(playerRef.current.duration);
                 }
               }}
             />

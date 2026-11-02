@@ -40,15 +40,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
 
       <VideoAndMapContainer>
         <VideoContainer>
-          <VideoPlayer
-            videoUrl={track.videoUrl}
-            onProgress={onPlayerProgress}
-            onDuration={(duration) => {
-              // if (Number.isFinite(duration) && duration >= 0) {
-              //   setVideoDuration(duration);
-              // }
-            }}
-          />
+          <VideoPlayer videoUrl={track.videoUrl} onProgress={onPlayerProgress} />
           <ViewingMapContainer>
             <LiveMap
               trackState={trackState}
