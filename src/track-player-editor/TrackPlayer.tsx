@@ -1,93 +1,24 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DownloadIcon from "@mui/icons-material/Download";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import EditIcon from "@mui/icons-material/Edit";
-import { LatLngLiteral, Track, Tracks } from "../track-models";
+import { Track, Tracks } from "../track-models";
 import { Link } from "wouter";
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import styled from "@emotion/styled";
 import { VideoPlayer } from "./track-editor/VideoPlayer";
 import { LiveMap } from "./track-editor/LiveMap";
-import {
-  computeDistanceFromStartMap,
-  computeTimingPointLocations,
-  DistanceWithCoord,
-  findPrecedingTimingPointIndex,
-  interpolateDistance,
-  interpolateCoordinates,
-} from "./track-editor";
-import { useMemoState, usePickedState } from "../common/utils/state-utils";
+import { computeTimingPointLocations } from "./track-editor";
+import { useMemoState } from "../common/utils/state-utils";
 import { DefaultViewOptions } from "./track-editor/ViewOptions";
 import { PageRouting } from "../page-routing";
+import { usePlayerState } from "./usePlayerState";
 
 interface TrackPlayerProps {
   track: Track;
 }
-
-const usePlayerState = (track: Track) => {
-  const [playedSeconds, setPlayedSeconds] = useState(0);
-  const timingPoints = track.timingPoints;
-  const initialCoord = track.path.length > 0 ? track.path[0] : { lat: 0, lng: 0 };
-  const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
-  const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
-
-  useEffect(() => {
-    const dfsMap = computeDistanceFromStartMap(track.path);
-    setDistanceFromStartMap(dfsMap);
-  }, [track.path]);
-
-  useEffect(() => {
-    if (!timingPoints || timingPoints.length === 0 || distanceFromStartMap.length === 0) {
-      setCurrentCenter(initialCoord);
-      return;
-    }
-
-    const precedingIndex = findPrecedingTimingPointIndex(playedSeconds, timingPoints);
-
-    let interpolatedDistance: number;
-    if (precedingIndex === -1) {
-      interpolatedDistance = timingPoints[0].d;
-    } else if (precedingIndex === timingPoints.length - 1) {
-      interpolatedDistance = timingPoints[timingPoints.length - 1].d;
-    } else {
-      interpolatedDistance = interpolateDistance(
-        timingPoints[precedingIndex],
-        timingPoints[precedingIndex + 1],
-        playedSeconds,
-      );
-    }
-
-    const nextIdx = distanceFromStartMap.findIndex((t) => t[0] > interpolatedDistance);
-    let interpolatedCoord: LatLngLiteral;
-    if (nextIdx === 0) {
-      interpolatedCoord = distanceFromStartMap[0][1];
-    } else if (nextIdx === -1) {
-      interpolatedCoord = distanceFromStartMap[distanceFromStartMap.length - 1][1];
-    } else {
-      const next = distanceFromStartMap[nextIdx];
-      const prev = distanceFromStartMap[nextIdx - 1];
-      interpolatedCoord = interpolateCoordinates(prev, next, interpolatedDistance);
-    }
-
-    setCurrentCenter(interpolatedCoord);
-  }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
-
-  const onPlayerProgress = useCallback(
-    (ev: { playedSeconds: number }) => {
-      setPlayedSeconds(ev.playedSeconds);
-    },
-    [setPlayedSeconds],
-  );
-
-  return {
-    playedSeconds,
-    distanceFromStartMap,
-    onPlayerProgress,
-    currentCenter,
-  };
-};
 
 export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
   const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));

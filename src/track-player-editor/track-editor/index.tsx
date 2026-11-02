@@ -45,6 +45,7 @@ import { VideoOverrideButton } from "./VideoOverrideButton";
 import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override";
 import { deepPurple } from "@mui/material/colors";
 import { k, ksd } from "./keyboard-shortcut-utils";
+import { usePlayerState } from "../usePlayerState";
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
@@ -88,13 +89,17 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   );
   const trackState = useAutosavingTrackState(initialTrack);
   const [track, setTrack] = trackState;
-  const [playedSeconds, setPlayedSeconds] = useState(0);
+  const {
+    playedSeconds,
+    onPlayerProgress,
+    distanceFromStartMap,
+    pathLengthMM,
+    currentCenter,
+    precedingTrackPointIndex,
+  } = usePlayerState(track);
   const [videoDuration, setVideoDuration] = useState<number>();
-  const [pathLengthMM, setPathLengthMM] = useMemoState(0);
-  const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
-  const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [centerOnLocation, setCenterOnLocation] = useState<{ center: LatLngLiteral; requestId: number }>();
   const liveMapRef = useRef<LiveMapHandle>(null);
   const videoPlayerRef = useRef<VideoPlayerHandle>(null);
@@ -128,7 +133,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   );
   const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOn];
   const viewOptionsState = useMemoState(DefaultViewOptions);
-  const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
 
   const videoPlayerAndMapRef = useRef<HTMLDivElement>(null);
 
@@ -148,13 +152,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   }, [precedingTrackPointIndex]);
 
   useEffect(() => {
-    const dfsMap = computeDistanceFromStartMap(path);
-    const pathLength = dfsMap[dfsMap.length - 1]?.[0] ?? 0;
-    setPathLengthMM(pathLength);
-    setDistanceFromStartMap(dfsMap);
-  }, [path, setPathLengthMM]);
-
-  useEffect(() => {
     if (!projectedPointInfo) {
       setCurrentDistanceMM(undefined);
     } else {
@@ -164,44 +161,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
       setCurrentDistanceMM(currentDistance);
     }
   }, [projectedPointInfo, path]);
-
-  useEffect(() => {
-    if (!timingPoints || timingPoints.length === 0 || distanceFromStartMap.length === 0) {
-      setPrecedingTrackPointIndex(-1);
-      setCurrentCenter(initialCoord);
-      return;
-    }
-
-    const precedingIndex = findPrecedingTimingPointIndex(playedSeconds, timingPoints);
-
-    let interpolatedDistance: number;
-    if (precedingIndex === -1) {
-      interpolatedDistance = timingPoints[0].d;
-    } else if (precedingIndex === timingPoints.length - 1) {
-      interpolatedDistance = timingPoints[timingPoints.length - 1].d;
-    } else {
-      interpolatedDistance = interpolateDistance(
-        timingPoints[precedingIndex],
-        timingPoints[precedingIndex + 1],
-        playedSeconds,
-      );
-    }
-
-    const nextIdx = distanceFromStartMap.findIndex((t) => t[0] > interpolatedDistance);
-    let interpolatedCoord: LatLngLiteral;
-    if (nextIdx === 0) {
-      interpolatedCoord = distanceFromStartMap[0][1];
-    } else if (nextIdx === -1) {
-      interpolatedCoord = distanceFromStartMap[distanceFromStartMap.length - 1][1];
-    } else {
-      const next = distanceFromStartMap[nextIdx];
-      const prev = distanceFromStartMap[nextIdx - 1];
-      interpolatedCoord = interpolateCoordinates(prev, next, interpolatedDistance);
-    }
-
-    setPrecedingTrackPointIndex(precedingIndex);
-    setCurrentCenter(interpolatedCoord);
-  }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap]);
 
   const addTimingPoint = useCallback(
     () => _addTimingPoint(playedSeconds, currentDistanceMM, setTimingPoints),
@@ -397,9 +356,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
             <VideoPlayer
               ref={videoPlayerRef}
               videoUrl={videoUrlOverride ?? track.videoUrl}
-              onProgress={(ev) => {
-                setPlayedSeconds(ev.playedSeconds);
-              }}
+              onProgress={onPlayerProgress}
               onDuration={(duration) => {
                 if (Number.isFinite(duration) && duration >= 0) {
                   setVideoDuration(duration);
