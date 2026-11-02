@@ -1,20 +1,65 @@
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 
 import { Video, VideoPlayer as VideoJsPlayer, NeutralVideoSkin } from "@videojs/react/video";
 import { YouTubeVideo } from "@videojs/react/media/youtube-video";
 import type { YouTubeAdapter } from "@videojs/youtube-video";
 import "@videojs/react/video/neutral-skin.css";
 
-interface VideoPlayerProps {
-  videoUrl: string;
-  onProgress: (state: { playedSeconds: number }) => void;
-  onDuration: (duration: number) => void;
-}
-
 export interface VideoPlayerHandle {
   seekTo: (timeSeconds: number) => void;
   seekBy: (offsetSeconds: number) => void;
   togglePlayback: () => Promise<void>;
+}
+
+export const useVideoPlayer = ({
+  videoUrl,
+  onProgress,
+}: {
+  videoUrl: string;
+  onProgress: (state: { playedSeconds: number }) => void;
+}) => {
+  const videoPlayerRef = useRef<VideoPlayerHandle>(null);
+  const [videoDuration, setVideoDuration] = useState<number>();
+
+  const seekTo = useCallback(
+    (timeSeconds: number) => {
+      videoPlayerRef.current?.seekTo(timeSeconds);
+    },
+    [videoPlayerRef],
+  );
+  const seekBy = useCallback(
+    (offsetSeconds: number) => {
+      videoPlayerRef.current?.seekBy(offsetSeconds);
+    },
+    [videoPlayerRef],
+  );
+  const togglePlayback = useCallback(() => {
+    return videoPlayerRef.current?.togglePlayback();
+  }, [videoPlayerRef]);
+
+  const videoPlayer = useCallback(
+    () => (
+      <VideoPlayer
+        ref={videoPlayerRef}
+        videoUrl={videoUrl}
+        onProgress={onProgress}
+        onDuration={(duration) => {
+          if (Number.isFinite(duration) && duration >= 0) {
+            setVideoDuration(duration);
+          }
+        }}
+      />
+    ),
+    [videoUrl, onProgress, setVideoDuration],
+  );
+
+  return { duration: videoDuration, Player: videoPlayer, seekTo, seekBy, togglePlayback };
+};
+
+interface VideoPlayerProps {
+  videoUrl: string;
+  onProgress: (state: { playedSeconds: number }) => void;
+  onDuration: (duration: number) => void;
 }
 
 export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(

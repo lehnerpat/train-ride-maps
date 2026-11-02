@@ -3,7 +3,7 @@ import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { VideoPlayer, VideoPlayerHandle } from "./VideoPlayer";
+import { useVideoPlayer, VideoPlayer, VideoPlayerHandle } from "./VideoPlayer";
 import { LiveMap, LiveMapHandle } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
@@ -97,12 +97,10 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
     currentCenter,
     precedingTrackPointIndex,
   } = usePlayerState(track);
-  const [videoDuration, setVideoDuration] = useState<number>();
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [centerOnLocation, setCenterOnLocation] = useState<{ center: LatLngLiteral; requestId: number }>();
   const liveMapRef = useRef<LiveMapHandle>(null);
-  const videoPlayerRef = useRef<VideoPlayerHandle>(null);
   const [isKeyboardModeActive, setIsKeyboardModeActive] = useState(false);
   const [videoUrlOverride, setVideoUrlOverride] = useState(() => loadVideoUrlOverride(initialTrack.uuid));
   const changeVideoUrlOverride = useCallback(
@@ -141,6 +139,11 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   const [path, setPath] = usePickedState(trackState, "path");
   const [, setTimingPoints] = usePickedState(trackState, "timingPoints");
 
+  const videoPlayer = useVideoPlayer({
+    videoUrl: videoUrlOverride ?? track.videoUrl,
+    onProgress: onPlayerProgress,
+  });
+
   useEffect(() => {
     if (!isEditingModeOn) {
       setIsKeyboardModeActive(false);
@@ -171,12 +174,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
     [setTimingPoints],
   );
 
-  const jumpToTime = useCallback(
-    (time: number) => {
-      videoPlayerRef.current?.seekTo(time);
-    },
-    [videoPlayerRef],
-  );
+  const jumpToTime = videoPlayer.seekTo;
   const jumpToLocation = useCallback(
     (distanceMM: number) => {
       const center = findCoordinateAtDistance(distanceFromStartMap, distanceMM);
@@ -234,7 +232,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
 
   useEffect(() => {
     const togglePlayback = () => {
-      const playback = videoPlayerRef.current?.togglePlayback();
+      const playback = videoPlayer.togglePlayback();
       if (playback) {
         void playback.catch((error) => console.error("Error while toggling video playback:", error));
       }
@@ -269,22 +267,22 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
         ...sharedKeyboardShortcutHandlers,
         ksd("w").handleAndStop(() => jumpToPreviousTimingPoint()),
         ksd("e").handleAndStop(() => jumpToNextTimingPoint()),
-        ksd("a").handleAndStop(() => videoPlayerRef.current?.seekBy(-1)),
+        ksd("a").handleAndStop(() => videoPlayer.seekBy(-1)),
         ksd("a")
           .shift()
-          .handleAndStop(() => videoPlayerRef.current?.seekBy(-0.1)),
-        ksd("s").handleAndStop(() => videoPlayerRef.current?.seekBy(-10)),
+          .handleAndStop(() => videoPlayer.seekBy(-0.1)),
+        ksd("s").handleAndStop(() => videoPlayer.seekBy(-10)),
         ksd("s")
           .shift()
-          .handleAndStop(() => videoPlayerRef.current?.seekBy(-30)),
-        ksd("d").handleAndStop(() => videoPlayerRef.current?.seekBy(10)),
+          .handleAndStop(() => videoPlayer.seekBy(-30)),
+        ksd("d").handleAndStop(() => videoPlayer.seekBy(10)),
         ksd("d")
           .shift()
-          .handleAndStop(() => videoPlayerRef.current?.seekBy(30)),
-        ksd("f").handleAndStop(() => videoPlayerRef.current?.seekBy(1)),
+          .handleAndStop(() => videoPlayer.seekBy(30)),
+        ksd("f").handleAndStop(() => videoPlayer.seekBy(1)),
         ksd("f")
           .shift()
-          .handleAndStop(() => videoPlayerRef.current?.seekBy(0.1)),
+          .handleAndStop(() => videoPlayer.seekBy(0.1)),
 
         ksd("g").handleAndStop(() => liveMapRef.current?.goToCurrentLocation()),
       ];
@@ -323,7 +321,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   }, [
     isKeyboardFocusedModeOn,
     isEditingModeOn,
-    videoPlayerRef,
+    videoPlayer,
     liveMapRef,
     jumpToNextTimingPoint,
     jumpToPreviousTimingPoint,
@@ -352,19 +350,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
 
       <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay} ref={videoPlayerAndMapRef}>
         <VideoContainer showMapAsOverlay={showMapAsOverlay}>
-          <>
-            <VideoPlayer
-              ref={videoPlayerRef}
-              videoUrl={videoUrlOverride ?? track.videoUrl}
-              onProgress={onPlayerProgress}
-              onDuration={(duration) => {
-                if (Number.isFinite(duration) && duration >= 0) {
-                  setVideoDuration(duration);
-                }
-              }}
-            />
-            {/* <Placeholder width="100%" height="100%" text="Video player" /> */}
-          </>
+          <videoPlayer.Player />
           <StraightRailsOverlay optionsState={straightRailOptionsState} />
           {showMapAsOverlay && (
             <ViewingMapContainer>
@@ -421,7 +407,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
               <VideoInfoArea
                 trackTitle={track.title}
                 videoUrl={track.videoUrl}
-                videoDuration={videoDuration}
+                videoDuration={videoPlayer.duration}
                 pathLengthMM={pathLengthMM}
                 onTrackInfoChanged={(title, videoUrl) => setTrack((prev) => ({ ...prev, title, videoUrl }))}
                 onPathUploaded={setPath}
