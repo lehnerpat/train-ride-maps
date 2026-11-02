@@ -420,7 +420,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
                   initialCenter={initialCoord}
                   currentCenter={currentCenter}
                   onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
-                  playedSeconds={playedSeconds}
                   isEditingModeOn={isEditingModeOn}
                   viewOptions={viewOptions.mapViewOptions}
                   isAutopanOnInitially={true}
@@ -442,7 +441,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
                 currentCenter={currentCenter}
                 centerOnLocation={centerOnLocation}
                 onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
-                playedSeconds={playedSeconds}
                 isEditingModeOn={isEditingModeOn}
                 viewOptions={viewOptions.mapViewOptions}
                 isAutopanOnInitially={false}

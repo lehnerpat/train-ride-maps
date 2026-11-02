@@ -60,7 +60,6 @@ interface LiveMapOwnProps {
   timingPointLocations: ReadonlyArray<LatLngLiteral>;
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   currentCenter: LatLngLiteral;
-  playedSeconds: number;
   isEditingModeOn: boolean;
   viewOptions: MapViewOptions;
 }
@@ -117,7 +116,6 @@ interface BaseLiveMapProps {
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
   centerOnLocation?: { center: LatLngLiteral; requestId: number };
-  playedSeconds: number;
   isAutopanOnInitially: boolean;
 }
 

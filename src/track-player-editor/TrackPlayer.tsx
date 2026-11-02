@@ -126,7 +126,6 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
               initialCenter={currentCenter}
               currentCenter={currentCenter}
               onMapMoved={(newCenter) => {}}
-              playedSeconds={0}
               isEditingModeOn={false}
               viewOptions={viewOptions.mapViewOptions}
               isAutopanOnInitially={true}
