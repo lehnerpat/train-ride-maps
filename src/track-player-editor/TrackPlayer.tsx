@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -9,10 +9,7 @@ import { Link } from "wouter";
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import styled from "@emotion/styled";
 import { VideoPlayer } from "./track-editor/VideoPlayer";
-import { LiveMap } from "./track-editor/LiveMap";
-import { computeTimingPointLocations } from "./track-editor";
-import { useMemoState } from "../common/utils/state-utils";
-import { DefaultViewOptions } from "./track-editor/ViewOptions";
+import { ViewingLiveMap } from "./track-editor/LiveMap";
 import { PageRouting } from "../page-routing";
 import { usePlayerState } from "./usePlayerState";
 
@@ -22,12 +19,7 @@ interface TrackPlayerProps {
 
 export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
   const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
-  const { distanceFromStartMap, onPlayerProgress, currentCenter } = usePlayerState(track);
-
-  // TODO: can we remove this?
-  const trackState = useState(track);
-  const viewOptionsState = useMemoState(DefaultViewOptions);
-  const [viewOptions] = viewOptionsState;
+  const { onPlayerProgress, currentCenter } = usePlayerState(track);
 
   return (
     <div>
@@ -42,17 +34,7 @@ export const TrackPlayer: FC<TrackPlayerProps> = ({ track }) => {
         <VideoContainer>
           <VideoPlayer videoUrl={track.videoUrl} onProgress={onPlayerProgress} />
           <ViewingMapContainer>
-            <LiveMap
-              trackState={trackState}
-              path={track.path}
-              timingPointLocations={computeTimingPointLocations(distanceFromStartMap, track.timingPoints)}
-              initialCenter={currentCenter}
-              currentCenter={currentCenter}
-              onMapMoved={(newCenter) => {}}
-              isEditingModeOn={false}
-              viewOptions={viewOptions.mapViewOptions}
-              isAutopanOnInitially={true}
-            />
+            <ViewingLiveMap path={track.path} currentCenter={currentCenter} />
           </ViewingMapContainer>
         </VideoContainer>
       </VideoAndMapContainer>

@@ -112,6 +112,22 @@ export const LiveMap: FC<LiveMapProps & React.RefAttributes<LiveMapHandle>> = fo
   },
 );
 
+interface ViewingLiveMapOwnProps {
+  path: ReadonlyArray<LatLngLiteral>;
+  currentCenter: LatLngLiteral;
+}
+
+type ViewingLiveMapProps = ViewingLiveMapOwnProps & Omit<BaseLiveMapProps, "isAutopanOnInitially" | "initialCenter">;
+
+export const ViewingLiveMap: FC<ViewingLiveMapProps> = (props) => {
+  const { currentCenter, path, ...restProps } = props;
+
+  return <BaseLiveMap currentCenter={currentCenter} initialCenter={currentCenter} isAutopanOnInitially={true} {...restProps} >
+    <TrackPathPaneViewingMode path={path} />
+    <CurrentPositionPane currentCenter={currentCenter} />
+  </BaseLiveMap>;
+};
+
 interface BaseLiveMapProps {
   initialCenter: LatLngLiteral;
   currentCenter: LatLngLiteral;
