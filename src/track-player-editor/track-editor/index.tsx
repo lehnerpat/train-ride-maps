@@ -3,7 +3,7 @@ import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { useVideoPlayer, VideoPlayer, VideoPlayerHandle } from "./VideoPlayer";
+import { useVideoPlayer } from "./VideoPlayer";
 import { LiveMap, LiveMapHandle } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
@@ -11,24 +11,11 @@ import { useMemoState, usePickedState, UseState, SetState } from "../../common/u
 import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
 import { distanceInMM } from "../../geo/distance";
 import { isFunction, isUndefined } from "../../common/utils/type-helpers";
-import {
-  AppBar,
-  Box,
-  Card,
-  Dialog,
-  Fab,
-  IconButton,
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { AppBar, Box, Button, Card, Dialog, Fab, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import {
   Add as AddIcon,
   ArrowBack as ArrowBackIcon,
   Download as DownloadIcon,
-  Edit as EditIcon,
   Fullscreen as FullscreenIcon,
   Keyboard as KeyboardIcon,
   SmartDisplay as SmartDisplayIcon,
@@ -46,29 +33,6 @@ import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override
 import { deepPurple } from "@mui/material/colors";
 import { k, ksd } from "./keyboard-shortcut-utils";
 import { usePlayerState } from "../usePlayerState";
-
-//eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Placeholder: FC<{ width?: number | string; height?: number | string; text?: string }> = ({
-  width,
-  height,
-  text,
-}) => (
-  <Box sx={{ bgcolor: "rgba(255, 255, 255, 0.13)", width, height }}>
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        border: "1px solid gray",
-        boxSizing: "border-box",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {text}
-    </Box>
-  </Box>
-);
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -120,13 +84,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   const isKeyboardFocusedModeOn = isEditingModeOn && isKeyboardModeActive;
 
   const setEditingModeOn = useCallback<SetState<boolean>>(
-    (action) =>
-      navigate(
-        PageRouting.viewTrackPage(
-          track.uuid,
-          (isFunction(action) ? action(isEditingModeOn) : action) ? "edit" : "view",
-        ),
-      ),
+    (action) => (isFunction(action) ? action(isEditingModeOn) : action),
     [isEditingModeOn],
   );
   const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOn];
@@ -337,6 +295,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
   return (
     <div>
       <MenuBar
+        trackId={track.uuid}
         isEditingState={isEditingModeOnState}
         isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
         onToggleKeyboardMode={toggleKeyboardMode}
@@ -570,6 +529,7 @@ function useKeyPressHandler(keyHandler: (ev: KeyboardEvent) => void) {
 }
 
 const MenuBar: FC<{
+  trackId: string;
   trackTitle: string;
   isEditingState: UseState<boolean>;
   isKeyboardFocusedModeOn: boolean;
@@ -580,6 +540,7 @@ const MenuBar: FC<{
   onDownloadFileClicked: () => void;
   onEnterFullscreenClicked: () => void;
 }> = ({
+  trackId,
   trackTitle,
   isEditingState: [isEditingModeOn, setIsEditingModeOn],
   isKeyboardFocusedModeOn,
@@ -601,6 +562,17 @@ const MenuBar: FC<{
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         {trackTitle}
       </Typography>
+      <Button
+        size="small"
+        variant="outlined"
+        color="inherit"
+        sx={{ mr: 2 }}
+        component={Link}
+        href={PageRouting.viewTrackPage(trackId)}
+      >
+        <SmartDisplayIcon fontSize="small" />
+        <Box sx={{ ml: 0.5, display: { xs: "none", md: "initial" } }}>View</Box>
+      </Button>
       {isEditingModeOn && <VideoOverrideButton override={videoUrlOverride} onChange={onVideoUrlOverrideChange} />}
       {isEditingModeOn && (
         <IconButton
@@ -613,22 +585,6 @@ const MenuBar: FC<{
           <KeyboardIcon />
         </IconButton>
       )}
-      <ToggleButtonGroup
-        value={isEditingModeOn ? "editing" : "viewing"}
-        exclusive
-        onChange={(_, newValue) => setIsEditingModeOn(newValue === "editing")}
-        size="small"
-        sx={{ mx: 3 }}
-      >
-        <ToggleButton value={"viewing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>Viewing</Box>
-          <SmartDisplayIcon />
-        </ToggleButton>
-        <ToggleButton value={"editing"} sx={{ pl: { md: 2 }, pr: { md: 1.5 } }}>
-          <Box sx={{ mr: 0.5, display: { xs: "none", md: "initial" } }}>Editing</Box>
-          <EditIcon />
-        </ToggleButton>
-      </ToggleButtonGroup>
       <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
         <DownloadIcon />
       </IconButton>

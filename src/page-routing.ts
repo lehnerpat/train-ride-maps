@@ -1,6 +1,6 @@
 export const PageRouting = {
-  viewTrackPage(trackId: string, mode?: "view" | "edit"): string {
-    return `/track/${trackId}${mode && mode !== "view" ? `/${mode}` : ""}`;
+  viewTrackPage(trackId: string): string {
+    return `/track/${trackId}/view-new`;
   },
   editTrackPage(trackId: string): string {
     return `/track/${trackId}/edit`;
