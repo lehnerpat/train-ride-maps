@@ -4,7 +4,7 @@ import { TimingPoint, Track, Tracks } from "../../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { useVideoPlayer } from "./VideoPlayer";
-import { LiveMap, LiveMapHandle } from "./LiveMap";
+import { EditingLiveMap, LiveMapHandle } from "./LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../../common/utils/state-utils";
@@ -276,52 +276,27 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
         <VideoContainer showMapAsOverlay={showMapAsOverlay}>
           <videoPlayer.Player />
           <StraightRailsOverlay optionsState={straightRailOptionsState} />
-          {showMapAsOverlay && (
-            <ViewingMapContainer>
-              <>
-                <LiveMap
-                  ref={liveMapRef}
-                  trackState={trackState}
-                  path={path}
-                  timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
-                  initialCenter={initialCoord}
-                  currentCenter={currentCenter}
-                  onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
-                  isEditingModeOn={isEditingModeOn}
-                  viewOptions={viewOptions.mapViewOptions}
-                  isAutopanOnInitially={true}
-                />
-                {/* <Placeholder width="100%" height="100%" text="Map" /> */}
-              </>
-            </ViewingMapContainer>
-          )}
         </VideoContainer>
-        {isEditingModeOn && (
-          <EditingMapContainer>
-            <>
-              <LiveMap
-                ref={liveMapRef}
-                trackState={trackState}
-                path={path}
-                timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
-                initialCenter={initialCoord}
-                currentCenter={currentCenter}
-                centerOnLocation={centerOnLocation}
-                onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
-                isEditingModeOn={isEditingModeOn}
-                viewOptions={viewOptions.mapViewOptions}
-                isAutopanOnInitially={false}
-              />
-              {/* <Placeholder width="100%" height="100%" text="Map" /> */}
-            </>
 
-            <AddTimingPointWidget
-              playedSeconds={playedSeconds}
-              currentDistanceMM={currentDistanceMM}
-              onAddButtonClicked={addTimingPoint}
-            />
-          </EditingMapContainer>
-        )}
+        <EditingMapContainer>
+          <EditingLiveMap
+            ref={liveMapRef}
+            trackState={trackState}
+            path={path}
+            timingPointLocations={computeTimingPointLocations(distanceFromStartMap, timingPoints)}
+            initialCenter={initialCoord}
+            currentCenter={currentCenter}
+            centerOnLocation={centerOnLocation}
+            onMapMoved={(newCenter) => setProjectedPointInfo(newCenter)}
+            viewOptions={viewOptions.mapViewOptions}
+          />
+
+          <AddTimingPointWidget
+            playedSeconds={playedSeconds}
+            currentDistanceMM={currentDistanceMM}
+            onAddButtonClicked={addTimingPoint}
+          />
+        </EditingMapContainer>
       </VideoAndMapContainer>
 
       {isEditingModeOn && (

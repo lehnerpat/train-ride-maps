@@ -54,63 +54,50 @@ function createDragMarker(layer: unknown, i: number, length: number) {
   };
 }
 
-interface LiveMapOwnProps {
+interface EditingLiveMapOwnProps {
   trackState: UseState<Track>;
   path: ReadonlyArray<LatLngLiteral>;
   timingPointLocations: ReadonlyArray<LatLngLiteral>;
   onMapMoved: (projection: { p: LatLngLiteral; precedingPathIndex: number } | undefined) => void;
   currentCenter: LatLngLiteral;
-  isEditingModeOn: boolean;
   viewOptions: MapViewOptions;
 }
 
-type LiveMapProps = LiveMapOwnProps & BaseLiveMapProps;
+type EditingLiveMapProps = EditingLiveMapOwnProps & Omit<BaseLiveMapProps, "isAutopanOnInitially">;
 
-export const LiveMap: FC<LiveMapProps & React.RefAttributes<LiveMapHandle>> = forwardRef<LiveMapHandle, LiveMapProps>(
-  (props, ref) => {
-    const {
-      trackState,
-      path,
-      timingPointLocations,
-      currentCenter,
-      onMapMoved,
-      isEditingModeOn,
-      viewOptions,
-      ...restProps
-    } = props;
-    const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
+export const EditingLiveMap: FC<EditingLiveMapProps & React.RefAttributes<LiveMapHandle>> = forwardRef<
+  LiveMapHandle,
+  EditingLiveMapProps
+>((props, ref) => {
+  const { trackState, path, timingPointLocations, currentCenter, onMapMoved, viewOptions, ...restProps } = props;
+  const [projectedPoint, setProjectedPoint] = useState<LatLngLiteral>();
 
-    const mapRef = useRef<LiveMapHandle>(null);
-    useImperativeHandle(
-      ref,
-      () => ({
-        goToCurrentLocation: () => {
-          mapRef.current?.goToCurrentLocation();
-        },
-        getCenter: () => mapRef.current?.getCenter(),
-      }),
-      [mapRef],
-    );
+  const mapRef = useRef<LiveMapHandle>(null);
+  useImperativeHandle(
+    ref,
+    () => ({
+      goToCurrentLocation: () => {
+        mapRef.current?.goToCurrentLocation();
+      },
+      getCenter: () => mapRef.current?.getCenter(),
+    }),
+    [mapRef],
+  );
 
-    return (
-      <BaseLiveMap {...restProps} currentCenter={currentCenter} ref={mapRef}>
-        {isEditingModeOn && (
-          <>
-            <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
-            <TrackPathPaneEditingMode trackState={trackState} path={path} />
-            <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={mapRef.current?.getCenter()} />
-            {viewOptions.editingModeOptions.isTimingPointMarkersOn && (
-              <TimingPointsPane timingPointLocations={timingPointLocations} />
-            )}
-          </>
-        )}
-        {!isEditingModeOn && viewOptions.isTrackPolylineOn && <TrackPathPaneViewingMode path={path} />}
-        <CurrentPositionPane currentCenter={currentCenter} />
-        {isEditingModeOn && viewOptions.editingModeOptions.isCrosshairOverlayOn && <CrosshairOverlay />}
-      </BaseLiveMap>
-    );
-  },
-);
+  return (
+    <BaseLiveMap currentCenter={currentCenter} isAutopanOnInitially={false} ref={mapRef} {...restProps}>
+      <MapEventHandler onMapMoved={onMapMoved} setProjectedPoint={setProjectedPoint} path={path} />
+      <TrackPathPaneEditingMode trackState={trackState} path={path} />
+      <ProjectedPointPane projectedPoint={projectedPoint} mapCenter={mapRef.current?.getCenter()} />
+      {viewOptions.editingModeOptions.isTimingPointMarkersOn && (
+        <TimingPointsPane timingPointLocations={timingPointLocations} />
+      )}
+
+      <CurrentPositionPane currentCenter={currentCenter} />
+      {viewOptions.editingModeOptions.isCrosshairOverlayOn && <CrosshairOverlay />}
+    </BaseLiveMap>
+  );
+});
 
 interface ViewingLiveMapOwnProps {
   path: ReadonlyArray<LatLngLiteral>;
@@ -122,10 +109,12 @@ type ViewingLiveMapProps = ViewingLiveMapOwnProps & Omit<BaseLiveMapProps, "isAu
 export const ViewingLiveMap: FC<ViewingLiveMapProps> = (props) => {
   const { currentCenter, path, ...restProps } = props;
 
-  return <BaseLiveMap currentCenter={currentCenter} initialCenter={currentCenter} isAutopanOnInitially={true} {...restProps} >
-    <TrackPathPaneViewingMode path={path} />
-    <CurrentPositionPane currentCenter={currentCenter} />
-  </BaseLiveMap>;
+  return (
+    <BaseLiveMap currentCenter={currentCenter} initialCenter={currentCenter} isAutopanOnInitially={true} {...restProps}>
+      <TrackPathPaneViewingMode path={path} />
+      <CurrentPositionPane currentCenter={currentCenter} />
+    </BaseLiveMap>
+  );
 };
 
 interface BaseLiveMapProps {

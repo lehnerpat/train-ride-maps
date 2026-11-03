@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { Map as LeafletMap } from "leaflet";
-import { LiveMap } from "./LiveMap";
+import { EditingLiveMap } from "./LiveMap";
 import { DefaultViewOptions } from "./ViewOptions";
 import { Track } from "../../track-models";
 
@@ -15,12 +15,10 @@ const path = [
 const TestMap = ({
   centerOnLocation,
   currentCenter = path[0],
-  isEditingModeOn = true,
   viewOptions = DefaultViewOptions.mapViewOptions,
 }: {
   centerOnLocation?: { center: (typeof path)[number]; requestId: number };
   currentCenter?: (typeof path)[number];
-  isEditingModeOn?: boolean;
   viewOptions?: typeof DefaultViewOptions.mapViewOptions;
 }) => {
   const trackState = useState<Track>({
@@ -31,7 +29,7 @@ const TestMap = ({
   } as unknown as Track);
   return (
     <div style={{ width: 400, height: 400 }}>
-      <LiveMap
+      <EditingLiveMap
         trackState={trackState}
         path={path}
         timingPointLocations={[]}
@@ -39,9 +37,7 @@ const TestMap = ({
         initialCenter={path[0]}
         currentCenter={currentCenter}
         centerOnLocation={centerOnLocation}
-        isEditingModeOn={isEditingModeOn}
         viewOptions={viewOptions}
-        isAutopanOnInitially={isEditingModeOn ? false : true}
       />
     </div>
   );
@@ -60,23 +56,6 @@ describe("LiveMap", () => {
   });
   afterAll(() => {
     vi.unstubAllGlobals();
-  });
-
-  test("uses the mode-specific auto-pan setting", () => {
-    const setView = vi.spyOn(LeafletMap.prototype, "setView");
-    const movedCenter = { lat: 52.51, lng: 13.41 };
-
-    const { rerender } = render(<TestMap isEditingModeOn={false} />);
-    setView.mockClear();
-    rerender(<TestMap isEditingModeOn={false} currentCenter={movedCenter} />);
-    expect(setView).toHaveBeenCalled();
-
-    setView.mockClear();
-    rerender(<TestMap isEditingModeOn currentCenter={path[0]} />);
-    setView.mockClear();
-    rerender(<TestMap isEditingModeOn currentCenter={movedCenter} />);
-    expect(setView).not.toHaveBeenCalled();
-    setView.mockRestore();
   });
 
   test("renders the map with zoom controls and toggles path editing", () => {
