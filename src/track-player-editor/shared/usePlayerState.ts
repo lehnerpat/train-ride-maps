@@ -13,7 +13,6 @@ export const usePlayerState = (track: Track) => {
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
-  const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
   const [timingPointProgressState, setTimingPointProgressState] = useState<TimingPointProgressState>(
     TIMING_POINT_PROGRESS_STATE_NONE,
   );
@@ -27,27 +26,36 @@ export const usePlayerState = (track: Track) => {
 
   useEffect(() => {
     if (!timingPoints || timingPoints.length === 0 || distanceFromStartMap.length === 0) {
-      setPrecedingTrackPointIndex(-1);
       setCurrentCenter(initialCoord);
       setTimingPointProgressState(TIMING_POINT_PROGRESS_STATE_NONE);
       return;
     }
 
-    const precedingIndex = findPrecedingTimingPointIndex(playedSeconds, timingPoints);
     const timingPointProgress = findTimingPointProgressState(playedSeconds, timingPoints, 0.5);
 
-    let interpolatedDistance: number;
-    if (precedingIndex === -1) {
-      interpolatedDistance = timingPoints[0].d;
-    } else if (precedingIndex === timingPoints.length - 1) {
-      interpolatedDistance = timingPoints[timingPoints.length - 1].d;
-    } else {
-      interpolatedDistance = interpolateDistance(
-        timingPoints[precedingIndex],
-        timingPoints[precedingIndex + 1],
-        playedSeconds,
-      );
-    }
+    const interpolatedDistance = (() => {
+      switch (timingPointProgress.type) {
+        case "exactly-on":
+          if (playedSeconds <= timingPointProgress.current.t) {
+            if (!timingPointProgress.previous) {
+              return timingPoints[timingPointProgress.current.index].d;
+            }
+            return interpolateDistance(timingPointProgress.previous, timingPointProgress.current, playedSeconds);
+          }
+          if (!timingPointProgress.next) {
+            return timingPoints[timingPointProgress.current.index].d;
+          }
+          return interpolateDistance(timingPointProgress.current, timingPointProgress.next, playedSeconds);
+        case "between":
+          return interpolateDistance(timingPointProgress.preceding, timingPointProgress.succeeding, playedSeconds);
+        case "after-last":
+          return timingPoints[timingPointProgress.last.index].d;
+        case "before-first":
+          return timingPoints[timingPointProgress.first.index].d;
+        default:
+          throw new Error(`Unknown timingPointProgress type: ${timingPointProgress.type}`);
+      }
+    })();
 
     const nextIdx = distanceFromStartMap.findIndex((t) => t[0] > interpolatedDistance);
     let interpolatedCoord: LatLngLiteral;
@@ -62,17 +70,8 @@ export const usePlayerState = (track: Track) => {
     }
 
     setCurrentCenter(interpolatedCoord);
-    setPrecedingTrackPointIndex(precedingIndex);
     setTimingPointProgressState(timingPointProgress);
-  }, [
-    playedSeconds,
-    timingPoints,
-    initialCoord,
-    distanceFromStartMap,
-    setPrecedingTrackPointIndex,
-    setCurrentCenter,
-    setTimingPointProgressState,
-  ]);
+  }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap, setCurrentCenter, setTimingPointProgressState]);
 
   const onPlayerProgress = useCallback(
     (ev: { playedSeconds: number }) => {
@@ -87,7 +86,6 @@ export const usePlayerState = (track: Track) => {
     onPlayerProgress,
     currentCenter,
     pathLengthMM,
-    precedingTrackPointIndex,
     timingPointProgressState,
   };
 };
@@ -106,17 +104,6 @@ function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): Distan
     prevPoint = point;
   }
   return distanceFromStartMap;
-}
-
-function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: ReadonlyArray<TimingPoint>): number {
-  const timingPointsCount = timingPoints.length;
-  if (!timingPoints || !Array.isArray(timingPoints) || timingPointsCount === 0) return -1;
-  if (offsetSec < timingPoints[0].t) return -1;
-  if (offsetSec >= timingPoints[timingPointsCount - 1].t) return timingPointsCount - 1;
-  const nextIndex = timingPoints.findIndex((tc) => tc.t > offsetSec);
-  if (nextIndex === -1) throw new Error("nextIndex was -1 but should never be here");
-  if (nextIndex === 0) throw new Error("nextIndex was 0 but should never be here");
-  return nextIndex - 1;
 }
 
 export function findTimingPointProgressState(

@@ -51,7 +51,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
     distanceFromStartMap,
     pathLengthMM,
     currentCenter,
-    precedingTrackPointIndex,
     timingPointProgressState,
   } = usePlayerState(track);
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
