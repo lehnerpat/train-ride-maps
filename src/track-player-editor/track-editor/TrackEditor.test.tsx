@@ -3,7 +3,7 @@ import { Router } from "wouter";
 import { memoryLocation } from "wouter/memory-location";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { Track } from "../../track-models";
-import { TrackEditor } from "./index";
+import { TrackEditor } from "./TrackEditor";
 
 const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
   videoPlayerHandle: {

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
-import { TrackEditor } from "../track-player-editor/track-editor";
+import { TrackEditor } from "../track-player-editor/track-editor/TrackEditor";
 import { StartPage } from "./StartPage";
 import { Alert, Container } from "@mui/material";
 
