@@ -3,7 +3,7 @@ import { LatLngLiteral } from "leaflet";
 import { TimingPoint, Track, Tracks } from "../../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { useVideoPlayer } from "./VideoPlayer";
+import { useVideoPlayer } from "../shared/VideoPlayer";
 import { EditingLiveMap, LiveMapHandle } from "../shared/live-map/LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";

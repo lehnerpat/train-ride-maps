@@ -8,7 +8,7 @@ import { Track, Tracks } from "../track-models";
 import { Link } from "wouter";
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import styled from "@emotion/styled";
-import { VideoPlayer } from "./track-editor/VideoPlayer";
+import { VideoPlayer } from "./shared/VideoPlayer";
 import { ViewingLiveMap } from "./shared/live-map/LiveMap";
 import { PageRouting } from "../page-routing";
 import { usePlayerState } from "./shared/usePlayerState";

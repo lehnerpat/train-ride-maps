@@ -17,7 +17,7 @@ const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("./VideoPlayer", async () => {
+vi.mock("../shared/VideoPlayer", async () => {
   const React = await import("react");
   const VideoPlayer = React.forwardRef<
     typeof videoPlayerHandle,
