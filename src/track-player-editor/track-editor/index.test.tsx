@@ -91,7 +91,7 @@ const track: Track = {
   uuid: "track-id",
   title: "Test track",
   videoUrl: "https://www.youtube.com/watch?v=test",
-  path: [{ lat: 0, lng: 0 }],
+  path: [],
   timingPoints: [],
 };
 

@@ -4,10 +4,12 @@ import { TimingPoint, Track } from "../track-models";
 import { distanceInMM } from "../geo/distance";
 import { useMemoState } from "../common/utils/state-utils";
 
+const EMPTY_PATH_COORDINATE: LatLngLiteral = { lat: 0, lng: 0 };
+
 export const usePlayerState = (track: Track) => {
   const [playedSeconds, setPlayedSeconds] = useState(0);
   const timingPoints = track.timingPoints;
-  const initialCoord = track.path.length > 0 ? track.path[0] : { lat: 0, lng: 0 };
+  const initialCoord = track.path[0] ?? EMPTY_PATH_COORDINATE;
   const [currentCenter, setCurrentCenter] = useState<LatLngLiteral>(initialCoord);
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
