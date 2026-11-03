@@ -77,7 +77,8 @@ export const usePlayerState = (track: Track) => {
   };
 };
 
-type DistanceWithCoord = [number, LatLngLiteral];
+export type DistanceWithCoord = [number, LatLngLiteral];
+
 function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): DistanceWithCoord[] {
   if (path.length === 0) return [];
   let totalDistance = 0;

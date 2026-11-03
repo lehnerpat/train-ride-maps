@@ -31,7 +31,7 @@ import { VideoOverrideButton } from "./VideoOverrideButton";
 import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override";
 import { deepPurple } from "@mui/material/colors";
 import { k, ksd } from "./keyboard-shortcut-utils";
-import { usePlayerState } from "../usePlayerState";
+import { DistanceWithCoord, usePlayerState } from "../usePlayerState";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
@@ -483,16 +483,6 @@ const ViewingMapContainer = styled(Box)`
 
 const TimingPointsListMemo = memo(TimingPointsList);
 
-function useKeyPressHandler(keyHandler: (ev: KeyboardEvent) => void) {
-  useEffect(() => {
-    document.body.addEventListener("keypress", keyHandler);
-
-    return () => {
-      document.body.removeEventListener("keypress", keyHandler);
-    };
-  });
-}
-
 const MenuBar: FC<{
   trackId: string;
   trackTitle: string;
@@ -600,25 +590,6 @@ function useAutosavingTrackState(initialTrack: Track): UseState<Track> {
   return [track, wrappedSetTrack];
 }
 
-export function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: ReadonlyArray<TimingPoint>): number {
-  const timingPointsCount = timingPoints.length;
-  if (!timingPoints || !Array.isArray(timingPoints) || timingPointsCount === 0) return -1;
-  if (offsetSec < timingPoints[0].t) return -1;
-  if (offsetSec >= timingPoints[timingPointsCount - 1].t) return timingPointsCount - 1;
-  const nextIndex = timingPoints.findIndex((tc) => tc.t > offsetSec);
-  if (nextIndex === -1) throw new Error("nextIndex was -1 but should never be here");
-  if (nextIndex === 0) throw new Error("nextIndex was 0 but should never be here");
-  return nextIndex - 1;
-}
-
-export function interpolateDistance(prevTP: TimingPoint, nextTP: TimingPoint, offsetSec: number): number {
-  if (offsetSec < prevTP.t || offsetSec > nextTP.t)
-    throw new Error(`Given offsetSec ${offsetSec} was outside of TimingPoint range [${prevTP.t}, ${nextTP.t}]`);
-  const p = (offsetSec - prevTP.t) / (nextTP.t - prevTP.t);
-  const d = prevTP.d + p * (nextTP.d - prevTP.d);
-  return d;
-}
-
 export function interpolateCoordinates(
   prevCoord: DistanceWithCoord,
   nextCoord: DistanceWithCoord,
@@ -644,21 +615,6 @@ function computePathLength(path: ReadonlyArray<LatLngLiteral>, lastPointIndex?: 
     distance += distanceInMM(path[i], path[i + 1]);
   }
   return distance;
-}
-
-export type DistanceWithCoord = [number, LatLngLiteral];
-export function computeDistanceFromStartMap(path: ReadonlyArray<LatLngLiteral>): DistanceWithCoord[] {
-  if (path.length === 0) return [];
-  let totalDistance = 0;
-  let prevPoint = path[0];
-  let distanceFromStartMap: DistanceWithCoord[] = [[0, prevPoint]];
-  for (let i = 1; i < path.length; i++) {
-    const point = path[i];
-    totalDistance += distanceInMM(prevPoint, point);
-    distanceFromStartMap.push([totalDistance, point]);
-    prevPoint = point;
-  }
-  return distanceFromStartMap;
 }
 
 function findCoordinateAtDistance(
