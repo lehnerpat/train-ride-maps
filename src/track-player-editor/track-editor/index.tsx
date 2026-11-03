@@ -31,7 +31,7 @@ import { VideoOverrideButton } from "./VideoOverrideButton";
 import { loadVideoUrlOverride, saveVideoUrlOverride } from "./video-url-override";
 import { deepPurple } from "@mui/material/colors";
 import { k, ksd } from "./keyboard-shortcut-utils";
-import { DistanceWithCoord, usePlayerState } from "../usePlayerState";
+import { DistanceWithCoord, usePlayerState } from "../shared/usePlayerState";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 

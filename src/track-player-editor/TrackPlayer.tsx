@@ -11,7 +11,7 @@ import styled from "@emotion/styled";
 import { VideoPlayer } from "./track-editor/VideoPlayer";
 import { ViewingLiveMap } from "./shared/live-map/LiveMap";
 import { PageRouting } from "../page-routing";
-import { usePlayerState } from "./usePlayerState";
+import { usePlayerState } from "./shared/usePlayerState";
 import { isFunction } from "../common/utils/type-helpers";
 
 interface TrackPlayerProps {

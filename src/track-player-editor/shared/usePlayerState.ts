@@ -1,8 +1,8 @@
 import { LatLngLiteral } from "leaflet";
 import { useState, useEffect, useCallback } from "react";
-import { TimingPoint, Track } from "../track-models";
-import { distanceInMM } from "../geo/distance";
-import { useMemoState } from "../common/utils/state-utils";
+import { TimingPoint, Track } from "../../track-models";
+import { distanceInMM } from "../../geo/distance";
+import { useMemoState } from "../../common/utils/state-utils";
 
 const EMPTY_PATH_COORDINATE: LatLngLiteral = { lat: 0, lng: 0 };
 
