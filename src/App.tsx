@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styled from "@emotion/styled";
-import { Route, Router, Switch } from "wouter";
+import { Redirect, Route, Router, Switch } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
 import { gitCommitSha } from "./build-info";
 import { OsmTest } from "./osm-input/OsmTest";
@@ -8,6 +8,7 @@ import { ReturnLink, ReturnLinkContainer } from "./common/components/return-link
 import { ViewTrackPage } from "./pages/ViewTrackPage";
 import { StartPage } from "./pages/StartPage";
 import { OsmImport } from "./osm-input/OsmImport";
+import { EditTrackPage } from "./pages/EditTrackPage";
 
 function App() {
   return (
@@ -24,9 +25,9 @@ function App() {
             <Route path="/osm-import">
               <OsmImport />
             </Route>
-            <Route path="/track/:id/:mode?">
-              {(params) => <ViewTrackPage trackUuid={params.id} mode={params.mode} />}
-            </Route>
+            <Route path="/track/:id/edit">{(params) => <EditTrackPage trackUuid={params.id} />}</Route>
+            <Route path="/track/:id/view">{(params) => <ViewTrackPage trackUuid={params.id} />}</Route>
+            <Route path="/track/:id">{(params) => <Redirect to={`/track/${params.id}/view`} />}</Route>
             <Route path="/*">{(params) => <Error404Page path={params["*"]} />}</Route>
           </Switch>
         </Router>

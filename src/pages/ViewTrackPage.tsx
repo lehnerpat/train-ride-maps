@@ -1,11 +1,10 @@
 import { FC } from "react";
 import { TrackLocalStorageService } from "../track-models/TrackLocalStorageService";
-import { isTrackPlayerEditorMode, TrackEditor } from "../track-player-editor/track-editor";
 import { StartPage } from "./StartPage";
 import { Alert, Container } from "@mui/material";
 import { TrackPlayer } from "../track-player-editor/TrackPlayer";
 
-export const ViewTrackPage: FC<{ trackUuid: string; mode?: string }> = ({ trackUuid, mode = "view" }) => {
+export const ViewTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
   const track = TrackLocalStorageService.loadWithFallbackToIncluded(trackUuid);
 
   if (track === null) {
@@ -20,21 +19,5 @@ export const ViewTrackPage: FC<{ trackUuid: string; mode?: string }> = ({ trackU
       </>
     );
   }
-
-  if (mode === "view-new") {
-    return <TrackPlayer track={track} />;
-  }
-
-  if (!isTrackPlayerEditorMode(mode)) {
-    return (
-      <>
-        <Container maxWidth="md" sx={{ pt: 2 }}>
-          <Alert severity="error">Invalid mode: {mode}</Alert>
-        </Container>
-        <StartPage />
-      </>
-    );
-  }
-
-  return <TrackEditor initialTrack={track} mode={mode} />;
+  return <TrackPlayer track={track} />;
 };
