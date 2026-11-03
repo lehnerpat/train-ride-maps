@@ -104,7 +104,7 @@ function renderTrackEditor(path = "/track/track-id/edit") {
   );
 }
 
-describe("TrackEditor keyboard-focused mode", () => {
+describe("TrackEditor", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -112,7 +112,6 @@ describe("TrackEditor keyboard-focused mode", () => {
   test("W/S control the video", async () => {
     renderTrackEditor();
     const videoPlayerInstance = screen.getByTestId("video-player").getAttribute("data-instance");
-    fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
     expect(screen.getByTestId("video-player").getAttribute("data-instance")).toBe(videoPlayerInstance);
 
@@ -124,7 +123,6 @@ describe("TrackEditor keyboard-focused mode", () => {
 
   test("leaves typing and modified key combinations alone", () => {
     renderTrackEditor();
-    fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
     fireEvent.keyDown(screen.getByRole("textbox", { name: "Video title" }), {
       key: "j",
@@ -136,15 +134,11 @@ describe("TrackEditor keyboard-focused mode", () => {
     expect(mapInstance.panBy).not.toHaveBeenCalled();
   });
 
-  test("Space toggles playback without keyboard-focused mode, in either mode", () => {
+  test("Space toggles playback", () => {
     const { unmount } = renderTrackEditor();
     fireEvent.keyDown(document, { key: " " });
     expect(videoPlayerHandle.togglePlayback).toHaveBeenCalledOnce();
     unmount();
-
-    renderTrackEditor("/track/track-id/view");
-    fireEvent.keyDown(document, { key: " " });
-    expect(videoPlayerHandle.togglePlayback).toHaveBeenCalledTimes(2);
   });
 
   test("Space leaves typing, buttons and modified combinations alone", () => {
@@ -153,7 +147,6 @@ describe("TrackEditor keyboard-focused mode", () => {
     fireEvent.keyDown(screen.getByRole("textbox", { name: "Video title" }), {
       key: " ",
     });
-    fireEvent.keyDown(screen.getByRole("button", { name: "Enable keyboard shortcuts" }), { key: " " });
     fireEvent.keyDown(document, { key: " ", ctrlKey: true });
 
     expect(videoPlayerHandle.togglePlayback).not.toHaveBeenCalled();

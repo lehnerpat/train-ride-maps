@@ -57,7 +57,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
   const [centerOnLocation, setCenterOnLocation] = useState<{ center: LatLngLiteral; requestId: number }>();
   const liveMapRef = useRef<LiveMapHandle>(null);
-  const [isKeyboardModeActive, setIsKeyboardModeActive] = useState(false);
   const [videoUrlOverride, setVideoUrlOverride] = useState(() => loadVideoUrlOverride(initialTrack.uuid));
   const changeVideoUrlOverride = useCallback(
     (url: string | undefined, options?: { isLocalFile?: boolean }) => {
@@ -72,7 +71,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
   );
   const locationRequestId = useRef(0);
   const isEditingModeOn = true;
-  const isKeyboardFocusedModeOn = isEditingModeOn && isKeyboardModeActive;
 
   const viewOptionsState = useMemoState(DefaultViewOptions);
 
@@ -85,12 +83,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
     videoUrl: videoUrlOverride ?? track.videoUrl,
     onProgress: onPlayerProgress,
   });
-
-  useEffect(() => {
-    if (!isEditingModeOn) {
-      setIsKeyboardModeActive(false);
-    }
-  }, [isEditingModeOn]);
 
   useEffect(() => {
     console.log("precedingTrackPointIndex", precedingTrackPointIndex);
@@ -151,10 +143,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
     jumpToTimingPointByIndex(precedingTrackPointIndex);
   }, [jumpToTimingPointByIndex, precedingTrackPointIndex]);
 
-  const toggleKeyboardMode = useCallback(() => {
-    setIsKeyboardModeActive((active) => !active);
-  }, []);
-
   useEffect(() => {
     const togglePlayback = () => {
       const playback = videoPlayer.togglePlayback();
@@ -182,12 +170,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
         }),
     ];
     const keyboardShortcutHandlers = (() => {
-      if (!isEditingModeOn) {
-        return sharedKeyboardShortcutHandlers;
-      }
-      if (!isKeyboardFocusedModeOn) {
-        return sharedKeyboardShortcutHandlers;
-      }
       return [
         ...sharedKeyboardShortcutHandlers,
         ksd("w").handleAndStop(() => jumpToPreviousTimingPoint()),
@@ -243,14 +225,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
 
     document.addEventListener("keydown", onKeyboardShortcut);
     return () => document.removeEventListener("keydown", onKeyboardShortcut);
-  }, [
-    isKeyboardFocusedModeOn,
-    isEditingModeOn,
-    videoPlayer,
-    liveMapRef,
-    jumpToNextTimingPoint,
-    jumpToPreviousTimingPoint,
-  ]);
+  }, [isEditingModeOn, videoPlayer, liveMapRef, jumpToNextTimingPoint, jumpToPreviousTimingPoint]);
 
   const reversePath = useCallback(() => setPath((path) => [...path].reverse()), [setPath]);
   const downloadTrackAsFile = useFileDownload(`track_${track.uuid}.json`, () => Tracks.serializeToJson(track));
@@ -263,8 +238,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
     <div>
       <MenuBar
         trackId={track.uuid}
-        isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
-        onToggleKeyboardMode={toggleKeyboardMode}
         videoUrlOverride={videoUrlOverride}
         onVideoUrlOverrideChange={changeVideoUrlOverride}
         viewOptionsState={viewOptionsState}
@@ -327,48 +300,27 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
               </>
             </Box>
           </Stack>
-          <BottomInfoBar {...{ isEditingModeOn, isKeyboardFocusedModeOn }} />
+          <BottomInfoBar />
         </>
       )}
     </div>
   );
 };
 
-function getModeTextAndShortcuts({
-  isEditingModeOn,
-  isKeyboardFocusedModeOn,
-}: {
-  isEditingModeOn: boolean;
-  isKeyboardFocusedModeOn: boolean;
-}): { modeText: string; shortcuts: { key: string; label: string }[] } {
-  if (!isEditingModeOn) {
-    return { modeText: "view", shortcuts: [] };
-  }
-
-  const sharedEditModeShortcuts = [{ key: "space", label: "play/pause" }];
-
-  if (isKeyboardFocusedModeOn) {
-    return {
-      modeText: "edit/keyboard",
-      shortcuts: [
-        ...sharedEditModeShortcuts,
-        { key: "a/s/d/f", label: "seek -1s/-10s/+10s/+0.1s" },
-        { key: "w/e", label: "go to prev/next timing point" },
-        { key: "g", label: "recenter map" },
-      ],
-    };
-  }
-  return { modeText: "edit", shortcuts: [...sharedEditModeShortcuts] };
+function getModeTextAndShortcuts(): { modeText: string; shortcuts: { key: string; label: string }[] } {
+  return {
+    modeText: "edit",
+    shortcuts: [
+      { key: "space", label: "play/pause" },
+      { key: "a/s/d/f", label: "seek -1s/-10s/+10s/+0.1s" },
+      { key: "w/e", label: "go to prev/next timing point" },
+      { key: "g", label: "recenter map" },
+    ],
+  };
 }
 
-const BottomInfoBar = ({
-  isEditingModeOn,
-  isKeyboardFocusedModeOn,
-}: {
-  isEditingModeOn: boolean;
-  isKeyboardFocusedModeOn: boolean;
-}) => {
-  const { modeText, shortcuts } = getModeTextAndShortcuts({ isEditingModeOn, isKeyboardFocusedModeOn });
+const BottomInfoBar = () => {
+  const { modeText, shortcuts } = getModeTextAndShortcuts();
 
   return (
     <Box sx={{ position: "fixed", bottom: 0, width: "100%", backgroundColor: "#333" }}>
@@ -461,22 +413,11 @@ const TimingPointsListMemo = memo(TimingPointsList);
 const MenuBar: FC<{
   trackId: string;
   trackTitle: string;
-  isKeyboardFocusedModeOn: boolean;
-  onToggleKeyboardMode: () => void;
   videoUrlOverride: string | undefined;
   onVideoUrlOverrideChange: (url: string | undefined, options?: { isLocalFile?: boolean }) => void;
   viewOptionsState: UseState<ViewOptions>;
   onDownloadFileClicked: () => void;
-}> = ({
-  trackId,
-  trackTitle,
-  isKeyboardFocusedModeOn,
-  onToggleKeyboardMode,
-  videoUrlOverride,
-  onVideoUrlOverrideChange,
-  viewOptionsState,
-  onDownloadFileClicked,
-}) => (
+}> = ({ trackId, trackTitle, videoUrlOverride, onVideoUrlOverrideChange, viewOptionsState, onDownloadFileClicked }) => (
   <AppBar position="static" sx={{ mb: 2 }}>
     <Toolbar>
       <Box sx={{ mr: 2 }}>
@@ -489,15 +430,6 @@ const MenuBar: FC<{
         {trackTitle}
       </Typography>
       <VideoOverrideButton override={videoUrlOverride} onChange={onVideoUrlOverrideChange} />
-      <IconButton
-        color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
-        title={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
-        aria-label={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
-        aria-pressed={isKeyboardFocusedModeOn}
-        onClick={onToggleKeyboardMode}
-      >
-        <KeyboardIcon />
-      </IconButton>
       <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
         <DownloadIcon />
       </IconButton>
