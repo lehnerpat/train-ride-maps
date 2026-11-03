@@ -79,18 +79,10 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
     [initialTrack.uuid],
   );
   const locationRequestId = useRef(0);
-  const [, navigate] = useLocation();
   const isEditingModeOn = mode === "edit";
   const isKeyboardFocusedModeOn = isEditingModeOn && isKeyboardModeActive;
 
-  const setEditingModeOn = useCallback<SetState<boolean>>(
-    (action) => (isFunction(action) ? action(isEditingModeOn) : action),
-    [isEditingModeOn],
-  );
-  const isEditingModeOnState: UseState<boolean> = [isEditingModeOn, setEditingModeOn];
   const viewOptionsState = useMemoState(DefaultViewOptions);
-
-  const videoPlayerAndMapRef = useRef<HTMLDivElement>(null);
 
   const [viewOptions] = viewOptionsState;
   const timingPoints = track.timingPoints;
@@ -167,26 +159,9 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
     jumpToTimingPointByIndex(precedingTrackPointIndex);
   }, [jumpToTimingPointByIndex, precedingTrackPointIndex]);
 
-  const toggleEditingMode = useCallback(() => setEditingModeOn(!isEditingModeOn), [isEditingModeOn, setEditingModeOn]);
   const toggleKeyboardMode = useCallback(() => {
     setIsKeyboardModeActive((active) => !active);
   }, []);
-  const enterFullscreen = useCallback(
-    () => _enterFullscreen(videoPlayerAndMapRef, isEditingModeOn),
-    [videoPlayerAndMapRef, isEditingModeOn],
-  );
-
-  const keyHandler = useCallback(
-    (ev: KeyboardEvent) => {
-      if (ev.key === "f" && !isEditingModeOn) {
-        enterFullscreen();
-      } else if (ev.key === "E") {
-        toggleEditingMode();
-      }
-    },
-    [toggleEditingMode, isEditingModeOn, enterFullscreen],
-  );
-  useKeyPressHandler(keyHandler);
 
   useEffect(() => {
     const togglePlayback = () => {
@@ -296,7 +271,6 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
     <div>
       <MenuBar
         trackId={track.uuid}
-        isEditingState={isEditingModeOnState}
         isKeyboardFocusedModeOn={isKeyboardFocusedModeOn}
         onToggleKeyboardMode={toggleKeyboardMode}
         videoUrlOverride={videoUrlOverride}
@@ -304,10 +278,9 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
         viewOptionsState={viewOptionsState}
         trackTitle={track.title}
         onDownloadFileClicked={downloadTrackAsFile}
-        onEnterFullscreenClicked={enterFullscreen}
       />
 
-      <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay} ref={videoPlayerAndMapRef}>
+      <VideoAndMapContainer showMapAsOverlay={showMapAsOverlay}>
         <VideoContainer showMapAsOverlay={showMapAsOverlay}>
           <videoPlayer.Player />
           <StraightRailsOverlay optionsState={straightRailOptionsState} />
@@ -531,25 +504,21 @@ function useKeyPressHandler(keyHandler: (ev: KeyboardEvent) => void) {
 const MenuBar: FC<{
   trackId: string;
   trackTitle: string;
-  isEditingState: UseState<boolean>;
   isKeyboardFocusedModeOn: boolean;
   onToggleKeyboardMode: () => void;
   videoUrlOverride: string | undefined;
   onVideoUrlOverrideChange: (url: string | undefined, options?: { isLocalFile?: boolean }) => void;
   viewOptionsState: UseState<ViewOptions>;
   onDownloadFileClicked: () => void;
-  onEnterFullscreenClicked: () => void;
 }> = ({
   trackId,
   trackTitle,
-  isEditingState: [isEditingModeOn, setIsEditingModeOn],
   isKeyboardFocusedModeOn,
   onToggleKeyboardMode,
   videoUrlOverride,
   onVideoUrlOverrideChange,
   viewOptionsState,
   onDownloadFileClicked,
-  onEnterFullscreenClicked,
 }) => (
   <AppBar position="static" sx={{ mb: 2 }}>
     <Toolbar>
@@ -573,28 +542,18 @@ const MenuBar: FC<{
         <SmartDisplayIcon fontSize="small" />
         <Box sx={{ ml: 0.5, display: { xs: "none", md: "initial" } }}>View</Box>
       </Button>
-      {isEditingModeOn && <VideoOverrideButton override={videoUrlOverride} onChange={onVideoUrlOverrideChange} />}
-      {isEditingModeOn && (
-        <IconButton
-          color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
-          title={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
-          aria-label={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
-          aria-pressed={isKeyboardFocusedModeOn}
-          onClick={onToggleKeyboardMode}
-        >
-          <KeyboardIcon />
-        </IconButton>
-      )}
+      <VideoOverrideButton override={videoUrlOverride} onChange={onVideoUrlOverrideChange} />
+      <IconButton
+        color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
+        title={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
+        aria-label={isKeyboardFocusedModeOn ? "Disable keyboard shortcuts" : "Enable keyboard shortcuts"}
+        aria-pressed={isKeyboardFocusedModeOn}
+        onClick={onToggleKeyboardMode}
+      >
+        <KeyboardIcon />
+      </IconButton>
       <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
         <DownloadIcon />
-      </IconButton>
-      <IconButton
-        color="inherit"
-        title="Enter fullscreen"
-        disabled={isEditingModeOn}
-        onClick={onEnterFullscreenClicked}
-      >
-        <FullscreenIcon />
       </IconButton>
       <ViewOptionsButton viewOptionsState={viewOptionsState} />
     </Toolbar>
@@ -750,27 +709,6 @@ export function computeTimingPointLocations(
     }
   }
   return result;
-}
-
-async function _enterFullscreen(
-  videoPlayerAndMapRef: React.RefObject<HTMLDivElement | null>,
-  isEditingModeOn: boolean,
-) {
-  const el = videoPlayerAndMapRef.current;
-  if (!el || isEditingModeOn) return;
-  if (!!document.fullscreenElement || !!(document as any).webkitFullscreenElement) {
-    console.debug("already in fullscreen. doing nothing.");
-    return;
-  }
-  try {
-    if (el.requestFullscreen) {
-      await el.requestFullscreen({ navigationUI: "hide" });
-    } else if (isFunction((el as any).webkitRequestFullscreen)) {
-      await (el as any).webkitRequestFullscreen();
-    }
-  } catch (e) {
-    console.error("Could not enter fullscreen:", e);
-  }
 }
 
 function _addTimingPoint(
