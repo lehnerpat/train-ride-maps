@@ -1,6 +1,11 @@
 import { Track, Tracks } from ".";
+import { IncludedDataMap } from "../included-data";
 
 class TrackLocalStorageServiceImpl {
+  loadWithFallbackToIncluded(trackId: string): Track | null {
+    return this.load(trackId) ?? IncludedDataMap.get(trackId) ?? null;
+  }
+
   load(trackId: string): Track | null {
     return this.loadKey(this.makeKey(trackId));
   }
