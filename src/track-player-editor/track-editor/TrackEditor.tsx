@@ -86,8 +86,8 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
   });
 
   useEffect(() => {
-    console.log("precedingTrackPointIndex", precedingTrackPointIndex);
-  }, [precedingTrackPointIndex]);
+    console.log("timingPointProgressState", timingPointProgressState);
+  }, [timingPointProgressState]);
 
   useEffect(() => {
     if (!projectedPointInfo) {
@@ -136,13 +136,25 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
     [timingPoints, jumpToTimeAndLocation],
   );
   const jumpToNextTimingPoint = useCallback(() => {
-    console.log("jumpToNextTimingPoint called, precedingTrackPointIndex:", precedingTrackPointIndex);
-    jumpToTimingPointByIndex(precedingTrackPointIndex + 1);
-  }, [jumpToTimingPointByIndex, precedingTrackPointIndex]);
+    console.log("jumpToNextTimingPoint called, timingPointProgressState:", timingPointProgressState);
+    const targetIndex = (() => {
+      if (timingPointProgressState.type === "exactly-on") return timingPointProgressState.current.index + 1;
+      if (timingPointProgressState.type === "between") return timingPointProgressState.succeeding.index;
+      if (timingPointProgressState.type === "before-first") return 0;
+      return null;
+    })();
+    if (targetIndex !== null) jumpToTimingPointByIndex(targetIndex);
+  }, [jumpToTimingPointByIndex, timingPointProgressState]);
   const jumpToPreviousTimingPoint = useCallback(() => {
-    console.log("jumpToPreviousTimingPoint called, precedingTrackPointIndex:", precedingTrackPointIndex);
-    jumpToTimingPointByIndex(precedingTrackPointIndex);
-  }, [jumpToTimingPointByIndex, precedingTrackPointIndex]);
+    console.log("jumpToPreviousTimingPoint called, timingPointProgressState:", timingPointProgressState);
+    const targetIndex = (() => {
+      if (timingPointProgressState.type === "exactly-on") return timingPointProgressState.current.index - 1;
+      if (timingPointProgressState.type === "between") return timingPointProgressState.preceding.index;
+      if (timingPointProgressState.type === "after-last") return timingPointProgressState.last.index;
+      return null;
+    })();
+    if (targetIndex !== null) jumpToTimingPointByIndex(targetIndex);
+  }, [jumpToTimingPointByIndex, timingPointProgressState]);
 
   useEffect(() => {
     const togglePlayback = () => {
