@@ -531,17 +531,6 @@ const MenuBar: FC<{
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         {trackTitle}
       </Typography>
-      <Button
-        size="small"
-        variant="outlined"
-        color="inherit"
-        sx={{ mr: 2 }}
-        component={Link}
-        href={PageRouting.viewTrackPage(trackId)}
-      >
-        <SmartDisplayIcon fontSize="small" />
-        <Box sx={{ ml: 0.5, display: { xs: "none", md: "initial" } }}>View</Box>
-      </Button>
       <VideoOverrideButton override={videoUrlOverride} onChange={onVideoUrlOverrideChange} />
       <IconButton
         color={isKeyboardFocusedModeOn ? "secondary" : "inherit"}
@@ -556,6 +545,17 @@ const MenuBar: FC<{
         <DownloadIcon />
       </IconButton>
       <ViewOptionsButton viewOptionsState={viewOptionsState} />
+      <Button
+        size="small"
+        variant="outlined"
+        color="inherit"
+        sx={{ ml: 2 }}
+        component={Link}
+        href={PageRouting.viewTrackPage(trackId)}
+      >
+        <SmartDisplayIcon fontSize="small" />
+        <Box sx={{ ml: 0.5, display: { xs: "none", md: "initial" } }}>View</Box>
+      </Button>
     </Toolbar>
   </AppBar>
 );

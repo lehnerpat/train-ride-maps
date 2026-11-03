@@ -69,23 +69,23 @@ const TopBar: FC<{
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {trackTitle}
         </Typography>
-        <Button
-          size="small"
-          variant="outlined"
-          color="inherit"
-          sx={{ mr: 2 }}
-          component={Link}
-          href={PageRouting.editTrackPage(trackId)}
-        >
-          <EditIcon fontSize="small" />
-          <Box sx={{ ml: 0.5, display: { xs: "none", md: "initial" } }}>Edit</Box>
-        </Button>
         <IconButton color="inherit" onClick={onDownloadFileClicked} title="Download track as file">
           <DownloadIcon />
         </IconButton>
         <IconButton color="inherit" title="Enter fullscreen" onClick={onEnterFullscreenClicked}>
           <FullscreenIcon />
         </IconButton>
+        <Button
+          size="small"
+          variant="outlined"
+          color="inherit"
+          sx={{ ml: 2 }}
+          component={Link}
+          href={PageRouting.editTrackPage(trackId)}
+        >
+          <EditIcon fontSize="small" />
+          <Box sx={{ ml: 0.5, display: { xs: "none", md: "initial" } }}>Edit</Box>
+        </Button>
       </Toolbar>
     </AppBar>
   );
