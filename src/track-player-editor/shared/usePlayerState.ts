@@ -14,6 +14,9 @@ export const usePlayerState = (track: Track) => {
   const [distanceFromStartMap, setDistanceFromStartMap] = useState<DistanceWithCoord[]>([]);
   const [pathLengthMM, setPathLengthMM] = useMemoState(0);
   const [precedingTrackPointIndex, setPrecedingTrackPointIndex] = useState(-1);
+  const [timingPointProgressState, setTimingPointProgressState] = useState<TimingPointProgressState>(
+    TIMING_POINT_PROGRESS_STATE_NONE,
+  );
 
   useEffect(() => {
     const dfsMap = computeDistanceFromStartMap(track.path);
@@ -26,6 +29,7 @@ export const usePlayerState = (track: Track) => {
     if (!timingPoints || timingPoints.length === 0 || distanceFromStartMap.length === 0) {
       setPrecedingTrackPointIndex(-1);
       setCurrentCenter(initialCoord);
+      setTimingPointProgressState(TIMING_POINT_PROGRESS_STATE_NONE);
       return;
     }
 
@@ -58,7 +62,15 @@ export const usePlayerState = (track: Track) => {
 
     setCurrentCenter(interpolatedCoord);
     setPrecedingTrackPointIndex(precedingIndex);
-  }, [playedSeconds, timingPoints, initialCoord, distanceFromStartMap, setPrecedingTrackPointIndex, setCurrentCenter]);
+  }, [
+    playedSeconds,
+    timingPoints,
+    initialCoord,
+    distanceFromStartMap,
+    setPrecedingTrackPointIndex,
+    setCurrentCenter,
+    setTimingPointProgressState,
+  ]);
 
   const onPlayerProgress = useCallback(
     (ev: { playedSeconds: number }) => {
@@ -74,6 +86,7 @@ export const usePlayerState = (track: Track) => {
     currentCenter,
     pathLengthMM,
     precedingTrackPointIndex,
+    timingPointProgressState,
   };
 };
 
@@ -104,6 +117,74 @@ function findPrecedingTimingPointIndex(offsetSec: number, timingPoints: Readonly
   return nextIndex - 1;
 }
 
+export function findTimingPointProgressState(
+  offsetSec: number,
+  timingPoints: ReadonlyArray<TimingPoint>,
+  exactlyOnToleranceSec: number = 0.5,
+): TimingPointProgressState {
+  const timingPointsCount = timingPoints.length;
+
+  if (!timingPoints || !Array.isArray(timingPoints) || timingPointsCount === 0) return TIMING_POINT_PROGRESS_STATE_NONE;
+
+  if (offsetSec < timingPoints[0].t) {
+    if (timingPoints[0].t - offsetSec <= exactlyOnToleranceSec) {
+      return {
+        type: "exactly-on",
+        previous: undefined,
+        current: { ...timingPoints[0], index: 0 },
+        next: timingPoints[1] ? { ...timingPoints[1], index: 1 } : undefined,
+      };
+    }
+    return {
+      type: "before-first",
+      first: { ...timingPoints[0], index: 0 },
+    };
+  }
+
+  if (offsetSec >= timingPoints[timingPointsCount - 1].t) {
+    if (offsetSec - timingPoints[timingPointsCount - 1].t <= exactlyOnToleranceSec) {
+      return {
+        type: "exactly-on",
+        previous: timingPoints[timingPointsCount - 2]
+          ? { ...timingPoints[timingPointsCount - 2], index: timingPointsCount - 2 }
+          : undefined,
+        current: { ...timingPoints[timingPointsCount - 1], index: timingPointsCount - 1 },
+        next: undefined,
+      };
+    }
+    return {
+      type: "after-last",
+      last: { ...timingPoints[timingPointsCount - 1], index: timingPointsCount - 1 },
+    };
+  }
+
+  const nextIndex = timingPoints.findIndex((tc) => tc.t > offsetSec);
+  if (nextIndex === -1) throw new Error("nextIndex was -1 but should never be here");
+  if (nextIndex === 0) throw new Error("nextIndex was 0 but should never be here");
+
+  if (offsetSec - timingPoints[nextIndex - 1].t <= exactlyOnToleranceSec) {
+    return {
+      type: "exactly-on",
+      previous: nextIndex - 2 >= 0 ? { ...timingPoints[nextIndex - 2], index: nextIndex - 2 } : undefined,
+      current: { ...timingPoints[nextIndex - 1], index: nextIndex - 1 },
+      next: { ...timingPoints[nextIndex], index: nextIndex },
+    };
+  }
+  if (timingPoints[nextIndex].t - offsetSec <= exactlyOnToleranceSec) {
+    return {
+      type: "exactly-on",
+      previous: { ...timingPoints[nextIndex - 1], index: nextIndex - 1 },
+      current: { ...timingPoints[nextIndex], index: nextIndex },
+      next: nextIndex + 1 < timingPointsCount ? { ...timingPoints[nextIndex + 1], index: nextIndex + 1 } : undefined,
+    };
+  }
+  return {
+    type: "between",
+    preceding: { ...timingPoints[nextIndex - 1], index: nextIndex - 1 },
+    succeeding: { ...timingPoints[nextIndex], index: nextIndex },
+  };
+}
+
 function interpolateDistance(prevTP: TimingPoint, nextTP: TimingPoint, offsetSec: number): number {
   if (offsetSec < prevTP.t || offsetSec > nextTP.t)
     throw new Error(`Given offsetSec ${offsetSec} was outside of TimingPoint range [${prevTP.t}, ${nextTP.t}]`);
@@ -126,3 +207,44 @@ function interpolateCoordinates(
   const lng = prevCoord[1].lng + p * (nextCoord[1].lng - prevCoord[1].lng);
   return { lat, lng };
 }
+
+export type TimingPointWithIndex = TimingPoint & { readonly index: number };
+
+/** No progress state, e.g. when track has no timing points. */
+export type TimingPointProgressStateNone = {
+  readonly type: "none";
+};
+
+export const TIMING_POINT_PROGRESS_STATE_NONE: TimingPointProgressStateNone = {
+  type: "none",
+} as const;
+
+export type TimingPointProgressStateBeforeFirst = {
+  readonly type: "before-first";
+  readonly first: TimingPointWithIndex;
+};
+
+export type TimingPointProgressStateExactlyOn = {
+  readonly type: "exactly-on";
+  readonly previous?: TimingPointWithIndex;
+  readonly current: TimingPointWithIndex;
+  readonly next?: TimingPointWithIndex;
+};
+
+export type TimingPointProgressStateBetween = {
+  readonly type: "between";
+  readonly preceding: TimingPointWithIndex;
+  readonly succeeding: TimingPointWithIndex;
+};
+
+export type TimingPointProgressStateAfterLast = {
+  readonly type: "after-last";
+  readonly last: TimingPointWithIndex;
+};
+
+export type TimingPointProgressState =
+  | TimingPointProgressStateNone
+  | TimingPointProgressStateBeforeFirst
+  | TimingPointProgressStateExactlyOn
+  | TimingPointProgressStateBetween
+  | TimingPointProgressStateAfterLast;
