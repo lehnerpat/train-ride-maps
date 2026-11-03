@@ -4,7 +4,7 @@ import { TimingPoint, Track, Tracks } from "../../track-models";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { useVideoPlayer } from "./VideoPlayer";
-import { EditingLiveMap, LiveMapHandle } from "./LiveMap";
+import { EditingLiveMap, LiveMapHandle } from "../shared/live-map/LiveMap";
 import { DefaultViewOptions, ViewOptions, ViewOptionsDialog } from "./ViewOptions";
 import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight-rails-overlay";
 import { useMemoState, usePickedState, UseState, SetState } from "../../common/utils/state-utils";

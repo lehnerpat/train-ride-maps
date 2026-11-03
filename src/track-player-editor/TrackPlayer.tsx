@@ -9,7 +9,7 @@ import { Link } from "wouter";
 import { useFileDownload } from "../common/hooks/useFileDownload";
 import styled from "@emotion/styled";
 import { VideoPlayer } from "./track-editor/VideoPlayer";
-import { ViewingLiveMap } from "./track-editor/LiveMap";
+import { ViewingLiveMap } from "./shared/live-map/LiveMap";
 import { PageRouting } from "../page-routing";
 import { usePlayerState } from "./usePlayerState";
 import { isFunction } from "../common/utils/type-helpers";

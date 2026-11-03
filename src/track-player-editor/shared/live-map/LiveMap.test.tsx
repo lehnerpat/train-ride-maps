@@ -3,8 +3,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { Map as LeafletMap } from "leaflet";
 import { EditingLiveMap } from "./LiveMap";
-import { DefaultViewOptions } from "./ViewOptions";
-import { Track } from "../../track-models";
+import { DefaultViewOptions } from "../../track-editor/ViewOptions";
+import { Track } from "../../../track-models";
 
 const path = [
   { lat: 52.5, lng: 13.4 },

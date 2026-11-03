@@ -61,7 +61,7 @@ vi.mock("./VideoPlayer", async () => {
   };
 });
 
-vi.mock("./LiveMap", async () => {
+vi.mock("../shared/live-map/LiveMap", async () => {
   const React = await import("react");
   return {
     EditingLiveMap: ({ isKeyboardFocusedModeOn }: { isKeyboardFocusedModeOn: boolean }) => {
