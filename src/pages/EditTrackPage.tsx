@@ -20,5 +20,5 @@ export const EditTrackPage: FC<{ trackUuid: string }> = ({ trackUuid }) => {
     );
   }
 
-  return <TrackEditor initialTrack={track} mode="edit" />;
+  return <TrackEditor initialTrack={track} />;
 };

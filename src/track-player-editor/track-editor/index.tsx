@@ -10,13 +10,12 @@ import { StraightRailsOverlay as StraightRailsOverlayOriginal } from "./straight
 import { useMemoState, usePickedState, UseState, SetState } from "../../common/utils/state-utils";
 import { TrackLocalStorageService } from "../../track-models/TrackLocalStorageService";
 import { distanceInMM } from "../../geo/distance";
-import { isFunction, isUndefined } from "../../common/utils/type-helpers";
+import { isUndefined } from "../../common/utils/type-helpers";
 import { AppBar, Box, Button, Card, Dialog, Fab, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import {
   Add as AddIcon,
   ArrowBack as ArrowBackIcon,
   Download as DownloadIcon,
-  Fullscreen as FullscreenIcon,
   Keyboard as KeyboardIcon,
   SmartDisplay as SmartDisplayIcon,
   Tune as TuneIcon,
@@ -25,7 +24,7 @@ import { useFileDownload } from "../../common/hooks/useFileDownload";
 import { augmentUuid, HasUuid } from "../../common/utils/uuid";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 import { TimingPointsList } from "./TimingPointsList";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { VideoInfoArea } from "./VideoInfoArea";
 import { PageRouting } from "../../page-routing";
 import { VideoOverrideButton } from "./VideoOverrideButton";
@@ -36,17 +35,10 @@ import { usePlayerState } from "../usePlayerState";
 
 const StraightRailsOverlay = memo(StraightRailsOverlayOriginal);
 
-export type TrackPlayerEditorMode = "view" | "edit";
-
-export function isTrackPlayerEditorMode(mode: string): mode is TrackPlayerEditorMode {
-  return ["view", "edit"].includes(mode);
-}
-
 interface TrackEditorProps {
   initialTrack: Track;
-  mode: TrackPlayerEditorMode;
 }
-export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
+export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
   const initialCoord = useMemo(
     () => (initialTrack.path.length > 0 ? initialTrack.path[0] : { lat: 0, lng: 0 }),
     [initialTrack],
@@ -79,7 +71,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack, mode }) => {
     [initialTrack.uuid],
   );
   const locationRequestId = useRef(0);
-  const isEditingModeOn = mode === "edit";
+  const isEditingModeOn = true;
   const isKeyboardFocusedModeOn = isEditingModeOn && isKeyboardModeActive;
 
   const viewOptionsState = useMemoState(DefaultViewOptions);

@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Router, useLocation } from "wouter";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { Router } from "wouter";
 import { memoryLocation } from "wouter/memory-location";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { Track } from "../../track-models";
@@ -95,17 +95,11 @@ const track: Track = {
   timingPoints: [],
 };
 
-const TrackEditorForCurrentLocation = () => {
-  const [location] = useLocation();
-  const mode = location.endsWith("/edit") ? "edit" : "view";
-  return <TrackEditor initialTrack={track} mode={mode} />;
-};
-
 function renderTrackEditor(path = "/track/track-id/edit") {
   const { hook } = memoryLocation({ path });
   return render(
     <Router hook={hook}>
-      <TrackEditorForCurrentLocation />
+      <TrackEditor initialTrack={track} />
     </Router>,
   );
 }
