@@ -34,6 +34,7 @@ export const usePlayerState = (track: Track) => {
     }
 
     const precedingIndex = findPrecedingTimingPointIndex(playedSeconds, timingPoints);
+    const timingPointProgress = findTimingPointProgressState(playedSeconds, timingPoints, 0.5);
 
     let interpolatedDistance: number;
     if (precedingIndex === -1) {
@@ -62,6 +63,7 @@ export const usePlayerState = (track: Track) => {
 
     setCurrentCenter(interpolatedCoord);
     setPrecedingTrackPointIndex(precedingIndex);
+    setTimingPointProgressState(timingPointProgress);
   }, [
     playedSeconds,
     timingPoints,

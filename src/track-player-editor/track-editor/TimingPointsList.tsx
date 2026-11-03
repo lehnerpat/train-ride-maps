@@ -24,23 +24,46 @@ import { List, RowComponentProps, useListRef } from "react-window";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { formatDistanceMeters, formatTimeSec } from "./track-info-formatting";
 import { Theme, lighten } from "@mui/material/styles";
+import { TimingPointProgressState } from "../shared/usePlayerState";
 
 interface TimingPointsListProps {
   timingPoints: ReadonlyArray<TimingPoint & HasUuid>;
   onDeleteTimingPoint: (uuid: string) => void;
   onJumpToTime: (timeSeconds: number) => void;
   onJumpToLocation: (distanceMM: number) => void;
-  precedingIndex: number;
   isAutoScrollOn: boolean;
+  timingPointProgressState: TimingPointProgressState;
 }
 
 type RowData = Pick<
   TimingPointsListProps,
-  "timingPoints" | "onDeleteTimingPoint" | "onJumpToTime" | "onJumpToLocation" | "precedingIndex"
+  | "timingPoints"
+  | "onDeleteTimingPoint"
+  | "onJumpToTime"
+  | "onJumpToLocation"
+  | "timingPointProgressState"
 >;
 
+const ROW_HEIGHT_PX = 34 as const;
+
 export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
-  const { isAutoScrollOn, precedingIndex, timingPoints, onDeleteTimingPoint, onJumpToTime, onJumpToLocation } = props;
+  const {
+    isAutoScrollOn,
+    timingPoints,
+    onDeleteTimingPoint,
+    onJumpToTime,
+    onJumpToLocation,
+    timingPointProgressState,
+  } = props;
+
+  const precedingIndex = (() => {
+    if (timingPointProgressState.type === "before-first") return -1;
+    if (timingPointProgressState.type === "after-last") return timingPointProgressState.last.index;
+    if (timingPointProgressState.type === "exactly-on") return timingPointProgressState.current.index;
+    if (timingPointProgressState.type === "between") return timingPointProgressState.preceding.index;
+    return -1;
+  })();
+
   const listRef = useListRef(null);
   const prevPrecedingIndex = useRef(precedingIndex);
 
@@ -58,16 +81,22 @@ export const TimingPointsList: FC<TimingPointsListProps> = (props) => {
 
   return (
     <Card raised>
-      <Typography variant="h6" sx={{ p: 2 }}>
+      <Typography variant="h6" sx={{ p: 2, pb: 0.5 }}>
         Timing Points:
       </Typography>
       <List
-        style={{ height: 300, width: "100%" }}
-        rowHeight={34}
+        style={{ height: 300, width: "100%", padding: `${ROW_HEIGHT_PX / 2}px 0` }}
+        rowHeight={ROW_HEIGHT_PX}
         rowCount={timingPoints.length}
         overscanCount={5}
         rowComponent={ItemRenderer}
-        rowProps={{ timingPoints, onDeleteTimingPoint, onJumpToTime, onJumpToLocation, precedingIndex }}
+        rowProps={{
+          timingPoints,
+          onDeleteTimingPoint,
+          onJumpToTime,
+          onJumpToLocation,
+          timingPointProgressState,
+        }}
         listRef={listRef}
       />
     </Card>
@@ -82,11 +111,27 @@ function ItemRenderer({
   onDeleteTimingPoint,
   onJumpToTime,
   onJumpToLocation,
-  precedingIndex,
+  timingPointProgressState,
 }: RowComponentProps<RowData>) {
   const timingPoint = timingPoints[index];
-  const isCurrent = index === precedingIndex;
-  const isHighlighted = index === precedingIndex || index === precedingIndex + 1;
+  const markerState = (() => {
+    if (timingPointProgressState.type === "exactly-on" && timingPointProgressState.current.index === index)
+      return "exactly-on";
+    if (timingPointProgressState.type === "before-first" && index === 0) return "before";
+    if (timingPointProgressState.type === "between" && timingPointProgressState.succeeding.index === index)
+      return "before";
+    if (timingPointProgressState.type === "after-last" && index === timingPoints.length - 1) return "after";
+    return "none";
+  })();
+  const isHighlightedStrong =
+    (timingPointProgressState.type === "exactly-on" && timingPointProgressState.current.index === index) ||
+    (timingPointProgressState.type === "between" &&
+      (timingPointProgressState.preceding.index === index || timingPointProgressState.succeeding.index === index)) ||
+    (timingPointProgressState.type === "before-first" && index === 0) ||
+    (timingPointProgressState.type === "after-last" && index === timingPoints.length - 1);
+  const isHighlightedWeak =
+    timingPointProgressState.type === "exactly-on" &&
+    (timingPointProgressState.previous?.index === index || timingPointProgressState.next?.index === index);
 
   return (
     <ListItem
@@ -97,14 +142,19 @@ function ItemRenderer({
       dense
       sx={[
         { pr: 1 },
-        isHighlighted &&
+        isHighlightedStrong &&
           ((theme: Theme) => ({
-            backgroundColor: lighten(theme.palette.background.paper, 0.2),
+            backgroundColor: lighten(theme.palette.background.paper, 0.22),
+            fontWeight: "bold",
+          })),
+        isHighlightedWeak &&
+          ((theme: Theme) => ({
+            backgroundColor: lighten(theme.palette.background.paper, 0.175),
             fontWeight: "bold",
           })),
       ]}
     >
-      <TimingPointData timingPoint={timingPoint} isCurrent={isCurrent} />
+      <TimingPointData timingPoint={timingPoint} markerState={markerState} />
       <TimingPointMenu
         timingPoint={timingPoint}
         onDeleteTimingPoint={onDeleteTimingPoint}
@@ -115,17 +165,23 @@ function ItemRenderer({
   );
 }
 
-const TimingPointData: FC<{ timingPoint: TimingPoint & HasUuid; isCurrent: boolean }> = ({
-  timingPoint,
-  isCurrent,
-}) => (
+const TimingPointData: FC<{
+  timingPoint: TimingPoint & HasUuid;
+  markerState: "exactly-on" | "before" | "after" | "none";
+}> = ({ timingPoint, markerState }) => (
   <Stack
     direction="row"
     spacing={0.5}
     sx={{ flexGrow: 1, pl: 0.5, pr: 1, fontFamily: "monospace", alignItems: "center" }}
   >
     <Box sx={{ display: "flex", alignItems: "center", minWidth: 20 }}>
-      {isCurrent ? <ForwardIcon fontSize="small" /> : null}
+      {markerState === "exactly-on" && <ForwardIcon fontSize="small" />}
+      {markerState === "before" && (
+        <ForwardIcon fontSize="small" style={{ transform: `translateY(-${ROW_HEIGHT_PX / 2}px)` }} />
+      )}
+      {markerState === "after" && (
+        <ForwardIcon fontSize="small" style={{ transform: `translateY(${ROW_HEIGHT_PX / 2}px)` }} />
+      )}
     </Box>
     <Box>t={formatTimeSec(timingPoint.t)}</Box>
     <Box sx={{ opacity: 0.6 }}>|</Box>

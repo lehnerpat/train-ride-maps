@@ -52,6 +52,7 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
     pathLengthMM,
     currentCenter,
     precedingTrackPointIndex,
+    timingPointProgressState,
   } = usePlayerState(track);
   const [projectedPointInfo, setProjectedPointInfo] = useState<{ p: LatLngLiteral; precedingPathIndex: number }>();
   const [currentDistanceMM, setCurrentDistanceMM] = useState<number>();
@@ -293,8 +294,8 @@ export const TrackEditor: FC<TrackEditorProps> = ({ initialTrack }) => {
                   onDeleteTimingPoint={deleteTimingPointById}
                   onJumpToTime={jumpToTime}
                   onJumpToLocation={jumpToLocation}
-                  precedingIndex={precedingTrackPointIndex}
                   isAutoScrollOn={viewOptions.trackPointsEditorOptions.isAutoscrollTimingPointsListOn}
+                  timingPointProgressState={timingPointProgressState}
                 />
                 {/* <Placeholder width={300} height={350} text="TP List" /> */}
               </>

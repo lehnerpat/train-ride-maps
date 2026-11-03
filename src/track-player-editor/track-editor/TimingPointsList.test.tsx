@@ -12,8 +12,8 @@ describe("TimingPointsList", () => {
         onDeleteTimingPoint={onDeleteTimingPoint}
         onJumpToTime={() => {}}
         onJumpToLocation={() => {}}
-        precedingIndex={0}
         isAutoScrollOn={false}
+        timingPointProgressState={{ type: "before-first", first: { t: 12, d: 3456, index: 0 } }}
       />,
     );
 
@@ -33,8 +33,8 @@ describe("TimingPointsList", () => {
         onDeleteTimingPoint={() => {}}
         onJumpToTime={onJumpToTime}
         onJumpToLocation={onJumpToLocation}
-        precedingIndex={0}
         isAutoScrollOn={false}
+        timingPointProgressState={{ type: "before-first", first: { t: 12, d: 3456, index: 0 } }}
       />,
     );
 
