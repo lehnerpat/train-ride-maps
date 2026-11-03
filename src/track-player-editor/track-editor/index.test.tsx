@@ -19,15 +19,45 @@ const { videoPlayerHandle, mapInstance } = vi.hoisted(() => ({
 
 vi.mock("./VideoPlayer", async () => {
   const React = await import("react");
+  const VideoPlayer = React.forwardRef<
+    typeof videoPlayerHandle,
+    {
+      videoUrl: string;
+      onProgress?: (state: { playedSeconds: number }) => void;
+      onDuration?: (duration: number) => void;
+    }
+  >((_, ref) => {
+    React.useImperativeHandle(ref, () => videoPlayerHandle, []);
+    const instanceId = React.useId();
+    return React.createElement("div", {
+      "data-testid": "video-player",
+      "data-instance": instanceId,
+    });
+  });
+
   return {
-    VideoPlayer: React.forwardRef<typeof videoPlayerHandle, Record<string, never>>((_, ref) => {
-      React.useImperativeHandle(ref, () => videoPlayerHandle, []);
-      const instanceId = React.useId();
-      return React.createElement("div", {
-        "data-testid": "video-player",
-        "data-instance": instanceId,
-      });
-    }),
+    VideoPlayer,
+    useVideoPlayer: ({
+      videoUrl,
+      onProgress,
+    }: {
+      videoUrl: string;
+      onProgress: (state: { playedSeconds: number }) => void;
+    }) => {
+      const videoPlayerRef = React.useRef<typeof videoPlayerHandle | null>(null);
+      const Player = React.useCallback(
+        () => React.createElement(VideoPlayer, { ref: videoPlayerRef, videoUrl, onProgress }),
+        [videoUrl, onProgress],
+      );
+
+      return {
+        duration: undefined,
+        Player,
+        seekTo: (timeSeconds: number) => videoPlayerRef.current?.seekTo(timeSeconds),
+        seekBy: (offsetSeconds: number) => videoPlayerRef.current?.seekBy(offsetSeconds),
+        togglePlayback: () => videoPlayerRef.current?.togglePlayback(),
+      };
+    },
   };
 });
 
@@ -61,32 +91,32 @@ const track: Track = {
   uuid: "track-id",
   title: "Test track",
   videoUrl: "https://www.youtube.com/watch?v=test",
-  path: [],
+  path: [{ lat: 0, lng: 0 }],
   timingPoints: [],
 };
 
-const TrackPlayerForCurrentLocation = () => {
+const TrackEditorForCurrentLocation = () => {
   const [location] = useLocation();
   const mode = location.endsWith("/edit") ? "edit" : "view";
   return <TrackEditor initialTrack={track} mode={mode} />;
 };
 
-function renderTrackPlayer(path = "/track/track-id/edit") {
+function renderTrackEditor(path = "/track/track-id/edit") {
   const { hook } = memoryLocation({ path });
   return render(
     <Router hook={hook}>
-      <TrackPlayerForCurrentLocation />
+      <TrackEditorForCurrentLocation />
     </Router>,
   );
 }
 
-describe("TrackPlayer keyboard-focused mode", () => {
+describe("TrackEditor keyboard-focused mode", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   test("W/S control the video", async () => {
-    renderTrackPlayer();
+    renderTrackEditor();
     const videoPlayerInstance = screen.getByTestId("video-player").getAttribute("data-instance");
     fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
@@ -99,7 +129,7 @@ describe("TrackPlayer keyboard-focused mode", () => {
   });
 
   test("leaves typing and modified key combinations alone", () => {
-    renderTrackPlayer();
+    renderTrackEditor();
     fireEvent.click(screen.getByRole("button", { name: "Enable keyboard shortcuts" }));
 
     fireEvent.keyDown(screen.getByRole("textbox", { name: "Video title" }), {
@@ -113,18 +143,18 @@ describe("TrackPlayer keyboard-focused mode", () => {
   });
 
   test("Space toggles playback without keyboard-focused mode, in either mode", () => {
-    const { unmount } = renderTrackPlayer();
+    const { unmount } = renderTrackEditor();
     fireEvent.keyDown(document, { key: " " });
     expect(videoPlayerHandle.togglePlayback).toHaveBeenCalledOnce();
     unmount();
 
-    renderTrackPlayer("/track/track-id/view");
+    renderTrackEditor("/track/track-id/view");
     fireEvent.keyDown(document, { key: " " });
     expect(videoPlayerHandle.togglePlayback).toHaveBeenCalledTimes(2);
   });
 
   test("Space leaves typing, buttons and modified combinations alone", () => {
-    renderTrackPlayer();
+    renderTrackEditor();
 
     fireEvent.keyDown(screen.getByRole("textbox", { name: "Video title" }), {
       key: " ",
@@ -136,7 +166,7 @@ describe("TrackPlayer keyboard-focused mode", () => {
   });
 
   test("Escape removes focus from the focused element", () => {
-    renderTrackPlayer();
+    renderTrackEditor();
     const input = screen.getByRole("textbox", { name: "Video title" });
     input.focus();
     expect(document.activeElement).toBe(input);

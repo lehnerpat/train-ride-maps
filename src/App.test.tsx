@@ -20,6 +20,6 @@ describe("App routing", () => {
     render(<App />);
 
     const trackLink = screen.getByRole("link", { name: IncludedData[0].title });
-    expect(trackLink.getAttribute("href")).toBe(`#/track/${IncludedData[0].uuid}`);
+    expect(trackLink.getAttribute("href")).toBe(`#/track/${IncludedData[0].uuid}/view`);
   });
 });

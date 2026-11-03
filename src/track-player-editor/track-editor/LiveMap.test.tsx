@@ -39,7 +39,6 @@ const TestMap = ({
         initialCenter={path[0]}
         currentCenter={currentCenter}
         centerOnLocation={centerOnLocation}
-        playedSeconds={0}
         isEditingModeOn={isEditingModeOn}
         viewOptions={viewOptions}
         isAutopanOnInitially={isEditingModeOn ? false : true}
